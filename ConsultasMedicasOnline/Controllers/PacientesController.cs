@@ -78,8 +78,25 @@ namespace ConsultasMedicasOnline.Controllers
         // POST: Pacientes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TipoSanguineo,Alergias,MedicamentosEmUso,HistoricoFamiliar,ContatoEmergencia,TelefoneEmergencia")] Paciente paciente)
+        public async Task<IActionResult> Create([Bind("NumeroIdentificacao,Telefone,TipoSanguineo,Alergias,MedicamentosEmUso,HistoricoFamiliar,ContatoEmergencia,TelefoneEmergencia")] Paciente paciente)
         {
+            // Log received data for debugging
+            Console.WriteLine($"Received: NIF = {paciente.NumeroIdentificacao}, Telefone = {paciente.Telefone}");
+            
+            // Clear model state if previously had errors
+            ModelState.Clear();
+            
+            // Validate required fields explicitly
+            if (string.IsNullOrWhiteSpace(paciente.NumeroIdentificacao))
+            {
+                ModelState.AddModelError("NumeroIdentificacao", "O número de identificação é obrigatório.");
+            }
+            
+            if (string.IsNullOrWhiteSpace(paciente.Telefone))
+            {
+                ModelState.AddModelError("Telefone", "O telefone é obrigatório.");
+            }
+            
             if (ModelState.IsValid)
             {
                 try
@@ -104,6 +121,7 @@ namespace ConsultasMedicasOnline.Controllers
 
                     paciente.UsuarioId = currentUserId;
                     paciente.DataCadastro = DateTime.UtcNow;
+                    paciente.Ativo = true;
                     
                     _context.Add(paciente);
                     await _context.SaveChangesAsync();
@@ -119,11 +137,22 @@ namespace ConsultasMedicasOnline.Controllers
                 }
                 catch (Exception ex)
                 {
+                    // Log the exception for debugging
+                    Console.WriteLine($"Error saving patient: {ex.Message}");
                     ModelState.AddModelError("", "Erro ao salvar os dados: " + ex.Message);
                 }
             }
             else
             {
+                // Log validation errors for debugging
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        Console.WriteLine($"Error for {state.Key}: {error.ErrorMessage}");
+                    }
+                }
+                
                 ModelState.AddModelError("", "Por favor, corrija os erros no formulário.");
             }
 

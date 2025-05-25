@@ -14,6 +14,13 @@
                 @TempData["SuccessMessage"]
             </div>
         }
+        
+        <!-- Form Status Summary -->
+        <div id="form-status" class="mb-4 p-4 bg-warning-50 border border-warning-200 rounded-lg text-warning-700 hidden">
+            <i class="fas fa-exclamation-circle mr-2"></i>
+            <span id="form-status-message">Por favor, preencha todos os campos obrigatórios marcados com *</span>
+        </div>
+
         @if (ViewData.ModelState.ErrorCount > 0)
         {
             <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
@@ -45,7 +52,7 @@
                 <p class="text-sm text-primary-600 mt-1">Preencha as informações abaixo para completar seu cadastro</p>
             </div>
 
-            <form asp-action="Create" method="post" class="p-6" id="pacienteForm">
+            <form asp-action="Create" method="post" class="p-6" id="pacienteForm" novalidate>
                 <div asp-validation-summary="ModelOnly" class="mb-6 p-4 bg-danger-50 border border-danger-200 rounded-lg text-danger-700"></div>
 
                 <!-- Personal Information -->
@@ -64,7 +71,10 @@
                             <input asp-for="NumeroIdentificacao" 
                                    type="text" 
                                    placeholder="Ex: 123456789LA123"
-                                   class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200" />
+                                   class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 required" 
+                                   required
+                                   data-val="true"
+                                   data-val-required="O Número de Identificação é obrigatório" />
                             <span asp-validation-for="NumeroIdentificacao" class="text-danger-600 text-sm mt-1"></span>
                             <p class="text-sm text-medical-500 mt-1">Número de Identificação Fiscal ou Bilhete de Identidade</p>
                         </div>
@@ -77,7 +87,10 @@
                             <input asp-for="Telefone" 
                                    type="tel" 
                                    placeholder="+244 912 345 678"
-                                   class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200" />
+                                   class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 required" 
+                                   required
+                                   data-val="true"
+                                   data-val-required="O Telefone é obrigatório" />
                             <span asp-validation-for="Telefone" class="text-danger-600 text-sm mt-1"></span>
                             <p class="text-sm text-medical-500 mt-1">Formato angolano: +244 XXX XXX XXX</p>
                         </div>
@@ -200,12 +213,14 @@
                 <div class="mb-8 p-4 bg-medical-50 border border-medical-200 rounded-lg">
                     <div class="flex items-start">
                         <div class="flex items-center h-5">
-                            <input id="terms" type="checkbox" required class="w-4 h-4 text-primary-600 bg-white border-medical-300 rounded focus:ring-primary-500">
+                            <input id="terms" name="terms" type="checkbox" required 
+                                  class="w-4 h-4 text-primary-600 bg-white border-medical-300 rounded focus:ring-primary-500 required">
                         </div>
                         <div class="ml-3 text-sm">
                             <label for="terms" class="text-medical-700">
                                 Concordo com os <a href="#" class="text-primary-600 hover:text-primary-700 font-medium">Termos de Uso</a> 
                                 e <a href="#" class="text-primary-600 hover:text-primary-700 font-medium">Política de Privacidade</a>
+                                <span class="text-red-500">*</span>
                             </label>
                             <p class="text-medical-500 mt-1">
                                 Ao marcar esta opção, você confirma que leu e concorda com nossos termos e política de privacidade.
@@ -220,7 +235,8 @@
                         <i class="fas fa-times mr-2"></i>
                         Cancelar
                     </a>
-                    <button type="submit" class="w-full sm:w-auto bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium">
+                    <button type="submit" id="submit-btn" disabled
+                            class="w-full sm:w-auto bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fas fa-save mr-2"></i>
                         Completar Cadastro
                     </button>
@@ -265,8 +281,22 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     
     <script>
-        // Angolan phone mask
         document.addEventListener('DOMContentLoaded', function() {
+            // Form validation
+            const form = document.getElementById('pacienteForm');
+            const submitButton = document.getElementById('submit-btn');
+            const formStatus = document.getElementById('form-status');
+            const formStatusMessage = document.getElementById('form-status-message');
+            const requiredInputs = document.querySelectorAll('.required');
+            const termsCheckbox = document.getElementById('terms');
+            
+            // Initial validation on page load
+            validateForm();
+            
+            // Validate form on input change
+            form.addEventListener('input', validateForm);
+            
+            // Angolan phone mask
             const phoneInputs = document.querySelectorAll('input[type="tel"]');
             phoneInputs.forEach(phoneInput => {
                 phoneInput.addEventListener('input', function(e) {
@@ -287,8 +317,94 @@
                         }
                         e.target.value = value;
                     }
+                    
+                    // Validate after formatting
+                    validateForm();
                 });
             });
+            
+            // Form submission
+            form.addEventListener('submit', function(event) {
+                if (!validateForm()) {
+                    event.preventDefault();
+                    formStatus.classList.remove('hidden');
+                    formStatus.classList.remove('bg-warning-50', 'border-warning-200', 'text-warning-700');
+                    formStatus.classList.add('bg-danger-50', 'border-danger-200', 'text-danger-700');
+                    formStatusMessage.textContent = 'Por favor, preencha todos os campos obrigatórios antes de enviar.';
+                    window.scrollTo(0, formStatus.offsetTop - 20);
+                } else {
+                    // Show loading state when form is valid and being submitted
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processando...';
+                    
+                    // Add a debug output to show the values being submitted
+                    console.log('NumeroIdentificacao:', document.getElementById('NumeroIdentificacao').value);
+                    console.log('Telefone:', document.getElementById('Telefone').value);
+                    console.log('Terms checked:', document.getElementById('terms').checked);
+                    
+                    // Wait a moment to ensure values are set before submission
+                    setTimeout(() => {
+                        // Continue with form submission
+                        return true;
+                    }, 200);
+                }
+            });
+            
+            // Validate form fields
+            function validateForm() {
+                let isValid = true;
+                let missingFields = [];
+                
+                // Check required inputs
+                requiredInputs.forEach(input => {
+                    const label = input.closest('div').querySelector('label');
+                    const labelText = label ? label.textContent.trim().replace('*', '').trim() : '';
+                    
+                    if (!input.value.trim()) {
+                        isValid = false;
+                        input.classList.add('border-danger-300');
+                        
+                        if (labelText && !missingFields.includes(labelText)) {
+                            missingFields.push(labelText);
+                        }
+                    } else {
+                        input.classList.remove('border-danger-300');
+                    }
+                });
+                
+                // Check terms checkbox
+                if (!termsCheckbox.checked) {
+                    isValid = false;
+                    termsCheckbox.classList.add('ring-2', 'ring-danger-300');
+                    missingFields.push('Concordar com os termos');
+                } else {
+                    termsCheckbox.classList.remove('ring-2', 'ring-danger-300');
+                }
+                
+                // Prepare message for form status
+                if (!isValid) {
+                    formStatus.classList.remove('hidden');
+                    formStatus.classList.remove('bg-success-50', 'border-success-200', 'text-success-700');
+                    formStatus.classList.add('bg-warning-50', 'border-warning-200', 'text-warning-700');
+                    
+                    if (missingFields.length > 0) {
+                        formStatusMessage.textContent = 'Por favor, preencha os seguintes campos: ' + missingFields.join(', ');
+                    } else {
+                        formStatusMessage.textContent = 'Por favor, preencha todos os campos obrigatórios marcados com *';
+                    }
+                } else {
+                    // Change message to success when form is valid
+                    formStatus.classList.remove('hidden');
+                    formStatus.classList.remove('bg-warning-50', 'border-warning-200', 'text-warning-700');
+                    formStatus.classList.add('bg-success-50', 'border-success-200', 'text-success-700');
+                    formStatusMessage.textContent = 'Formulário pronto para envio!';
+                }
+                
+                // Update submit button state
+                submitButton.disabled = !isValid;
+                
+                return isValid;
+            }
         });
     </script>
 }

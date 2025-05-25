@@ -17,6 +17,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\wwwroot\\js\\form-helper.js",
+      "PackagePath": "staticwebassets\\js\\form-helper.js"
+    },
+    {
       "Id": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

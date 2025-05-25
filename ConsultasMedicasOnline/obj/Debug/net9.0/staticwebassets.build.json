@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "SDW3k5usS3IhAl8El7qeqPY7yaWlsbnqhHaASxaAowk=",
+  "Hash": "KL2HzzHOU1GTv9KXNmmosDRyUwIfTcZ0m1LHCRIYoBI=",
   "Source": "ConsultasMedicasOnline",
   "BasePath": "_content/ConsultasMedicasOnline",
   "Mode": "Default",
@@ -2432,6 +2432,27 @@
       "OriginalItemSpec": "C:\\Users\\User\\.nuget\\packages\\microsoft.aspnetcore.identity.ui\\9.0.3\\staticwebassets\\V5\\lib\\bootstrap\\dist\\js\\bootstrap.js.map"
     },
     {
+      "Identity": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\obj\\Debug\\net9.0\\compressed\\ildpipksiv-3la9gc6zvh.gz",
+      "SourceId": "ConsultasMedicasOnline",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\obj\\Debug\\net9.0\\compressed\\",
+      "BasePath": "_content/ConsultasMedicasOnline",
+      "RelativePath": "js/form-helper#[.{fingerprint=3la9gc6zvh}]?.js.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\wwwroot\\js\\form-helper.js",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "aknohoqdfd",
+      "Integrity": "Sn7YXPLBq0RkQ1T8l2XW3XKoPiTFweosvZMIy4D6X64=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\wwwroot\\js\\form-helper.js"
+    },
+    {
       "Identity": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\obj\\Debug\\net9.0\\compressed\\itpyl2w2cu-r4e9w2rdcm.gz",
       "SourceId": "ConsultasMedicasOnline",
       "SourceType": "Discovered",
@@ -4110,6 +4131,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\wwwroot\\js\\form-helper.js",
+      "SourceId": "ConsultasMedicasOnline",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\wwwroot\\",
+      "BasePath": "_content/ConsultasMedicasOnline",
+      "RelativePath": "js/form-helper#[.{fingerprint}]?.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "3la9gc6zvh",
+      "Integrity": "131QFRYEtS0M9Tre2LDGXPJDUhEmL+mqePZ5JockatY=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\form-helper.js"
     },
     {
       "Identity": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\wwwroot\\js\\site.js",
@@ -15486,6 +15528,304 @@
         {
           "Name": "integrity",
           "Value": "sha256-JKWeHUaANNuffeRatdc54UCb84RoxjEw/nTq8Mops8Y="
+        }
+      ]
+    },
+    {
+      "Route": "js/form-helper.3la9gc6zvh.js",
+      "AssetFile": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\obj\\Debug\\net9.0\\compressed\\ildpipksiv-3la9gc6zvh.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.002610966057"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "382"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Sn7YXPLBq0RkQ1T8l2XW3XKoPiTFweosvZMIy4D6X64=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 25 May 2025 14:07:15 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"131QFRYEtS0M9Tre2LDGXPJDUhEmL+mqePZ5JockatY=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "3la9gc6zvh"
+        },
+        {
+          "Name": "label",
+          "Value": "js/form-helper.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-131QFRYEtS0M9Tre2LDGXPJDUhEmL+mqePZ5JockatY="
+        }
+      ]
+    },
+    {
+      "Route": "js/form-helper.3la9gc6zvh.js",
+      "AssetFile": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\wwwroot\\js\\form-helper.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "724"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"131QFRYEtS0M9Tre2LDGXPJDUhEmL+mqePZ5JockatY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 25 May 2025 14:07:15 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "3la9gc6zvh"
+        },
+        {
+          "Name": "label",
+          "Value": "js/form-helper.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-131QFRYEtS0M9Tre2LDGXPJDUhEmL+mqePZ5JockatY="
+        }
+      ]
+    },
+    {
+      "Route": "js/form-helper.3la9gc6zvh.js.gz",
+      "AssetFile": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\obj\\Debug\\net9.0\\compressed\\ildpipksiv-3la9gc6zvh.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "382"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Sn7YXPLBq0RkQ1T8l2XW3XKoPiTFweosvZMIy4D6X64=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 25 May 2025 14:07:15 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "3la9gc6zvh"
+        },
+        {
+          "Name": "label",
+          "Value": "js/form-helper.js.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-Sn7YXPLBq0RkQ1T8l2XW3XKoPiTFweosvZMIy4D6X64="
+        }
+      ]
+    },
+    {
+      "Route": "js/form-helper.js",
+      "AssetFile": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\obj\\Debug\\net9.0\\compressed\\ildpipksiv-3la9gc6zvh.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.002610966057"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "382"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Sn7YXPLBq0RkQ1T8l2XW3XKoPiTFweosvZMIy4D6X64=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 25 May 2025 14:07:15 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"131QFRYEtS0M9Tre2LDGXPJDUhEmL+mqePZ5JockatY=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-131QFRYEtS0M9Tre2LDGXPJDUhEmL+mqePZ5JockatY="
+        }
+      ]
+    },
+    {
+      "Route": "js/form-helper.js",
+      "AssetFile": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\wwwroot\\js\\form-helper.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "724"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"131QFRYEtS0M9Tre2LDGXPJDUhEmL+mqePZ5JockatY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 25 May 2025 14:07:15 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-131QFRYEtS0M9Tre2LDGXPJDUhEmL+mqePZ5JockatY="
+        }
+      ]
+    },
+    {
+      "Route": "js/form-helper.js.gz",
+      "AssetFile": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\obj\\Debug\\net9.0\\compressed\\ildpipksiv-3la9gc6zvh.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "382"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Sn7YXPLBq0RkQ1T8l2XW3XKoPiTFweosvZMIy4D6X64=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 25 May 2025 14:07:15 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-Sn7YXPLBq0RkQ1T8l2XW3XKoPiTFweosvZMIy4D6X64="
         }
       ]
     },
