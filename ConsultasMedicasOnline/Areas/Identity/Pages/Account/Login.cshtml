@@ -1,0 +1,210 @@
+@page
+@model ConsultasMedicasOnline.Areas.Identity.Pages.Account.LoginModel
+
+@{
+    ViewData["Title"] = "Entrar na sua conta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Modern Login Page -->
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl mb-6 shadow-2xl">
+                <i class="fas fa-user-md text-white text-2xl"></i>
+            </div>
+            <h2 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-600 mb-2">
+                Bem-vindo de volta
+            </h2>
+            <p class="text-slate-600 text-lg">
+                Entre na sua conta para acessar seus agendamentos
+            </p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="bg-white/70 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-8 space-y-6">
+            <form id="account" method="post" class="space-y-6">
+                <div asp-validation-summary="ModelOnly" class="text-red-600 bg-red-50 border border-red-200 rounded-xl p-4 hidden" role="alert"></div>
+                
+                <!-- Email Field -->
+                <div class="space-y-2">
+                    <label asp-for="Input.Email" class="block text-sm font-semibold text-slate-700">
+                        <i class="fas fa-envelope mr-2 text-blue-500"></i>
+                        E-mail
+                    </label>
+                    <div class="relative">
+                        <input asp-for="Input.Email" 
+                               class="w-full px-4 py-4 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-slate-700 placeholder-slate-400" 
+                               autocomplete="username" 
+                               aria-required="true" 
+                               placeholder="seu@email.com" />
+                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                            <i class="fas fa-at text-slate-400"></i>
+                        </div>
+                    </div>
+                    <span asp-validation-for="Input.Email" class="text-red-500 text-sm"></span>
+                </div>
+
+                <!-- Password Field -->
+                <div class="space-y-2">
+                    <label asp-for="Input.Password" class="block text-sm font-semibold text-slate-700">
+                        <i class="fas fa-lock mr-2 text-blue-500"></i>
+                        Senha
+                    </label>
+                    <div class="relative">
+                        <input asp-for="Input.Password" 
+                               type="password"
+                               class="w-full px-4 py-4 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-slate-700 placeholder-slate-400" 
+                               autocomplete="current-password" 
+                               aria-required="true" 
+                               placeholder="Digite sua senha" />
+                        <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                            <i id="passwordIcon" class="fas fa-eye text-slate-400 hover:text-slate-600 transition-colors duration-200"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Input.Password" class="text-red-500 text-sm"></span>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input asp-for="Input.RememberMe" type="checkbox" 
+                               class="h-4 w-4 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-500 focus:ring-2" />
+                        <label asp-for="Input.RememberMe" class="ml-3 text-sm font-medium text-slate-700">
+                            Lembrar-me
+                        </label>
+                    </div>
+                    <div>
+                        <a asp-page="./ForgotPassword" class="text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
+                            Esqueceu a senha?
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="group relative w-full inline-flex items-center justify-center px-6 py-4 text-lg font-bold text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl">
+                    <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></span>
+                    <span class="relative flex items-center">
+                        <i class="fas fa-sign-in-alt mr-3 group-hover:scale-110 transition-transform duration-300"></i>
+                        Entrar na conta
+                    </span>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-slate-200"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-4 bg-white text-slate-500 font-medium">ou</span>
+                </div>
+            </div>
+
+            <!-- Register Link -->
+            <div class="text-center">
+                <p class="text-slate-600">
+                    Ainda não tem uma conta?
+                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" 
+                       class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-300">
+                        Criar conta grátis
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!-- External Logins (if available) -->
+        @{
+            if ((Model.ExternalLogins?.Count ?? 0) > 0)
+            {
+                <div class="bg-white/70 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-6">
+                    <h3 class="text-lg font-semibold text-slate-700 mb-4 text-center">
+                        Ou entre com
+                    </h3>
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="space-y-3">
+                        @foreach (var provider in Model.ExternalLogins!)
+                        {
+                            <button type="submit" name="provider" value="@provider.Name" 
+                                    class="w-full flex items-center justify-center px-4 py-3 border border-slate-300 rounded-xl text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-400 transition-all duration-300">
+                                <i class="fab fa-@provider.Name.ToLower() mr-3 text-lg"></i>
+                                Entrar com @provider.DisplayName
+                            </button>
+                        }
+                    </form>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function togglePassword() {
+            const passwordField = document.querySelector('input[name="Input.Password"]');
+            const passwordIcon = document.getElementById('passwordIcon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                passwordIcon.classList.remove('fa-eye');
+                passwordIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                passwordIcon.classList.remove('fa-eye-slash');
+                passwordIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Form validation animation
+        document.getElementById('account').addEventListener('submit', function(e) {
+            const email = document.querySelector('input[name="Input.Email"]').value;
+            const password = document.querySelector('input[name="Input.Password"]').value;
+            
+            if (!email || !password) {
+                e.preventDefault();
+                
+                // Show validation summary
+                const validationSummary = document.querySelector('[asp-validation-summary]');
+                if (validationSummary) {
+                    validationSummary.textContent = 'Por favor, preencha todos os campos obrigatórios.';
+                    validationSummary.classList.remove('hidden');
+                    validationSummary.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                // Shake animation for empty fields
+                if (!email) {
+                    const emailField = document.querySelector('input[name="Input.Email"]');
+                    emailField.classList.add('animate-pulse');
+                    emailField.style.borderColor = '#ef4444';
+                    setTimeout(() => {
+                        emailField.classList.remove('animate-pulse');
+                        emailField.style.borderColor = '';
+                    }, 1000);
+                }
+                
+                if (!password) {
+                    const passwordField = document.querySelector('input[name="Input.Password"]');
+                    passwordField.classList.add('animate-pulse');
+                    passwordField.style.borderColor = '#ef4444';
+                    setTimeout(() => {
+                        passwordField.classList.remove('animate-pulse');
+                        passwordField.style.borderColor = '';
+                    }, 1000);
+                }
+            }
+        });
+
+        // Enhanced focus effects
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('scale-105');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('scale-105');
+            });
+        });
+    </script>
+}

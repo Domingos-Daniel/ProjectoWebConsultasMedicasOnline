@@ -1,0 +1,206 @@
+@{
+    ViewData["Title"] = "Central de Ajuda - MedConsulta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Central de Ajuda Page -->
+<div class="min-h-screen pt-24 pb-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-16 animate-fade-in">
+            <div class="flex justify-center mb-8">
+                <div class="relative group">
+                    <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl group-hover:shadow-3xl transition-all duration-300 transform group-hover:scale-105">
+                        <i class="fas fa-life-ring text-white text-3xl group-hover:scale-110 transition-transform duration-300"></i>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-3xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+                </div>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-600 mb-6">
+                Central de Ajuda
+            </h1>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                Encontre respostas rápidas para suas dúvidas e aprenda a usar todos os recursos da plataforma MedConsulta.
+            </p>
+        </div>
+
+        <!-- Busca -->
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 mb-12 animate-fade-in">
+            <div class="max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-center text-slate-800 mb-6">
+                    Como podemos ajudar você?
+                </h2>
+                <div class="relative">
+                    <input type="text" 
+                           placeholder="Digite sua dúvida..." 
+                           class="w-full px-6 py-4 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-slate-700 placeholder-slate-400 text-lg">
+                    <div class="absolute inset-y-0 right-0 pr-6 flex items-center">
+                        <i class="fas fa-search text-slate-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categorias de Ajuda -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+            <!-- Primeiros Passos -->
+            <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <i class="fas fa-play text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Primeiros Passos</h3>
+                <p class="text-slate-600 mb-6">Como criar conta, fazer login e configurar seu perfil</p>
+                <button class="text-blue-600 font-medium hover:text-blue-700 transition-colors duration-200">
+                    Ver tutoriais →
+                </button>
+            </div>
+
+            <!-- Agendamento -->
+            <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <i class="fas fa-calendar-alt text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Agendamento</h3>
+                <p class="text-slate-600 mb-6">Como agendar, cancelar e reagendar consultas</p>
+                <button class="text-blue-600 font-medium hover:text-blue-700 transition-colors duration-200">
+                    Ver guias →
+                </button>
+            </div>
+
+            <!-- Pagamentos -->
+            <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <i class="fas fa-credit-card text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Pagamentos</h3>
+                <p class="text-slate-600 mb-6">Formas de pagamento, reembolsos e cobranças</p>
+                <button class="text-blue-600 font-medium hover:text-blue-700 transition-colors duration-200">
+                    Ver detalhes →
+                </button>
+            </div>
+
+            <!-- Para Médicos -->
+            <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <i class="fas fa-user-md text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Para Médicos</h3>
+                <p class="text-slate-600 mb-6">Gestão de agenda, pacientes e prontuários</p>
+                <button class="text-blue-600 font-medium hover:text-blue-700 transition-colors duration-200">
+                    Ver recursos →
+                </button>
+            </div>
+
+            <!-- Problemas Técnicos -->
+            <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                <div class="w-16 h-16 bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Problemas Técnicos</h3>
+                <p class="text-slate-600 mb-6">Soluções para erros comuns e dificuldades</p>
+                <button class="text-blue-600 font-medium hover:text-blue-700 transition-colors duration-200">
+                    Ver soluções →
+                </button>
+            </div>
+
+            <!-- Políticas -->
+            <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <i class="fas fa-shield-alt text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-4">Políticas</h3>
+                <p class="text-slate-600 mb-6">Termos de uso, privacidade e segurança</p>
+                <button class="text-blue-600 font-medium hover:text-blue-700 transition-colors duration-200">
+                    Ver políticas →
+                </button>
+            </div>
+        </div>
+
+        <!-- FAQ Popular -->
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-12 mb-20 animate-fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-6">
+                    Perguntas Mais Frequentes
+                </h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="space-y-6 max-w-4xl mx-auto">
+                <!-- FAQ Item 1 -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <button class="w-full px-6 py-4 text-left bg-white/50 hover:bg-white/70 transition-colors duration-200 flex justify-between items-center">
+                        <span class="font-semibold text-slate-800">Como criar minha conta no MedConsulta?</span>
+                        <i class="fas fa-plus text-slate-400"></i>
+                    </button>
+                    <div class="px-6 py-4 bg-blue-50/50 border-t border-slate-200">
+                        <p class="text-slate-600">É muito simples! Clique em "Registrar" no menu superior, preencha seus dados básicos como nome, email e telefone, crie uma senha segura e confirme seu email. Todo o processo leva menos de 2 minutos.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <button class="w-full px-6 py-4 text-left bg-white/50 hover:bg-white/70 transition-colors duration-200 flex justify-between items-center">
+                        <span class="font-semibold text-slate-800">Posso agendar consulta para outra pessoa?</span>
+                        <i class="fas fa-plus text-slate-400"></i>
+                    </button>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <button class="w-full px-6 py-4 text-left bg-white/50 hover:bg-white/70 transition-colors duration-200 flex justify-between items-center">
+                        <span class="font-semibold text-slate-800">Como cancelo uma consulta agendada?</span>
+                        <i class="fas fa-plus text-slate-400"></i>
+                    </button>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <button class="w-full px-6 py-4 text-left bg-white/50 hover:bg-white/70 transition-colors duration-200 flex justify-between items-center">
+                        <span class="font-semibold text-slate-800">Meus dados estão seguros na plataforma?</span>
+                        <i class="fas fa-plus text-slate-400"></i>
+                    </button>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <button class="w-full px-6 py-4 text-left bg-white/50 hover:bg-white/70 transition-colors duration-200 flex justify-between items-center">
+                        <span class="font-semibold text-slate-800">Como funciona o sistema de lembretes?</span>
+                        <i class="fas fa-plus text-slate-400"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <a asp-controller="Paginas" asp-action="FAQ" 
+                   class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300">
+                    <i class="fas fa-question mr-2"></i>
+                    Ver Todas as Perguntas
+                </a>
+            </div>
+        </div>
+
+        <!-- Contato Direto -->
+        <div class="text-center animate-fade-in">
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-3xl p-12 text-white">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                    Ainda precisa de ajuda?
+                </h2>
+                <p class="text-xl mb-8 opacity-90">
+                    Nossa equipe de suporte está pronta para resolver qualquer dúvida que você tenha.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a asp-controller="Paginas" asp-action="Contato" 
+                       class="inline-flex items-center px-8 py-4 bg-white text-blue-600 rounded-xl font-bold text-lg hover:bg-gray-50 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-envelope mr-3"></i>
+                        Entrar em Contato
+                    </a>
+                    <a href="tel:+551130000000" 
+                       class="inline-flex items-center px-8 py-4 border-2 border-white text-white rounded-xl font-bold text-lg hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-phone mr-3"></i>
+                        Ligar Agora
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

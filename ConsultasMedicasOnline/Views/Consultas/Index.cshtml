@@ -1,0 +1,434 @@
+@model IEnumerable<ConsultasMedicasOnline.Models.Consulta>
+
+@{
+    ViewData["Title"] = "Consultas";
+    var userRole = "";
+    if (User.IsInRole("Paciente")) userRole = "Paciente";
+    else if (User.IsInRole("Medico")) userRole = "Médico";
+    else if (User.IsInRole("Administrador")) userRole = "Administrador";
+}
+
+<div class="min-h-screen bg-medical-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-medical-800">
+                        @if (userRole == "Paciente")
+                        {
+                            <text>Minhas Consultas</text>
+                        }
+                        else if (userRole == "Médico")
+                        {
+                            <text>Minha Agenda</text>
+                        }
+                        else
+                        {
+                            <text>Gerenciar Consultas</text>
+                        }
+                    </h1>
+                    <p class="text-medical-600 mt-2">
+                        @if (userRole == "Paciente")
+                        {
+                            <text>Acompanhe suas consultas agendadas e histórico médico</text>
+                        }
+                        else if (userRole == "Médico")
+                        {
+                            <text>Gerencie suas consultas e atendimentos</text>
+                        }
+                        else
+                        {
+                            <text>Visão geral de todas as consultas do sistema</text>
+                        }
+                    </p>
+                </div>
+                <div class="mt-4 sm:mt-0 flex space-x-3">
+                    @if (User.IsInRole("Paciente"))
+                    {
+                        <a asp-action="Create" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
+                            <i class="fas fa-plus mr-2"></i>
+                            Agendar Consulta
+                        </a>
+                    }
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <a asp-action="Create" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
+                            <i class="fas fa-plus mr-2"></i>
+                            Nova Consulta
+                        </a>
+                        <a href="#" class="bg-success-600 text-white px-4 py-2 rounded-lg hover:bg-success-700 transition-colors duration-200 inline-flex items-center">
+                            <i class="fas fa-download mr-2"></i>
+                            Exportar
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-primary-100 rounded-lg">
+                        <i class="fas fa-calendar text-primary-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-medical-600">Total</p>
+                        <p class="text-2xl font-bold text-medical-800">@Model.Count()</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-warning-100 rounded-lg">
+                        <i class="fas fa-clock text-warning-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-medical-600">Agendadas</p>
+                        <p class="text-2xl font-bold text-medical-800">@Model.Count(c => c.Status == StatusConsulta.Agendada || c.Status == StatusConsulta.Confirmada)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-success-100 rounded-lg">
+                        <i class="fas fa-check-circle text-success-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-medical-600">Realizadas</p>
+                        <p class="text-2xl font-bold text-medical-800">@Model.Count(c => c.Status == StatusConsulta.Concluida)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-info-100 rounded-lg">
+                        <i class="fas fa-calendar-day text-info-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-medical-600">Hoje</p>
+                        <p class="text-2xl font-bold text-medical-800">@Model.Count(c => c.DataHora.Date == DateTime.Today)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-medical-700 mb-2">Status</label>
+                    <select id="statusFilter" class="w-full px-3 py-2 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <option value="">Todos os status</option>
+                        <option value="Agendada">Agendada</option>
+                        <option value="Confirmada">Confirmada</option>
+                        <option value="EmAndamento">Em Andamento</option>
+                        <option value="Concluida">Concluída</option>
+                        <option value="Cancelada">Cancelada</option>
+                        <option value="NaoCompareceu">Não Compareceu</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-medical-700 mb-2">Período</label>
+                    <select id="periodoFilter" class="w-full px-3 py-2 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <option value="">Todos os períodos</option>
+                        <option value="hoje">Hoje</option>
+                        <option value="semana">Esta semana</option>
+                        <option value="mes">Este mês</option>
+                        <option value="proximo">Próximas</option>
+                        <option value="passadas">Passadas</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-medical-700 mb-2">Buscar</label>
+                    <input type="text" id="searchInput" placeholder="Nome do paciente/médico" class="w-full px-3 py-2 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+                </div>
+                <div class="flex items-end">
+                    <button id="clearFilters" class="w-full px-4 py-2 bg-medical-100 text-medical-700 rounded-lg hover:bg-medical-200 transition-colors duration-200">
+                        <i class="fas fa-times mr-2"></i>
+                        Limpar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consultas List -->
+        <div class="bg-white rounded-xl shadow-sm border border-medical-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-medical-200">
+                <h3 class="text-lg font-semibold text-medical-800">Lista de Consultas</h3>
+            </div>
+            
+            @if (Model.Any())
+            {
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-medical-200">
+                        <thead class="bg-medical-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-medical-500 uppercase tracking-wider">
+                                    Data/Hora
+                                </th>
+                                @if (userRole != "Médico")
+                                {
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-medical-500 uppercase tracking-wider">
+                                        Médico
+                                    </th>
+                                }
+                                @if (userRole != "Paciente")
+                                {
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-medical-500 uppercase tracking-wider">
+                                        Paciente
+                                    </th>
+                                }
+                                <th class="px-6 py-3 text-left text-xs font-medium text-medical-500 uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-medical-500 uppercase tracking-wider">
+                                    Tipo
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-medical-500 uppercase tracking-wider">
+                                    Motivo
+                                </th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-medical-500 uppercase tracking-wider">
+                                    Ações
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-medical-200" id="consultasTableBody">
+                            @foreach (var consulta in Model.OrderByDescending(c => c.DataHora))
+                            {
+                                <tr class="consulta-row hover:bg-medical-50 transition-colors duration-200" 
+                                    data-status="@consulta.Status.ToString()" 
+                                    data-data="@consulta.DataHora.ToString("yyyy-MM-dd")"
+                                    data-search="@(consulta.Paciente.Usuario?.Nome + " " + consulta.Paciente.Usuario?.Sobrenome + " " + consulta.Medico.Usuario?.Nome + " " + consulta.Medico.Usuario?.Sobrenome)">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex flex-col">
+                                            <div class="text-sm font-medium text-medical-900">
+                                                @consulta.DataHora.ToString("dd/MM/yyyy")
+                                            </div>
+                                            <div class="text-sm text-medical-500">
+                                                @consulta.DataHora.ToString("HH:mm")
+                                            </div>
+                                        </div>
+                                    </td>
+                                    @if (userRole != "Médico")
+                                    {
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
+                                                    <span class="text-primary-600 font-medium text-sm">
+                                                        @consulta.Medico.Usuario?.Nome?.First()@consulta.Medico.Usuario?.Sobrenome?.First()
+                                                    </span>
+                                                </div>
+                                                <div class="ml-3">
+                                                    <div class="text-sm font-medium text-medical-900">
+                                                        Dr. @consulta.Medico.Usuario?.Nome @consulta.Medico.Usuario?.Sobrenome
+                                                    </div>
+                                                    <div class="text-sm text-medical-500">
+                                                        @consulta.Medico.Especialidade?.Nome
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    }
+                                    @if (userRole != "Paciente")
+                                    {
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="h-10 w-10 rounded-full bg-medical-100 flex items-center justify-center">
+                                                    <span class="text-medical-600 font-medium text-sm">
+                                                        @consulta.Paciente.Usuario?.Nome?.First()@consulta.Paciente.Usuario?.Sobrenome?.First()
+                                                    </span>
+                                                </div>
+                                                <div class="ml-3">
+                                                    <div class="text-sm font-medium text-medical-900">
+                                                        @consulta.Paciente.Usuario?.Nome @consulta.Paciente.Usuario?.Sobrenome
+                                                    </div>
+                                                    <div class="text-sm text-medical-500">
+                                                        @consulta.Paciente.Usuario?.Email
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    }
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                            @(consulta.Status == StatusConsulta.Agendada ? "bg-warning-100 text-warning-800" :
+                                              consulta.Status == StatusConsulta.Confirmada ? "bg-info-100 text-info-800" :
+                                              consulta.Status == StatusConsulta.EmAndamento ? "bg-primary-100 text-primary-800" :
+                                              consulta.Status == StatusConsulta.Concluida ? "bg-success-100 text-success-800" :
+                                              consulta.Status == StatusConsulta.Cancelada ? "bg-danger-100 text-danger-800" :
+                                              "bg-medical-100 text-medical-800")">
+                                            @(consulta.Status == StatusConsulta.Agendada ? "Agendada" :
+                                              consulta.Status == StatusConsulta.Confirmada ? "Confirmada" :
+                                              consulta.Status == StatusConsulta.EmAndamento ? "Em Andamento" :
+                                              consulta.Status == StatusConsulta.Concluida ? "Concluída" :
+                                              consulta.Status == StatusConsulta.Cancelada ? "Cancelada" :
+                                              "Não Compareceu")
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center text-sm text-medical-700">
+                                            <i class="fas fa-@(consulta.Tipo == TipoConsulta.Online ? "video" : "hospital") mr-2 text-medical-400"></i>
+                                            @(consulta.Tipo == TipoConsulta.Online ? "Online" : "Presencial")
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-medical-900 max-w-xs truncate" title="@consulta.MotivoConsulta">
+                                            @(string.IsNullOrEmpty(consulta.MotivoConsulta) ? "-" : consulta.MotivoConsulta)
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <div class="flex justify-end space-x-2">
+                                            <a asp-action="Details" asp-route-id="@consulta.Id" class="text-primary-600 hover:text-primary-900 p-1" title="Ver detalhes">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            
+                                            @if (consulta.Status == StatusConsulta.Agendada && (User.IsInRole("Administrador") || 
+                                                (User.IsInRole("Paciente") && consulta.DataHora > DateTime.Now.AddHours(2))))
+                                            {
+                                                <a asp-action="Edit" asp-route-id="@consulta.Id" class="text-warning-600 hover:text-warning-900 p-1" title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            }
+                                            
+                                            @if ((consulta.Status == StatusConsulta.Agendada || consulta.Status == StatusConsulta.Confirmada) && 
+                                                (User.IsInRole("Administrador") || User.IsInRole("Paciente")))
+                                            {
+                                                <button onclick="cancelarConsulta(@consulta.Id)" class="text-danger-600 hover:text-danger-900 p-1" title="Cancelar">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            }
+                                            
+                                            @if (User.IsInRole("Medico") && consulta.Status == StatusConsulta.Agendada)
+                                            {
+                                                <form asp-action="Confirmar" asp-route-id="@consulta.Id" method="post" class="inline">
+                                                    <button type="submit" class="text-success-600 hover:text-success-900 p-1" title="Confirmar">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-12">
+                    <i class="fas fa-calendar-times text-6xl text-medical-300 mb-4"></i>
+                    <h3 class="text-lg font-semibold text-medical-800 mb-2">Nenhuma consulta encontrada</h3>
+                    <p class="text-medical-600 mb-6">
+                        @if (userRole == "Paciente")
+                        {
+                            <text>Você ainda não possui consultas agendadas.</text>
+                        }
+                        else if (userRole == "Médico")
+                        {
+                            <text>Você não possui consultas em sua agenda.</text>
+                        }
+                        else
+                        {
+                            <text>Não há consultas registradas no sistema.</text>
+                        }
+                    </p>
+                    @if (User.IsInRole("Paciente"))
+                    {
+                        <a asp-action="Create" class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
+                            <i class="fas fa-plus mr-2"></i>
+                            Agendar Primeira Consulta
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Filter functionality
+            function filterConsultas() {
+                const statusFilter = $('#statusFilter').val().toLowerCase();
+                const periodoFilter = $('#periodoFilter').val();
+                const searchTerm = $('#searchInput').val().toLowerCase();
+                const today = new Date();
+                
+                $('.consulta-row').each(function() {
+                    const row = $(this);
+                    const status = row.data('status').toLowerCase();
+                    const dataConsulta = new Date(row.data('data'));
+                    const searchText = row.data('search').toLowerCase();
+                    
+                    let showRow = true;
+                    
+                    // Status filter
+                    if (statusFilter && status !== statusFilter) {
+                        showRow = false;
+                    }
+                    
+                    // Period filter
+                    if (periodoFilter) {
+                        const diffTime = dataConsulta - today;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        
+                        switch (periodoFilter) {
+                            case 'hoje':
+                                if (diffDays !== 0) showRow = false;
+                                break;
+                            case 'semana':
+                                if (diffDays < 0 || diffDays > 7) showRow = false;
+                                break;
+                            case 'mes':
+                                if (dataConsulta.getMonth() !== today.getMonth() || 
+                                    dataConsulta.getFullYear() !== today.getFullYear()) showRow = false;
+                                break;
+                            case 'proximo':
+                                if (diffTime <= 0) showRow = false;
+                                break;
+                            case 'passadas':
+                                if (diffTime >= 0) showRow = false;
+                                break;
+                        }
+                    }
+                    
+                    // Search filter
+                    if (searchTerm && !searchText.includes(searchTerm)) {
+                        showRow = false;
+                    }
+                    
+                    row.toggle(showRow);
+                });
+            }
+            
+            $('#statusFilter, #periodoFilter').change(filterConsultas);
+            $('#searchInput').on('input', filterConsultas);
+            
+            $('#clearFilters').click(function() {
+                $('#statusFilter, #periodoFilter').val('');
+                $('#searchInput').val('');
+                $('.consulta-row').show();
+            });
+        });
+        
+        function cancelarConsulta(consultaId) {
+            const motivo = prompt('Informe o motivo do cancelamento:');
+            if (motivo && motivo.trim()) {
+                if (confirm('Tem certeza de que deseja cancelar esta consulta?')) {
+                    $.post('@Url.Action("Cancelar")', {
+                        id: consultaId,
+                        motivo: motivo.trim()
+                    }, function() {
+                        location.reload();
+                    }).fail(function() {
+                        alert('Erro ao cancelar a consulta. Tente novamente.');
+                    });
+                }
+            }
+        }
+    </script>
+}

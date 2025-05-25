@@ -1,0 +1,464 @@
+﻿@{
+    ViewData["Title"] = "MedConsulta - Sua Saúde em Primeiro Lugar";
+}
+
+<!-- Hero Section with Animated Background -->
+<section class="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 overflow-hidden">
+    <!-- Animated Background Elements -->
+    <div class="absolute inset-0">
+        <div class="absolute top-10 left-10 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div class="absolute top-32 right-10 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-10 left-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style="animation-delay: 4s;"></div>
+    </div>
+    
+    <!-- Content -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="text-center">
+            <!-- Logo/Brand -->
+            <div class="mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl mb-4 shadow-2xl">
+                    <i class="fas fa-heartbeat text-white text-3xl"></i>
+                </div>
+                <h1 class="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 mb-6 leading-tight">
+                    MedConsulta
+                </h1>
+            </div>
+            
+            <!-- Main Headline -->
+            <h2 class="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">
+                O futuro da medicina
+                <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                    está aqui
+                </span>
+            </h2>
+            
+            <!-- Subtitle -->
+            <p class="text-xl md:text-2xl text-blue-100 mb-12 max-w-4xl mx-auto leading-relaxed">
+                Conectamos você aos melhores profissionais de saúde através de uma plataforma moderna, 
+                segura e intuitiva. Cuide da sua saúde com a tecnologia mais avançada.
+            </p>
+            
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="Consultas" asp-action="Create" 
+                       class="group relative inline-flex items-center justify-center px-10 py-4 text-lg font-bold text-white transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 hover:shadow-2xl">
+                        <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity"></span>
+                        <span class="relative flex items-center">
+                            <i class="fas fa-calendar-plus mr-3"></i>
+                            Agendar Consulta
+                        </span>
+                    </a>
+                    <a asp-controller="Consultas" asp-action="Index" 
+                       class="group inline-flex items-center justify-center px-10 py-4 text-lg font-bold text-blue-300 border-2 border-blue-300 rounded-2xl hover:bg-blue-300 hover:text-slate-900 transition-all duration-300 transform hover:scale-105">
+                        <i class="fas fa-list mr-3"></i>
+                        Minhas Consultas
+                    </a>
+                }
+                else
+                {
+                    <a asp-area="Identity" asp-page="/Account/Register" 
+                       class="group relative inline-flex items-center justify-center px-12 py-5 text-xl font-bold text-white transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 hover:shadow-2xl">
+                        <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity"></span>
+                        <span class="relative flex items-center">
+                            <i class="fas fa-user-plus mr-3"></i>
+                            Criar Conta Grátis
+                        </span>
+                    </a>
+                    <a asp-area="Identity" asp-page="/Account/Login" 
+                       class="group inline-flex items-center justify-center px-12 py-5 text-xl font-bold text-blue-300 border-2 border-blue-300 rounded-2xl hover:bg-blue-300 hover:text-slate-900 transition-all duration-300 transform hover:scale-105">
+                        <i class="fas fa-sign-in-alt mr-3"></i>
+                        Já tenho conta
+                    </a>
+                }
+            </div>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+                    <div class="text-4xl font-bold text-blue-400 mb-2">1000+</div>
+                    <div class="text-blue-100">Médicos Especialistas</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+                    <div class="text-4xl font-bold text-purple-400 mb-2">50k+</div>
+                    <div class="text-blue-100">Consultas Realizadas</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+                    <div class="text-4xl font-bold text-pink-400 mb-2">24/7</div>
+                    <div class="text-blue-100">Atendimento Online</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <div class="w-6 h-10 border-2 border-blue-300 rounded-full flex justify-center">
+                <div class="w-1 h-3 bg-blue-300 rounded-full mt-2 animate-pulse"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section with Modern Cards -->
+<section class="py-24 bg-gradient-to-b from-slate-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-bold text-slate-900 mb-6">
+                Por que escolher o 
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">MedConsulta</span>?
+            </h2>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Uma plataforma completa que revoluciona a forma como você cuida da sua saúde
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-200">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl opacity-0 group-hover:opacity-5 transition-opacity"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-calendar-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Agendamento Inteligente</h3>
+                    <p class="text-slate-600">
+                        Sistema de agendamento com IA que encontra o melhor horário para você e seu médico automaticamente.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-200">
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-600 rounded-3xl opacity-0 group-hover:opacity-5 transition-opacity"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-video text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Consultas Online</h3>
+                    <p class="text-slate-600">
+                        Consulte com médicos através de videoconferência segura, sem sair de casa.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-200">
+                <div class="absolute inset-0 bg-gradient-to-r from-pink-500 to-red-600 rounded-3xl opacity-0 group-hover:opacity-5 transition-opacity"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 bg-gradient-to-r from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-file-medical text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Prontuário Digital</h3>
+                    <p class="text-slate-600">
+                        Seu histórico médico sempre disponível e seguro, com criptografia de ponta.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-200">
+                <div class="absolute inset-0 bg-gradient-to-r from-green-500 to-teal-600 rounded-3xl opacity-0 group-hover:opacity-5 transition-opacity"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-bell text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Lembretes Inteligentes</h3>
+                    <p class="text-slate-600">
+                        Notificações personalizadas via SMS e email para nunca perder uma consulta.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Feature 5 -->
+            <div class="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-200">
+                <div class="absolute inset-0 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-3xl opacity-0 group-hover:opacity-5 transition-opacity"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-credit-card text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Pagamento Seguro</h3>
+                    <p class="text-slate-600">
+                        Múltiplas formas de pagamento com segurança bancária e sem taxas ocultas.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Feature 6 -->
+            <div class="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-200">
+                <div class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-3xl opacity-0 group-hover:opacity-5 transition-opacity"></div>
+                <div class="relative">
+                    <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-shield-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">100% Seguro</h3>
+                    <p class="text-slate-600">
+                        Dados protegidos com certificação médica e conformidade com LGPD.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-24 bg-gradient-to-r from-slate-900 to-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-bold text-white mb-6">
+                Como <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">funciona</span>
+            </h2>
+            <p class="text-xl text-slate-300 max-w-3xl mx-auto">
+                Apenas 3 passos simples para cuidar da sua saúde
+            </p>
+        </div>
+        
+        <div class="relative">
+            <!-- Connection Line -->
+            <div class="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transform -translate-y-1/2 z-0"></div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 relative z-10">
+                <!-- Step 1 -->
+                <div class="text-center">
+                    <div class="relative inline-block">
+                        <div class="w-24 h-24 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl">
+                            <span class="text-white text-2xl font-bold">1</span>
+                        </div>
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-blue-400 rounded-full animate-ping opacity-20"></div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Cadastre-se</h3>
+                    <p class="text-slate-300">
+                        Crie sua conta em menos de 2 minutos e tenha acesso completo à plataforma
+                    </p>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="text-center">
+                    <div class="relative inline-block">
+                        <div class="w-24 h-24 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl">
+                            <span class="text-white text-2xl font-bold">2</span>
+                        </div>
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-purple-400 rounded-full animate-ping opacity-20"></div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Escolha o Médico</h3>
+                    <p class="text-slate-300">
+                        Encontre o especialista ideal baseado na sua necessidade e localização
+                    </p>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="text-center">
+                    <div class="relative inline-block">
+                        <div class="w-24 h-24 bg-gradient-to-r from-pink-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl">
+                            <span class="text-white text-2xl font-bold">3</span>
+                        </div>
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-pink-400 rounded-full animate-ping opacity-20"></div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Agende e Consulte</h3>
+                    <p class="text-slate-300">
+                        Marque sua consulta no melhor horário e consulte online ou presencialmente
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Specialties Section -->
+<section class="py-24 bg-gradient-to-b from-white to-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-bold text-slate-900 mb-6">
+                Especialidades <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Médicas</span>
+            </h2>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Encontre o especialista ideal para suas necessidades
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div class="group bg-white p-6 rounded-2xl text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200">
+                <div class="w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-heartbeat text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-800">Cardiologia</h3>
+            </div>
+            <div class="group bg-white p-6 rounded-2xl text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200">
+                <div class="w-16 h-16 bg-gradient-to-r from-pink-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-baby text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-800">Pediatria</h3>
+            </div>
+            <div class="group bg-white p-6 rounded-2xl text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200">
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-eye text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-800">Oftalmologia</h3>
+            </div>
+            <div class="group bg-white p-6 rounded-2xl text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200">
+                <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-brain text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-800">Neurologia</h3>
+            </div>
+            <div class="group bg-white p-6 rounded-2xl text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200">
+                <div class="w-16 h-16 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-bone text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-800">Ortopedia</h3>
+            </div>
+            <div class="group bg-white p-6 rounded-2xl text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200">
+                <div class="w-16 h-16 bg-gradient-to-r from-pink-500 to-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-venus text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-800">Ginecologia</h3>
+            </div>
+            <div class="group bg-white p-6 rounded-2xl text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200">
+                <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-user-md text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-800">Clínica Geral</h3>
+            </div>
+            <div class="group bg-white p-6 rounded-2xl text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200">
+                <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-allergies text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-800">Dermatologia</h3>
+            </div>
+            <div class="group bg-white p-6 rounded-2xl text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200">
+                <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-head-side-virus text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-800">Psiquiatria</h3>
+            </div>
+            <div class="group bg-white p-6 rounded-2xl text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200">
+                <div class="w-16 h-16 bg-gradient-to-r from-slate-500 to-slate-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-plus text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-slate-800">Ver Todas</h3>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-24 bg-gradient-to-b from-slate-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-20">
+            <h2 class="text-5xl font-bold text-slate-900 mb-6">
+                O que nossos <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">pacientes</span> dizem
+            </h2>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+                Mais de 50.000 pessoas já confiaram na nossa plataforma
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Testimonial 1 -->
+            <div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow border border-slate-200">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold">MS</span>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-slate-900">Maria Silva</h4>
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-slate-600">
+                    "Incrível como é fácil agendar consultas! Agora posso cuidar da minha saúde sem perder tempo em filas."
+                </p>
+            </div>
+            
+            <!-- Testimonial 2 -->
+            <div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow border border-slate-200">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold">JS</span>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-slate-900">João Santos</h4>
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-slate-600">
+                    "As consultas online salvaram minha vida! Consegui atendimento médico mesmo morando no interior."
+                </p>
+            </div>
+            
+            <!-- Testimonial 3 -->
+            <div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-shadow border border-slate-200">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold">AC</span>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-slate-900">Ana Costa</h4>
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-slate-600">
+                    "Plataforma segura e confiável. Meu histórico médico sempre disponível quando preciso."
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Final CTA Section -->
+<section class="py-24 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
+    <!-- Background Animation -->
+    <div class="absolute inset-0">
+        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-blue-600/20 to-purple-600/20 animate-pulse"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+        <h2 class="text-5xl md:text-6xl font-bold text-white mb-8">
+            Pronto para cuidar da sua saúde?
+        </h2>
+        <p class="text-xl text-blue-100 mb-12 max-w-2xl mx-auto">
+            Junte-se a milhares de pessoas que já descobriram uma nova forma de cuidar da saúde
+        </p>
+        
+        @if (User.Identity?.IsAuthenticated != true)
+        {
+            <a asp-area="Identity" asp-page="/Account/Register" 
+               class="group relative inline-flex items-center justify-center px-12 py-6 text-2xl font-bold text-blue-600 bg-white rounded-2xl hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                <span class="absolute inset-0 w-full h-full bg-white rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity"></span>
+                <span class="relative flex items-center">
+                    <i class="fas fa-rocket mr-3"></i>
+                    Começar Agora - É Grátis!
+                </span>
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Consultas" asp-action="Create" 
+               class="group relative inline-flex items-center justify-center px-12 py-6 text-2xl font-bold text-blue-600 bg-white rounded-2xl hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                <span class="absolute inset-0 w-full h-full bg-white rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity"></span>
+                <span class="relative flex items-center">
+                    <i class="fas fa-calendar-plus mr-3"></i>
+                    Agendar Consulta Agora
+                </span>
+            </a>
+        }
+    </div>
+</section>

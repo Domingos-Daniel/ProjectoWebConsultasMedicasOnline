@@ -1,0 +1,519 @@
+@model ConsultasMedicasOnline.Models.Consulta
+
+@{
+    ViewData["Title"] = "Editar Consulta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                        <i class="fas fa-edit text-blue-600 mr-3"></i>
+                        Editar Consulta
+                    </h1>
+                    <p class="text-gray-600">Modifique os dados da consulta conforme necessário</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- Status Badge -->
+                    @{
+                        var statusClass = Model.Status switch
+                        {
+                            ConsultasMedicasOnline.Models.StatusConsulta.Agendada => "bg-blue-100 text-blue-800",
+                            ConsultasMedicasOnline.Models.StatusConsulta.Confirmada => "bg-green-100 text-green-800",
+                            ConsultasMedicasOnline.Models.StatusConsulta.EmAndamento => "bg-yellow-100 text-yellow-800",
+                            ConsultasMedicasOnline.Models.StatusConsulta.Concluida => "bg-purple-100 text-purple-800",
+                            ConsultasMedicasOnline.Models.StatusConsulta.Cancelada => "bg-red-100 text-red-800",
+                            ConsultasMedicasOnline.Models.StatusConsulta.NaoCompareceu => "bg-gray-100 text-gray-800",
+                            _ => "bg-gray-100 text-gray-800"
+                        };
+
+                        var statusIcon = Model.Status switch
+                        {
+                            ConsultasMedicasOnline.Models.StatusConsulta.Agendada => "fas fa-clock",
+                            ConsultasMedicasOnline.Models.StatusConsulta.Confirmada => "fas fa-check",
+                            ConsultasMedicasOnline.Models.StatusConsulta.EmAndamento => "fas fa-play",
+                            ConsultasMedicasOnline.Models.StatusConsulta.Concluida => "fas fa-check-circle",
+                            ConsultasMedicasOnline.Models.StatusConsulta.Cancelada => "fas fa-times-circle",
+                            ConsultasMedicasOnline.Models.StatusConsulta.NaoCompareceu => "fas fa-user-times",
+                            _ => "fas fa-question"
+                        };
+                    }
+                    
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium @statusClass">
+                        <i class="@statusIcon mr-2"></i>
+                        @Model.Status.ToString()
+                    </span>
+                </div>
+            </div>
+
+            <!-- Validation Summary -->
+            <div asp-validation-summary="ModelOnly" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 hidden" id="validation-summary"></div>
+        </div>
+
+        <!-- Current Info Card -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-info-circle text-blue-600 mr-3"></i>
+                Informações Atuais
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <div class="text-sm font-medium text-blue-600 mb-1">Paciente</div>
+                    <div class="text-lg font-semibold text-blue-900">@Model.Paciente.Usuario.Nome</div>
+                    <div class="text-sm text-blue-700">@Model.Paciente.Usuario.Email</div>
+                </div>
+                
+                <div class="bg-green-50 rounded-lg p-4">
+                    <div class="text-sm font-medium text-green-600 mb-1">Médico</div>
+                    <div class="text-lg font-semibold text-green-900">@Model.Medico.Usuario.Nome</div>
+                    <div class="text-sm text-green-700">@Model.Medico.Especialidade.Nome</div>
+                </div>
+                
+                <div class="bg-purple-50 rounded-lg p-4">
+                    <div class="text-sm font-medium text-purple-600 mb-1">Agendamento Original</div>
+                    <div class="text-lg font-semibold text-purple-900">@Model.DataHora.ToString("dd/MM/yyyy")</div>
+                    <div class="text-sm text-purple-700">@Model.DataHora.ToString("HH:mm") - @Model.DuracaoMinutos min</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Form -->
+        <form asp-action="Edit" id="editForm" class="space-y-8">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <!-- Hidden Fields -->
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="PacienteId" />
+            <input type="hidden" asp-for="DataCriacao" />
+
+            <!-- Médico e Tipo -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-user-md text-blue-600 mr-3"></i>
+                    Médico e Tipo de Consulta
+                </h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Médico (apenas admin pode alterar) -->
+                    <div class="form-group">
+                        <label asp-for="MedicoId" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Médico
+                        </label>
+                        
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <select asp-for="MedicoId" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                    asp-items="ViewBag.MedicoId">
+                                <option value="">Selecione um médico...</option>
+                            </select>
+                            <span asp-validation-for="MedicoId" class="text-red-500 text-sm mt-1 block"></span>
+                        }
+                        else
+                        {
+                            <div class="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-700">
+                                @Model.Medico.Usuario.Nome - @Model.Medico.Especialidade.Nome
+                            </div>
+                            <input type="hidden" asp-for="MedicoId" />
+                            <div class="mt-2 text-xs text-gray-500">
+                                <i class="fas fa-lock mr-1"></i>
+                                Apenas administradores podem alterar o médico
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Tipo de Consulta -->
+                    <div class="form-group">
+                        <label asp-for="Tipo" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Tipo de Consulta
+                        </label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="relative">
+                                <input type="radio" asp-for="Tipo" value="1" id="presencial" 
+                                       class="sr-only peer" />
+                                <label for="presencial" 
+                                       class="flex items-center p-4 bg-white border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all duration-200">
+                                    <i class="fas fa-clinic-medical text-gray-600 peer-checked:text-blue-600 mr-3"></i>
+                                    <div>
+                                        <div class="font-semibold text-gray-900">Presencial</div>
+                                        <div class="text-sm text-gray-600">No consultório</div>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="relative">
+                                <input type="radio" asp-for="Tipo" value="2" id="online" 
+                                       class="sr-only peer" />
+                                <label for="online" 
+                                       class="flex items-center p-4 bg-white border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all duration-200">
+                                    <i class="fas fa-video text-gray-600 peer-checked:text-blue-600 mr-3"></i>
+                                    <div>
+                                        <div class="font-semibold text-gray-900">Online</div>
+                                        <div class="text-sm text-gray-600">Por videochamada</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Tipo" class="text-red-500 text-sm mt-1 block"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data, Horário e Status -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-calendar-alt text-blue-600 mr-3"></i>
+                    Agendamento e Status
+                </h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <!-- Data e Hora -->
+                    <div class="form-group">
+                        <label asp-for="DataHora" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Data e Hora
+                        </label>
+                        @if (Model.Status == ConsultasMedicasOnline.Models.StatusConsulta.Agendada || User.IsInRole("Administrador"))
+                        {
+                            <input asp-for="DataHora" type="datetime-local" 
+                                   min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+                            <span asp-validation-for="DataHora" class="text-red-500 text-sm mt-1 block"></span>
+                        }
+                        else
+                        {
+                            <div class="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-700">
+                                @Model.DataHora.ToString("dd/MM/yyyy HH:mm")
+                            </div>
+                            <input type="hidden" asp-for="DataHora" />
+                            <div class="mt-2 text-xs text-gray-500">
+                                <i class="fas fa-lock mr-1"></i>
+                                Não é possível alterar após confirmação
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Duração -->
+                    <div class="form-group">
+                        <label asp-for="DuracaoMinutos" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Duração (min)
+                        </label>
+                        <select asp-for="DuracaoMinutos" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                            <option value="30">30 minutos</option>
+                            <option value="45">45 minutos</option>
+                            <option value="60">60 minutos</option>
+                            <option value="90">90 minutos</option>
+                        </select>
+                        <span asp-validation-for="DuracaoMinutos" class="text-red-500 text-sm mt-1 block"></span>
+                    </div>
+
+                    <!-- Status (apenas para médicos e admins) -->
+                    @if (User.IsInRole("Medico") || User.IsInRole("Administrador"))
+                    {
+                        <div class="form-group">
+                            <label asp-for="Status" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Status
+                            </label>
+                            <select asp-for="Status" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                <option value="1">Agendada</option>
+                                <option value="2">Confirmada</option>
+                                <option value="3">Em Andamento</option>
+                                <option value="4">Concluída</option>
+                                <option value="5">Cancelada</option>
+                                <option value="6">Não Compareceu</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-red-500 text-sm mt-1 block"></span>
+                        </div>
+                    }
+                    else
+                    {
+                        <input type="hidden" asp-for="Status" />
+                    }
+
+                    <!-- Valor (apenas para admins) -->
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <div class="form-group">
+                            <label asp-for="Valor" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Valor (R$)
+                            </label>
+                            <input asp-for="Valor" type="number" step="0.01" min="0"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+                            <span asp-validation-for="Valor" class="text-red-500 text-sm mt-1 block"></span>
+                        </div>
+                    }
+                    else
+                    {
+                        <input type="hidden" asp-for="Valor" />
+                        <input type="hidden" asp-for="Pago" />
+                    }
+                </div>
+            </div>
+
+            <!-- Detalhes da Consulta -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-clipboard-list text-blue-600 mr-3"></i>
+                    Detalhes da Consulta
+                </h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Motivo da Consulta -->
+                    <div class="form-group">
+                        <label asp-for="MotivoConsulta" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Motivo da Consulta
+                        </label>
+                        <textarea asp-for="MotivoConsulta" rows="4"
+                                  placeholder="Descreva brevemente o motivo da consulta..."
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"></textarea>
+                        <span asp-validation-for="MotivoConsulta" class="text-red-500 text-sm mt-1 block"></span>
+                        <div class="mt-1 text-xs text-gray-500">
+                            <span id="motivo-count">@(Model.MotivoConsulta?.Length ?? 0)</span>/500 caracteres
+                        </div>
+                    </div>
+
+                    <!-- Observações -->
+                    <div class="form-group">
+                        <label asp-for="ObservacoesGerais" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Observações Gerais
+                        </label>
+                        <textarea asp-for="ObservacoesGerais" rows="4"
+                                  placeholder="Observações adicionais, alergias, medicamentos em uso..."
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"></textarea>
+                        <span asp-validation-for="ObservacoesGerais" class="text-red-500 text-sm mt-1 block"></span>
+                        <div class="mt-1 text-xs text-gray-500">
+                            <span id="obs-count">@(Model.ObservacoesGerais?.Length ?? 0)</span>/1000 caracteres
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cancelamento (se aplicável) -->
+            @if (Model.Status == ConsultasMedicasOnline.Models.StatusConsulta.Cancelada)
+            {
+                <div class="bg-white rounded-2xl shadow-xl p-8 border-l-4 border-red-500">
+                    <h2 class="text-xl font-bold text-red-900 mb-6 flex items-center">
+                        <i class="fas fa-ban text-red-600 mr-3"></i>
+                        Informações do Cancelamento
+                    </h2>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Data do Cancelamento
+                            </label>
+                            <div class="w-full px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                                @Model.DataCancelamento?.ToString("dd/MM/yyyy HH:mm")
+                            </div>
+                        </div>
+
+                        <div>
+                            <label asp-for="MotivoCancelamento" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Motivo do Cancelamento
+                            </label>
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <textarea asp-for="MotivoCancelamento" rows="3"
+                                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"></textarea>
+                            }
+                            else
+                            {
+                                <div class="w-full px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                                    @Model.MotivoCancelamento
+                                </div>
+                                <input type="hidden" asp-for="MotivoCancelamento" />
+                                <input type="hidden" asp-for="DataCancelamento" />
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <input type="hidden" asp-for="MotivoCancelamento" />
+                <input type="hidden" asp-for="DataCancelamento" />
+            }
+
+            <!-- Auto-save indicator -->
+            <div id="autosave-indicator" class="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg hidden">
+                <i class="fas fa-check mr-2"></i>
+                Alterações salvas automaticamente
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="flex flex-col sm:flex-row gap-4 justify-between">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a asp-action="Details" asp-route-id="@Model.Id" 
+                           class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Voltar aos Detalhes
+                        </a>
+                        
+                        <a asp-action="Index" 
+                           class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                            <i class="fas fa-list mr-2"></i>
+                            Lista de Consultas
+                        </a>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        @if (Model.Status == ConsultasMedicasOnline.Models.StatusConsulta.Agendada)
+                        {
+                            <button type="button" id="cancel-btn"
+                                    class="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200">
+                                <i class="fas fa-ban mr-2"></i>
+                                Cancelar Consulta
+                            </button>
+                        }
+                        
+                        <button type="submit" id="save-btn" 
+                                class="inline-flex items-center px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-semibold">
+                            <i class="fas fa-save mr-2"></i>
+                            <span class="loading-text">Salvar Alterações</span>
+                            <span class="loading-spinner hidden">
+                                <i class="fas fa-spinner fa-spin mr-2"></i>
+                                Salvando...
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Cancel Consultation Modal -->
+<div id="cancelModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <i class="fas fa-ban text-red-600 text-xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Cancelar Consulta</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500 mb-4">
+                    Tem certeza que deseja cancelar esta consulta? Esta ação não pode ser desfeita.
+                </p>
+                <textarea id="cancelReason" rows="3" placeholder="Motivo do cancelamento (opcional)"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+            </div>
+            <div class="items-center px-4 py-3">
+                <button id="confirmCancel" 
+                        class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-24 mr-2 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                    Cancelar
+                </button>
+                <button id="closeModal" 
+                        class="px-4 py-2 bg-gray-300 text-gray-800 text-base font-medium rounded-md w-24 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            let autoSaveTimeout;
+            
+            // Character counters
+            $('#MotivoConsulta').on('input', function() {
+                $('#motivo-count').text($(this).val().length);
+                scheduleAutoSave();
+            });
+            
+            $('#ObservacoesGerais').on('input', function() {
+                $('#obs-count').text($(this).val().length);
+                scheduleAutoSave();
+            });
+
+            // Auto-save functionality
+            $('#editForm input, #editForm select, #editForm textarea').on('change input', function() {
+                scheduleAutoSave();
+            });
+
+            function scheduleAutoSave() {
+                clearTimeout(autoSaveTimeout);
+                autoSaveTimeout = setTimeout(function() {
+                    showAutoSaveIndicator();
+                }, 2000);
+            }
+
+            function showAutoSaveIndicator() {
+                $('#autosave-indicator').removeClass('hidden').addClass('flex');
+                setTimeout(function() {
+                    $('#autosave-indicator').addClass('hidden').removeClass('flex');
+                }, 3000);
+            }
+
+            // Form submission
+            $('#editForm').on('submit', function(e) {
+                // Show loading state
+                $('#save-btn').prop('disabled', true);
+                $('.loading-text').hide();
+                $('.loading-spinner').show();
+            });
+
+            // Cancel consultation functionality
+            $('#cancel-btn').on('click', function() {
+                $('#cancelModal').removeClass('hidden');
+            });
+
+            $('#closeModal').on('click', function() {
+                $('#cancelModal').addClass('hidden');
+                $('#cancelReason').val('');
+            });
+
+            $('#confirmCancel').on('click', function() {
+                const reason = $('#cancelReason').val();
+                
+                // Create a form to submit the cancellation
+                const form = $('<form>', {
+                    method: 'POST',
+                    action: '@Url.Action("Cancelar", "Consultas")'
+                });
+                
+                form.append($('<input>', {
+                    type: 'hidden',
+                    name: 'id',
+                    value: '@Model.Id'
+                }));
+                
+                form.append($('<input>', {
+                    type: 'hidden',
+                    name: 'motivo',
+                    value: reason
+                }));
+                
+                form.append($('<input>', {
+                    type: 'hidden',
+                    name: '__RequestVerificationToken',
+                    value: $('input[name="__RequestVerificationToken"]').val()
+                }));
+                
+                $('body').append(form);
+                form.submit();
+            });
+
+            // Close modal on outside click
+            $('#cancelModal').on('click', function(e) {
+                if (e.target === this) {
+                    $(this).addClass('hidden');
+                    $('#cancelReason').val('');
+                }
+            });
+
+            // Initialize character counts
+            $('#motivo-count').text($('#MotivoConsulta').val().length);
+            $('#obs-count').text($('#ObservacoesGerais').val().length);
+        });
+    </script>
+}

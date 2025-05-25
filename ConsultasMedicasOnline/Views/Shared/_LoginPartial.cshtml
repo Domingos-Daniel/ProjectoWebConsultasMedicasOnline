@@ -1,0 +1,80 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ConsultasMedicasOnline.Models
+@inject SignInManager<Usuario> SignInManager
+@inject UserManager<Usuario> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="flex items-center space-x-4">
+        <!-- Notificações -->
+        <div class="relative">
+            <button class="text-medical-600 hover:text-primary-600 transition-colors duration-200">
+                <i class="fas fa-bell text-lg"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+            </button>
+        </div>
+        
+        <!-- Menu do usuário -->
+        <div class="relative user-menu">
+            <button class="flex items-center space-x-2 text-medical-600 hover:text-primary-600 transition-colors duration-200">
+                <div class="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-white text-sm"></i>
+                </div>
+                <span class="hidden md:block font-medium">@User.Identity?.Name</span>
+                <i class="fas fa-chevron-down text-xs"></i>
+            </button>
+            
+            <!-- Dropdown menu -->
+            <div class="user-dropdown absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-medical-200 py-2 hidden z-50">
+                <a asp-area="Identity" asp-page="/Account/Manage/Index" 
+                   class="block px-4 py-2 text-sm text-medical-700 hover:bg-medical-50 transition-colors duration-200">
+                    <i class="fas fa-user-cog mr-2"></i>Meu Perfil
+                </a>
+                <a href="#" class="block px-4 py-2 text-sm text-medical-700 hover:bg-medical-50 transition-colors duration-200">
+                    <i class="fas fa-cog mr-2"></i>Configurações
+                </a>
+                <hr class="my-2 border-medical-200">
+                <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Sair
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="flex items-center space-x-4">
+        <a asp-area="Identity" asp-page="/Account/Login" 
+           class="text-medical-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+            Entrar
+        </a>
+        <a asp-area="Identity" asp-page="/Account/Register" 
+           class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors duration-200">
+            Cadastrar-se
+        </a>
+    </div>
+}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const userMenuButton = document.querySelector('.user-menu button');
+        const userDropdown = document.querySelector('.user-dropdown');
+        
+        if (userMenuButton && userDropdown) {
+            userMenuButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userDropdown.classList.toggle('hidden');
+            });
+            
+            document.addEventListener('click', function() {
+                userDropdown.classList.add('hidden');
+            });
+            
+            userDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+    });
+</script>

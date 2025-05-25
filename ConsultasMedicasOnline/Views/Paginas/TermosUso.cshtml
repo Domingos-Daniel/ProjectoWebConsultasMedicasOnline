@@ -1,0 +1,438 @@
+@{
+    ViewData["Title"] = "Termos de Uso - MedConsulta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Termos de Uso Page -->
+<div class="min-h-screen pt-24 pb-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-16 animate-fade-in">
+            <div class="flex justify-center mb-8">
+                <div class="relative group">
+                    <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl group-hover:shadow-3xl transition-all duration-300 transform group-hover:scale-105">
+                        <i class="fas fa-file-contract text-white text-3xl group-hover:scale-110 transition-transform duration-300"></i>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-3xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+                </div>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-600 mb-6">
+                Termos de Uso
+            </h1>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                Conheça as regras e condições para uso da plataforma MedConsulta. Leia atentamente antes de utilizar nossos serviços.
+            </p>
+            <div class="mt-6 text-sm text-slate-500">
+                Última atualização: @DateTime.Now.ToString("dd/MM/yyyy")
+            </div>
+        </div>
+
+        <!-- Conteúdo dos Termos -->
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 md:p-12 animate-fade-in">
+            
+            <!-- 1. Aceitação dos Termos -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-handshake text-blue-500 mr-3"></i>
+                    1. Aceitação dos Termos
+                </h2>
+                <div class="prose prose-slate max-w-none">
+                    <p class="text-slate-600 leading-relaxed text-lg mb-4">
+                        Ao acessar e usar a plataforma MedConsulta, você concorda em cumprir e estar vinculado a estes 
+                        Termos de Uso. Se você não concordar com qualquer parte destes termos, não deve usar nossos serviços.
+                    </p>
+                    <div class="bg-blue-50 rounded-2xl p-6">
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-info-circle text-blue-500 text-xl mt-1"></i>
+                            <div>
+                                <h3 class="text-lg font-bold text-blue-800 mb-2">Importante:</h3>
+                                <p class="text-blue-700">
+                                    Estes termos constituem um acordo legal entre você e o MedConsulta. 
+                                    É fundamental que você os leia e compreenda completamente.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Definições -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-book text-green-500 mr-3"></i>
+                    2. Definições
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="bg-green-50 rounded-2xl p-4">
+                            <h3 class="font-bold text-slate-800 mb-2">"Plataforma"</h3>
+                            <p class="text-slate-600 text-sm">O website, aplicativos e serviços do MedConsulta</p>
+                        </div>
+                        <div class="bg-blue-50 rounded-2xl p-4">
+                            <h3 class="font-bold text-slate-800 mb-2">"Usuário"</h3>
+                            <p class="text-slate-600 text-sm">Qualquer pessoa que acesse ou use a plataforma</p>
+                        </div>
+                        <div class="bg-purple-50 rounded-2xl p-4">
+                            <h3 class="font-bold text-slate-800 mb-2">"Paciente"</h3>
+                            <p class="text-slate-600 text-sm">Usuário que busca serviços médicos na plataforma</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-orange-50 rounded-2xl p-4">
+                            <h3 class="font-bold text-slate-800 mb-2">"Profissional"</h3>
+                            <p class="text-slate-600 text-sm">Médico credenciado que oferece serviços</p>
+                        </div>
+                        <div class="bg-red-50 rounded-2xl p-4">
+                            <h3 class="font-bold text-slate-800 mb-2">"Consulta"</h3>
+                            <p class="text-slate-600 text-sm">Atendimento médico agendado através da plataforma</p>
+                        </div>
+                        <div class="bg-yellow-50 rounded-2xl p-4">
+                            <h3 class="font-bold text-slate-800 mb-2">"Conteúdo"</h3>
+                            <p class="text-slate-600 text-sm">Informações, dados e materiais na plataforma</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Elegibilidade e Cadastro -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-user-check text-purple-500 mr-3"></i>
+                    3. Elegibilidade e Cadastro
+                </h2>
+                
+                <div class="space-y-6">
+                    <div class="bg-purple-50 rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-slate-800 mb-4">Requisitos para Uso</h3>
+                        <ul class="space-y-2 text-slate-600">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                Ter pelo menos 18 anos de idade ou consentimento dos responsáveis legais
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                Fornecer informações verdadeiras, precisas e atualizadas
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                Manter a segurança e confidencialidade de sua conta
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                                Usar a plataforma apenas para fins legítimos
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-red-50 rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-slate-800 mb-4">Responsabilidades da Conta</h3>
+                        <p class="text-slate-600 mb-3">Você é responsável por:</p>
+                        <ul class="space-y-2 text-slate-600">
+                            <li>• Manter suas informações de login seguras</li>
+                            <li>• Notificar sobre uso não autorizado</li>
+                            <li>• Todas as atividades realizadas em sua conta</li>
+                            <li>• Atualizar informações quando necessário</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Uso da Plataforma -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-laptop-medical text-blue-500 mr-3"></i>
+                    4. Uso da Plataforma
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Usos Permitidos -->
+                    <div class="bg-green-50 rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-green-800 mb-4 flex items-center">
+                            <i class="fas fa-thumbs-up text-green-600 mr-2"></i>
+                            Usos Permitidos
+                        </h3>
+                        <ul class="space-y-2 text-green-700 text-sm">
+                            <li>• Agendar consultas médicas</li>
+                            <li>• Comunicar-se com profissionais</li>
+                            <li>• Acessar seu histórico médico</li>
+                            <li>• Gerenciar informações pessoais</li>
+                            <li>• Realizar pagamentos</li>
+                            <li>• Buscar informações de saúde</li>
+                        </ul>
+                    </div>
+
+                    <!-- Usos Proibidos -->
+                    <div class="bg-red-50 rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-red-800 mb-4 flex items-center">
+                            <i class="fas fa-ban text-red-600 mr-2"></i>
+                            Usos Proibidos
+                        </h3>
+                        <ul class="space-y-2 text-red-700 text-sm">
+                            <li>• Violar leis ou regulamentos</li>
+                            <li>• Fornecer informações falsas</li>
+                            <li>• Interferir no funcionamento</li>
+                            <li>• Acessar contas de terceiros</li>
+                            <li>• Distribuir malware ou vírus</li>
+                            <li>• Usar para fins comerciais não autorizados</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. Serviços Médicos -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-stethoscope text-red-500 mr-3"></i>
+                    5. Serviços Médicos
+                </h2>
+                
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-2xl mb-6">
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 text-xl mt-1"></i>
+                        <div>
+                            <h3 class="text-lg font-bold text-yellow-800 mb-2">Aviso Importante:</h3>
+                            <p class="text-yellow-800">
+                                O MedConsulta é uma plataforma de intermediação. Não fornecemos diretamente serviços médicos. 
+                                Os profissionais são independentes e responsáveis por seus próprios atendimentos.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-white/50 rounded-2xl p-6 border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3">Responsabilidade dos Profissionais</h3>
+                        <ul class="text-slate-600 text-sm space-y-1">
+                            <li>• Qualidade e adequação do atendimento médico</li>
+                            <li>• Cumprimento de normas éticas e profissionais</li>
+                            <li>• Manutenção de registros médicos</li>
+                            <li>• Confidencialidade das informações</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white/50 rounded-2xl p-6 border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3">Responsabilidade dos Pacientes</h3>
+                        <ul class="text-slate-600 text-sm space-y-1">
+                            <li>• Fornecer informações médicas precisas</li>
+                            <li>• Comparecer às consultas agendadas</li>
+                            <li>• Seguir orientações médicas recebidas</li>
+                            <li>• Comunicar emergências adequadamente</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. Pagamentos e Cancelamentos -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-credit-card text-green-500 mr-3"></i>
+                    6. Pagamentos e Cancelamentos
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Pagamentos -->
+                    <div class="bg-green-50 rounded-2xl p-6">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Política de Pagamento</h3>
+                        <ul class="space-y-2 text-slate-600 text-sm">
+                            <li>• Pagamento antecipado obrigatório</li>
+                            <li>• Métodos aceitos: cartão, PIX, boleto</li>
+                            <li>• Preços sujeitos a alteração</li>
+                            <li>• Taxas da plataforma aplicáveis</li>
+                            <li>• Reembolsos conforme política</li>
+                        </ul>
+                    </div>
+
+                    <!-- Cancelamentos -->
+                    <div class="bg-blue-50 rounded-2xl p-6">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Política de Cancelamento</h3>
+                        <ul class="space-y-2 text-slate-600 text-sm">
+                            <li>• Até 24h: reembolso integral</li>
+                            <li>• Entre 12-24h: reembolso de 50%</li>
+                            <li>• Menos de 12h: sem reembolso</li>
+                            <li>• Emergências: análise individual</li>
+                            <li>• Reagendamento sujeito à disponibilidade</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. Propriedade Intelectual -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-copyright text-purple-500 mr-3"></i>
+                    7. Propriedade Intelectual
+                </h2>
+                
+                <div class="bg-purple-50 rounded-2xl p-6">
+                    <p class="text-slate-600 leading-relaxed mb-4">
+                        Todo o conteúdo da plataforma, incluindo design, código, textos, imagens e logotipos, 
+                        é propriedade do MedConsulta ou seus licenciadores e está protegido por leis de direitos autorais.
+                    </p>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div>
+                            <h3 class="font-bold text-slate-800 mb-2">Seus Direitos</h3>
+                            <ul class="text-slate-600 text-sm space-y-1">
+                                <li>• Usar para fins pessoais</li>
+                                <li>• Acessar conteúdo disponibilizado</li>
+                                <li>• Baixar informações pessoais</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 mb-2">Restrições</h3>
+                            <ul class="text-slate-600 text-sm space-y-1">
+                                <li>• Não copiar sem autorização</li>
+                                <li>• Não modificar ou redistribuir</li>
+                                <li>• Não usar comercialmente</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8. Limitação de Responsabilidade -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-shield-alt text-orange-500 mr-3"></i>
+                    8. Limitação de Responsabilidade
+                </h2>
+                
+                <div class="bg-orange-50 rounded-2xl p-6">
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-orange-500 pl-4">
+                            <h3 class="font-bold text-slate-800 mb-2">Responsabilidade da Plataforma</h3>
+                            <p class="text-slate-600 text-sm">
+                                Limitada à intermediação entre usuários. Não nos responsabilizamos por decisões médicas, 
+                                diagnósticos ou tratamentos realizados pelos profissionais.
+                            </p>
+                        </div>
+                        
+                        <div class="border-l-4 border-red-500 pl-4">
+                            <h3 class="font-bold text-slate-800 mb-2">Exclusões</h3>
+                            <p class="text-slate-600 text-sm">
+                                Não garantimos disponibilidade ininterrupta, ausência de erros ou resultados específicos. 
+                                Uso por sua conta e risco.
+                            </p>
+                        </div>
+                        
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <h3 class="font-bold text-slate-800 mb-2">Força Maior</h3>
+                            <p class="text-slate-600 text-sm">
+                                Não somos responsáveis por eventos fora de nosso controle, como falhas de internet, 
+                                desastres naturais ou ações governamentais.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 9. Modificações -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-edit text-blue-500 mr-3"></i>
+                    9. Modificações dos Termos
+                </h2>
+                
+                <div class="bg-blue-50 rounded-2xl p-6">
+                    <p class="text-slate-600 leading-relaxed mb-4">
+                        Reservamo-nos o direito de modificar estes termos a qualquer momento. As mudanças entrarão em vigor 
+                        imediatamente após a publicação na plataforma.
+                    </p>
+                    
+                    <div class="flex items-start space-x-3 bg-white/50 p-4 rounded-xl">
+                        <i class="fas fa-bell text-blue-600 mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-slate-800 mb-1">Notificações</h3>
+                            <p class="text-slate-600 text-sm">
+                                Mudanças significativas serão comunicadas por e-mail ou notificação na plataforma 
+                                com pelo menos 30 dias de antecedência.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 10. Rescisão -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-door-open text-red-500 mr-3"></i>
+                    10. Rescisão
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-red-50 rounded-2xl p-6">
+                        <h3 class="font-bold text-slate-800 mb-3">Rescisão pelo Usuário</h3>
+                        <ul class="text-slate-600 text-sm space-y-2">
+                            <li>• Pode encerrar conta a qualquer momento</li>
+                            <li>• Deve cumprir obrigações pendentes</li>
+                            <li>• Dados mantidos conforme lei</li>
+                            <li>• Alguns dados podem ser anonimizados</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-orange-50 rounded-2xl p-6">
+                        <h3 class="font-bold text-slate-800 mb-3">Rescisão pela Plataforma</h3>
+                        <ul class="text-slate-600 text-sm space-y-2">
+                            <li>• Violação dos termos de uso</li>
+                            <li>• Atividades fraudulentas</li>
+                            <li>• Inatividade prolongada</li>
+                            <li>• Decisão comercial justificada</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 11. Lei Aplicável -->
+            <section class="mb-8">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-balance-scale text-purple-500 mr-3"></i>
+                    11. Lei Aplicável e Foro
+                </h2>
+                
+                <div class="bg-purple-50 rounded-2xl p-6">
+                    <p class="text-slate-600 leading-relaxed mb-4">
+                        Estes Termos de Uso são regidos pelas leis brasileiras. Qualquer disputa será resolvida 
+                        preferencialmente por mediação ou arbitragem.
+                    </p>
+                    
+                    <div class="flex items-center space-x-4 text-sm text-slate-600">
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-purple-600 mr-2"></i>
+                            <span>Foro: São Paulo, SP</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-gavel text-purple-600 mr-2"></i>
+                            <span>Lei Brasileira</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center mt-12 animate-fade-in">
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-3xl p-8 text-white">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4">
+                    Ainda tem dúvidas sobre os termos?
+                </h2>
+                <p class="text-lg mb-6 opacity-90">
+                    Nossa equipe jurídica está disponível para esclarecer qualquer questão.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a asp-controller="Paginas" asp-action="Contato" 
+                       class="inline-flex items-center px-6 py-3 bg-white text-blue-600 rounded-xl font-medium hover:bg-gray-100 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-envelope mr-2"></i>
+                        Contato Jurídico
+                    </a>
+                    <a asp-controller="Paginas" asp-action="FAQ" 
+                       class="inline-flex items-center px-6 py-3 border-2 border-white text-white rounded-xl font-medium hover:bg-white hover:text-blue-600 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-question mr-2"></i>
+                        Ver FAQ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

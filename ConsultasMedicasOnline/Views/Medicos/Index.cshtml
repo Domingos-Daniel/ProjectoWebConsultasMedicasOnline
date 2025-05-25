@@ -1,0 +1,330 @@
+@model IEnumerable<ConsultasMedicasOnline.Models.Medico>
+
+@{
+    ViewData["Title"] = "Nossos Médicos";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-white py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-medical-800 mb-4">
+                    <i class="fas fa-user-md text-primary-600 mr-3"></i>
+                    Nossos Médicos Especialistas
+                </h1>
+                <p class="text-lg text-medical-600 max-w-2xl mx-auto">
+                    Conheça nossa equipe de profissionais qualificados e agende sua consulta com o especialista ideal
+                </p>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6 mb-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                <div class="flex-1 md:mr-6">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-medical-400"></i>
+                        </div>
+                        <input type="text" id="searchMedicos" placeholder="Buscar por nome, especialidade ou CRM..." 
+                               class="block w-full pl-10 pr-3 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    </div>
+                </div>
+                <div class="flex space-x-4">
+                    <select id="especialidadeFilter" class="px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <option value="">Todas as Especialidades</option>
+                        @foreach (var especialidade in Model.Select(m => m.Especialidade).Distinct().OrderBy(e => e.Nome))
+                        {
+                            <option value="@especialidade.Nome">@especialidade.Nome</option>
+                        }
+                    </select>
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <a asp-action="Create" class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
+                            <i class="fas fa-plus mr-2"></i>
+                            Cadastrar Médico
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-primary-100 rounded-lg">
+                        <i class="fas fa-user-md text-primary-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-medical-600">Total de Médicos</p>
+                        <p class="text-2xl font-bold text-medical-800">@Model.Count()</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-success-100 rounded-lg">
+                        <i class="fas fa-stethoscope text-success-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-medical-600">Especialidades</p>
+                        <p class="text-2xl font-bold text-medical-800">@Model.Select(m => m.EspecialidadeId).Distinct().Count()</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-warning-100 rounded-lg">
+                        <i class="fas fa-calendar-check text-warning-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-medical-600">Consultas Hoje</p>
+                        <p class="text-2xl font-bold text-medical-800">@Model.Sum(m => m.Consultas.Count(c => c.DataHora.Date == DateTime.Today))</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-info-100 rounded-lg">
+                        <i class="fas fa-clock text-info-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-medical-600">Disponíveis Agora</p>
+                        <p class="text-2xl font-bold text-medical-800">@Model.Count(m => m.HorariosDisponiveis.Any())</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctors Grid -->
+        @if (Model.Any())
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="medicosGrid">
+                @foreach (var medico in Model)
+                {
+                    <div class="medico-card bg-white rounded-xl shadow-sm border border-medical-200 overflow-hidden hover:shadow-md transition-shadow duration-300" 
+                         data-especialidade="@medico.Especialidade.Nome" 
+                         data-nome="@medico.Usuario.Nome @medico.Usuario.Sobrenome" 
+                         data-crm="@medico.CRM">
+                        <!-- Doctor Image -->
+                        <div class="relative bg-gradient-to-br from-primary-500 to-primary-600 h-48 flex items-center justify-center">
+                            <div class="h-24 w-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
+                                <span class="text-white text-2xl font-bold">
+                                    @medico.Usuario.Nome.First()@medico.Usuario.Sobrenome.First()
+                                </span>
+                            </div>
+                            <!-- Availability Badge -->
+                            @if (medico.HorariosDisponiveis.Any(h => h.Ativo && 
+                                (DateTime.Now.DayOfWeek == DayOfWeek.Monday && h.DiaSemana == DiaSemana.Segunda) ||
+                                (DateTime.Now.DayOfWeek == DayOfWeek.Tuesday && h.DiaSemana == DiaSemana.Terca) ||
+                                (DateTime.Now.DayOfWeek == DayOfWeek.Wednesday && h.DiaSemana == DiaSemana.Quarta) ||
+                                (DateTime.Now.DayOfWeek == DayOfWeek.Thursday && h.DiaSemana == DiaSemana.Quinta) ||
+                                (DateTime.Now.DayOfWeek == DayOfWeek.Friday && h.DiaSemana == DiaSemana.Sexta) ||
+                                (DateTime.Now.DayOfWeek == DayOfWeek.Saturday && h.DiaSemana == DiaSemana.Sabado) ||
+                                (DateTime.Now.DayOfWeek == DayOfWeek.Sunday && h.DiaSemana == DiaSemana.Domingo)))
+                            {
+                                <div class="absolute top-4 right-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800">
+                                        <span class="w-2 h-2 mr-1 bg-success-400 rounded-full"></span>
+                                        Disponível
+                                    </span>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Doctor Info -->
+                        <div class="p-6">
+                            <!-- Name and Specialty -->
+                            <div class="mb-4">
+                                <h3 class="text-xl font-bold text-medical-800 mb-1">
+                                    Dr. @medico.Usuario.Nome @medico.Usuario.Sobrenome
+                                </h3>
+                                <div class="flex items-center text-primary-600 mb-2">
+                                    <i class="fas fa-stethoscope mr-2"></i>
+                                    <span class="font-medium">@medico.Especialidade.Nome</span>
+                                </div>
+                                <p class="text-sm text-medical-600">
+                                    <i class="fas fa-id-badge mr-2"></i>
+                                    CRM: @medico.CRM/@medico.EstadoCRM
+                                </p>
+                            </div>
+
+                            <!-- Bio -->
+                            @if (!string.IsNullOrEmpty(medico.Biografia))
+                            {
+                                <div class="mb-4">
+                                    <p class="text-sm text-medical-700 line-clamp-3">
+                                        @medico.Biografia
+                                    </p>
+                                </div>
+                            }
+
+                            <!-- Consultation Info -->
+                            <div class="mb-4 space-y-2">
+                                @if (medico.ValorConsulta.HasValue)
+                                {
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-medical-600">Consulta particular:</span>
+                                        <span class="font-semibold text-success-600">R$ @medico.ValorConsulta.Value.ToString("F2")</span>
+                                    </div>
+                                }
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-medical-600">Duração:</span>
+                                    <span class="text-medical-800">@medico.TempoConsultaMinutos min</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-medical-600">Aceita particular:</span>
+                                    <span class="@(medico.AceitaParticular ? "text-success-600" : "text-danger-600")">
+                                        <i class="fas fa-@(medico.AceitaParticular ? "check" : "times")"></i>
+                                        @(medico.AceitaParticular ? "Sim" : "Não")
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-medical-600">Aceita convênio:</span>
+                                    <span class="@(medico.AceitaConvenio ? "text-success-600" : "text-danger-600")">
+                                        <i class="fas fa-@(medico.AceitaConvenio ? "check" : "times")"></i>
+                                        @(medico.AceitaConvenio ? "Sim" : "Não")
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div class="text-center p-3 bg-primary-50 rounded-lg">
+                                    <div class="text-lg font-bold text-primary-600">@medico.Consultas.Count()</div>
+                                    <div class="text-xs text-primary-700">Consultas</div>
+                                </div>
+                                <div class="text-center p-3 bg-success-50 rounded-lg">
+                                    <div class="text-lg font-bold text-success-600">@medico.Consultas.Count(c => c.Status == StatusConsulta.Concluida)</div>
+                                    <div class="text-xs text-success-700">Realizadas</div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="space-y-2">
+                                <a asp-action="Details" asp-route-id="@medico.Id" 
+                                   class="w-full bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 text-center inline-block">
+                                    <i class="fas fa-eye mr-2"></i>
+                                    Ver Perfil Completo
+                                </a>
+                                @if (User.IsInRole("Paciente"))
+                                {
+                                    <a asp-controller="Consultas" asp-action="Create" asp-route-medicoId="@medico.Id" 
+                                       class="w-full bg-success-600 text-white px-4 py-2 rounded-lg hover:bg-success-700 transition-colors duration-200 text-center inline-block">
+                                        <i class="fas fa-calendar-plus mr-2"></i>
+                                        Agendar Consulta
+                                    </a>
+                                }
+                                @if (User.IsInRole("Administrador"))
+                                {
+                                    <div class="flex space-x-2">
+                                        <a asp-action="Edit" asp-route-id="@medico.Id" 
+                                           class="flex-1 bg-warning-600 text-white px-3 py-2 rounded-lg hover:bg-warning-700 transition-colors duration-200 text-center text-sm">
+                                            <i class="fas fa-edit mr-1"></i>
+                                            Editar
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@medico.Id" 
+                                           class="flex-1 bg-danger-600 text-white px-3 py-2 rounded-lg hover:bg-danger-700 transition-colors duration-200 text-center text-sm">
+                                            <i class="fas fa-trash mr-1"></i>
+                                            Excluir
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-12">
+                <div class="h-24 w-24 mx-auto bg-medical-100 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-user-md text-medical-400 text-3xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-medical-900 mb-2">Nenhum médico encontrado</h3>
+                <p class="text-medical-500 mb-6">Não há médicos cadastrados no sistema ainda.</p>
+                @if (User.IsInRole("Administrador"))
+                {
+                    <a asp-action="Create" class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
+                        <i class="fas fa-plus mr-2"></i>
+                        Cadastrar Primeiro Médico
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchMedicos');
+            const especialidadeFilter = document.getElementById('especialidadeFilter');
+            const medicosGrid = document.getElementById('medicosGrid');
+            const medicoCards = document.querySelectorAll('.medico-card');
+
+            function filterMedicos() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedEspecialidade = especialidadeFilter.value.toLowerCase();
+
+                medicoCards.forEach(card => {
+                    const nome = card.dataset.nome.toLowerCase();
+                    const especialidade = card.dataset.especialidade.toLowerCase();
+                    const crm = card.dataset.crm.toLowerCase();
+
+                    const matchesSearch = nome.includes(searchTerm) || 
+                                        especialidade.includes(searchTerm) || 
+                                        crm.includes(searchTerm);
+                    
+                    const matchesEspecialidade = selectedEspecialidade === '' || 
+                                               especialidade === selectedEspecialidade;
+
+                    if (matchesSearch && matchesEspecialidade) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Check if any cards are visible
+                const visibleCards = Array.from(medicoCards).filter(card => card.style.display !== 'none');
+                
+                if (visibleCards.length === 0) {
+                    if (!document.getElementById('no-results')) {
+                        const noResults = document.createElement('div');
+                        noResults.id = 'no-results';
+                        noResults.className = 'col-span-full text-center py-12';
+                        noResults.innerHTML = `
+                            <div class="h-16 w-16 mx-auto bg-medical-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-search text-medical-400 text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-medical-900 mb-2">Nenhum médico encontrado</h3>
+                            <p class="text-medical-500">Tente ajustar os filtros ou termos de busca.</p>
+                        `;
+                        medicosGrid.appendChild(noResults);
+                    }
+                } else {
+                    const noResults = document.getElementById('no-results');
+                    if (noResults) {
+                        noResults.remove();
+                    }
+                }
+            }
+
+            searchInput.addEventListener('input', filterMedicos);
+            especialidadeFilter.addEventListener('change', filterMedicos);
+        });
+    </script>
+
+    <style>
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+}

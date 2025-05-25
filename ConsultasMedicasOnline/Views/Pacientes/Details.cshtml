@@ -1,0 +1,272 @@
+@model ConsultasMedicasOnline.Models.Paciente
+
+@{
+    ViewData["Title"] = "Perfil do Paciente";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-white py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="flex items-center">
+                    <a asp-action="Index" class="text-medical-600 hover:text-primary-600 mr-4 transition-colors duration-200">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-3xl font-bold text-medical-800">Perfil do Paciente</h1>
+                        <p class="mt-2 text-medical-600">Informações detalhadas do paciente</p>
+                    </div>
+                </div>
+                <div class="mt-4 md:mt-0 flex space-x-3">
+                    @if (User.IsInRole("Administrador") || Model.UsuarioId == User.Identity.Name)
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="bg-warning-600 text-white px-4 py-2 rounded-lg hover:bg-warning-700 transition-colors duration-200 inline-flex items-center">
+                            <i class="fas fa-edit mr-2"></i>
+                            Editar
+                        </a>
+                    }
+                    <a asp-controller="Consultas" asp-action="Create" asp-route-pacienteId="@Model.Id" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
+                        <i class="fas fa-calendar-plus mr-2"></i>
+                        Agendar Consulta
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Patient Info Card -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 overflow-hidden">
+                    <!-- Profile Header -->
+                    <div class="bg-gradient-to-r from-primary-600 to-primary-700 p-6 text-white">
+                        <div class="flex items-center">
+                            <div class="h-20 w-20 rounded-full bg-white bg-opacity-20 flex items-center justify-center">
+                                <span class="text-2xl font-bold">
+                                    @Model.Usuario.Nome.First()@Model.Usuario.Sobrenome.First()
+                                </span>
+                            </div>
+                            <div class="ml-6">
+                                <h2 class="text-2xl font-bold">@Model.Usuario.Nome @Model.Usuario.Sobrenome</h2>
+                                <p class="text-primary-100">Paciente desde @Model.DataCadastro.ToString("MMMM yyyy", new System.Globalization.CultureInfo("pt-BR"))</p>
+                                @if (!string.IsNullOrEmpty(Model.TipoSanguineo))
+                                {
+                                    <div class="mt-2">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-500 text-white">
+                                            <i class="fas fa-tint mr-2"></i>
+                                            Tipo Sanguíneo: @Model.TipoSanguineo
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-medical-800 mb-4">
+                            <i class="fas fa-user text-primary-600 mr-2"></i>
+                            Informações Pessoais
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-medical-700 mb-1">Email</label>
+                                <p class="text-medical-900 bg-medical-50 p-3 rounded-lg">
+                                    <i class="fas fa-envelope text-medical-400 mr-2"></i>
+                                    @Model.Usuario.Email
+                                </p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-medical-700 mb-1">Telefone</label>
+                                <p class="text-medical-900 bg-medical-50 p-3 rounded-lg">
+                                    <i class="fas fa-phone text-medical-400 mr-2"></i>
+                                    @(Model.Usuario.Telefone ?? "Não informado")
+                                </p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-medical-700 mb-1">Data de Nascimento</label>
+                                <p class="text-medical-900 bg-medical-50 p-3 rounded-lg">
+                                    <i class="fas fa-birthday-cake text-medical-400 mr-2"></i>
+                                    @(Model.Usuario.DataNascimento?.ToString("dd/MM/yyyy") ?? "Não informado")
+                                </p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-medical-700 mb-1">CPF</label>
+                                <p class="text-medical-900 bg-medical-50 p-3 rounded-lg">
+                                    <i class="fas fa-id-card text-medical-400 mr-2"></i>
+                                    @(Model.Usuario.CPF ?? "Não informado")
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medical Information -->
+                    <div class="p-6 border-t border-medical-200">
+                        <h3 class="text-lg font-semibold text-medical-800 mb-4">
+                            <i class="fas fa-stethoscope text-primary-600 mr-2"></i>
+                            Informações Médicas
+                        </h3>
+                        <div class="space-y-4">
+                            @if (!string.IsNullOrEmpty(Model.Alergias))
+                            {
+                                <div>
+                                    <label class="block text-sm font-medium text-medical-700 mb-1">
+                                        <i class="fas fa-exclamation-triangle text-warning-500 mr-1"></i>
+                                        Alergias
+                                    </label>
+                                    <p class="text-medical-900 bg-warning-50 border border-warning-200 p-3 rounded-lg">
+                                        @Model.Alergias
+                                    </p>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.MedicamentosEmUso))
+                            {
+                                <div>
+                                    <label class="block text-sm font-medium text-medical-700 mb-1">
+                                        <i class="fas fa-pills text-primary-500 mr-1"></i>
+                                        Medicamentos em Uso
+                                    </label>
+                                    <p class="text-medical-900 bg-primary-50 border border-primary-200 p-3 rounded-lg">
+                                        @Model.MedicamentosEmUso
+                                    </p>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.HistoricoFamiliar))
+                            {
+                                <div>
+                                    <label class="block text-sm font-medium text-medical-700 mb-1">
+                                        <i class="fas fa-family text-medical-500 mr-1"></i>
+                                        Histórico Familiar
+                                    </label>
+                                    <p class="text-medical-900 bg-medical-50 border border-medical-200 p-3 rounded-lg">
+                                        @Model.HistoricoFamiliar
+                                    </p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contact -->
+                    @if (!string.IsNullOrEmpty(Model.ContatoEmergencia))
+                    {
+                        <div class="p-6 border-t border-medical-200">
+                            <h3 class="text-lg font-semibold text-medical-800 mb-4">
+                                <i class="fas fa-ambulance text-danger-600 mr-2"></i>
+                                Contato de Emergência
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-medical-700 mb-1">Nome</label>
+                                    <p class="text-medical-900 bg-danger-50 border border-danger-200 p-3 rounded-lg">
+                                        @Model.ContatoEmergencia
+                                    </p>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.TelefoneEmergencia))
+                                {
+                                    <div>
+                                        <label class="block text-sm font-medium text-medical-700 mb-1">Telefone</label>
+                                        <p class="text-medical-900 bg-danger-50 border border-danger-200 p-3 rounded-lg">
+                                            <i class="fas fa-phone text-danger-400 mr-2"></i>
+                                            @Model.TelefoneEmergencia
+                                        </p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Side Panel -->
+            <div class="space-y-6">
+                <!-- Stats Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                    <h3 class="text-lg font-semibold text-medical-800 mb-4">
+                        <i class="fas fa-chart-line text-primary-600 mr-2"></i>
+                        Estatísticas
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-primary-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar-check text-primary-600 mr-3"></i>
+                                <span class="text-medical-700">Total de Consultas</span>
+                            </div>
+                            <span class="text-xl font-bold text-primary-600">@Model.Consultas.Count()</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-success-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-success-600 mr-3"></i>
+                                <span class="text-medical-700">Realizadas</span>
+                            </div>
+                            <span class="text-xl font-bold text-success-600">@Model.Consultas.Count(c => c.Status == StatusConsulta.Concluida)</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-warning-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fas fa-clock text-warning-600 mr-3"></i>
+                                <span class="text-medical-700">Agendadas</span>
+                            </div>
+                            <span class="text-xl font-bold text-warning-600">@Model.Consultas.Count(c => c.Status == StatusConsulta.Agendada)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Appointments -->
+                @if (Model.Consultas.Any())
+                {
+                    <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                        <h3 class="text-lg font-semibold text-medical-800 mb-4">
+                            <i class="fas fa-history text-primary-600 mr-2"></i>
+                            Últimas Consultas
+                        </h3>
+                        <div class="space-y-3">
+                            @foreach (var consulta in Model.Consultas.OrderByDescending(c => c.DataHora).Take(5))
+                            {
+                                <div class="flex items-center justify-between p-3 bg-medical-50 rounded-lg">
+                                    <div>
+                                        <p class="font-medium text-medical-800">
+                                            Dr. @consulta.Medico.Usuario.Nome @consulta.Medico.Usuario.Sobrenome
+                                        </p>
+                                        <p class="text-sm text-medical-600">@consulta.Medico.Especialidade.Nome</p>
+                                        <p class="text-sm text-medical-500">@consulta.DataHora.ToString("dd/MM/yyyy HH:mm")</p>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full                                        @(consulta.Status == StatusConsulta.Concluida ? "bg-success-100 text-success-800" :
+                                          consulta.Status == StatusConsulta.Agendada ? "bg-warning-100 text-warning-800" :
+                                          consulta.Status == StatusConsulta.Cancelada ? "bg-danger-100 text-danger-800" :
+                                          "bg-medical-100 text-medical-800")">
+                                        @consulta.Status.ToString()
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                        <div class="mt-4">
+                            <a asp-controller="Consultas" asp-action="Index" asp-route-pacienteId="@Model.Id" 
+                               class="text-primary-600 hover:text-primary-700 text-sm font-medium">
+                                Ver todas as consultas →
+                            </a>
+                        </div>
+                    </div>
+                }
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                    <h3 class="text-lg font-semibold text-medical-800 mb-4">
+                        <i class="fas fa-bolt text-primary-600 mr-2"></i>
+                        Ações Rápidas
+                    </h3>
+                    <div class="space-y-3">
+                        <a asp-controller="Consultas" asp-action="Create" asp-route-pacienteId="@Model.Id" 
+                           class="w-full bg-primary-600 text-white px-4 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center justify-center">
+                            <i class="fas fa-calendar-plus mr-2"></i>
+                            Agendar Consulta
+                        </a>
+                        <a asp-controller="Prontuarios" asp-action="Index" asp-route-pacienteId="@Model.Id" 
+                           class="w-full bg-medical-600 text-white px-4 py-3 rounded-lg hover:bg-medical-700 transition-colors duration-200 inline-flex items-center justify-center">
+                            <i class="fas fa-file-medical mr-2"></i>
+                            Ver Prontuários
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

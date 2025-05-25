@@ -1,0 +1,380 @@
+@{
+    ViewData["Title"] = "Política de Privacidade - MedConsulta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Política de Privacidade Page -->
+<div class="min-h-screen pt-24 pb-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-16 animate-fade-in">
+            <div class="flex justify-center mb-8">
+                <div class="relative group">
+                    <div class="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl group-hover:shadow-3xl transition-all duration-300 transform group-hover:scale-105">
+                        <i class="fas fa-shield-alt text-white text-3xl group-hover:scale-110 transition-transform duration-300"></i>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-3xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+                </div>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-600 mb-6">
+                Política de Privacidade
+            </h1>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                Sua privacidade é fundamental para nós. Saiba como coletamos, usamos e protegemos suas informações pessoais.
+            </p>
+            <div class="mt-6 text-sm text-slate-500">
+                Última atualização: @DateTime.Now.ToString("dd/MM/yyyy")
+            </div>
+        </div>
+
+        <!-- Conteúdo da Política -->
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 md:p-12 animate-fade-in">
+            
+            <!-- 1. Introdução -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-info-circle text-indigo-500 mr-3"></i>
+                    1. Introdução
+                </h2>
+                <div class="prose prose-slate max-w-none">
+                    <p class="text-slate-600 leading-relaxed text-lg mb-4">
+                        O MedConsulta está comprometido em proteger e respeitar sua privacidade. Esta Política de Privacidade 
+                        explica como coletamos, usamos, divulgamos e protegemos suas informações quando você usa nossos serviços.
+                    </p>
+                    <p class="text-slate-600 leading-relaxed text-lg">
+                        Ao usar nossa plataforma, você concorda com a coleta e uso de informações de acordo com esta política.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 2. Informações que Coletamos -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-database text-blue-500 mr-3"></i>
+                    2. Informações que Coletamos
+                </h2>
+                
+                <div class="space-y-6">
+                    <div class="bg-blue-50 rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-slate-800 mb-3 flex items-center">
+                            <i class="fas fa-user text-blue-600 mr-2"></i>
+                            Informações Pessoais
+                        </h3>
+                        <ul class="text-slate-600 space-y-2">
+                            <li>• Nome completo, CPF, RG</li>
+                            <li>• Data de nascimento e endereço</li>
+                            <li>• Telefone e e-mail de contato</li>
+                            <li>• Informações de emergência</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-green-50 rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-slate-800 mb-3 flex items-center">
+                            <i class="fas fa-heartbeat text-green-600 mr-2"></i>
+                            Informações de Saúde
+                        </h3>
+                        <ul class="text-slate-600 space-y-2">
+                            <li>• Histórico médico e familiar</li>
+                            <li>• Alergias e medicamentos em uso</li>
+                            <li>• Resultados de consultas e exames</li>
+                            <li>• Prontuários médicos eletrônicos</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-purple-50 rounded-2xl p-6">
+                        <h3 class="text-xl font-bold text-slate-800 mb-3 flex items-center">
+                            <i class="fas fa-mouse-pointer text-purple-600 mr-2"></i>
+                            Informações de Uso
+                        </h3>
+                        <ul class="text-slate-600 space-y-2">
+                            <li>• Dados de navegação e interação</li>
+                            <li>• Logs de acesso e IP</li>
+                            <li>• Cookies e tecnologias similares</li>
+                            <li>• Informações do dispositivo</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Como Usamos suas Informações -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-cogs text-orange-500 mr-3"></i>
+                    3. Como Usamos suas Informações
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white/50 rounded-2xl p-6 border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3">Prestação de Serviços</h3>
+                        <ul class="text-slate-600 text-sm space-y-1">
+                            <li>• Agendamento de consultas</li>
+                            <li>• Comunicação entre pacientes e médicos</li>
+                            <li>• Processamento de pagamentos</li>
+                            <li>• Lembretes e notificações</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white/50 rounded-2xl p-6 border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3">Melhoria dos Serviços</h3>
+                        <ul class="text-slate-600 text-sm space-y-1">
+                            <li>• Análise de uso da plataforma</li>
+                            <li>• Desenvolvimento de novos recursos</li>
+                            <li>• Pesquisas de satisfação</li>
+                            <li>• Suporte técnico</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white/50 rounded-2xl p-6 border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3">Segurança</h3>
+                        <ul class="text-slate-600 text-sm space-y-1">
+                            <li>• Prevenção de fraudes</li>
+                            <li>• Monitoramento de segurança</li>
+                            <li>• Verificação de identidade</li>
+                            <li>• Auditoria de acesso</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white/50 rounded-2xl p-6 border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3">Compliance</h3>
+                        <ul class="text-slate-600 text-sm space-y-1">
+                            <li>• Cumprimento de obrigações legais</li>
+                            <li>• Regulamentações de saúde</li>
+                            <li>• Requisitos fiscais</li>
+                            <li>• Auditorias regulatórias</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Compartilhamento de Informações -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-share-alt text-red-500 mr-3"></i>
+                    4. Compartilhamento de Informações
+                </h2>
+                
+                <div class="bg-red-50 rounded-2xl p-6 mb-6">
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-xl mt-1"></i>
+                        <div>
+                            <h3 class="text-lg font-bold text-red-800 mb-2">Importante:</h3>
+                            <p class="text-red-700">
+                                Nunca vendemos, alugamos ou comercializamos suas informações pessoais para terceiros.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="border-l-4 border-blue-500 pl-6">
+                        <h3 class="font-bold text-slate-800 mb-2">Com Profissionais de Saúde</h3>
+                        <p class="text-slate-600 text-sm">Compartilhamos informações médicas apenas com os profissionais envolvidos no seu atendimento.</p>
+                    </div>
+
+                    <div class="border-l-4 border-green-500 pl-6">
+                        <h3 class="font-bold text-slate-800 mb-2">Parceiros Tecnológicos</h3>
+                        <p class="text-slate-600 text-sm">Dados mínimos necessários são compartilhados com fornecedores de infraestrutura e pagamento.</p>
+                    </div>
+
+                    <div class="border-l-4 border-yellow-500 pl-6">
+                        <h3 class="font-bold text-slate-800 mb-2">Autoridades Competentes</h3>
+                        <p class="text-slate-600 text-sm">Apenas quando exigido por lei ou ordem judicial.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. Segurança dos Dados -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-lock text-green-500 mr-3"></i>
+                    5. Segurança dos Dados
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3 bg-green-50 p-4 rounded-xl">
+                            <i class="fas fa-key text-green-600"></i>
+                            <span class="text-slate-700 font-medium">Criptografia SSL/TLS</span>
+                        </div>
+                        <div class="flex items-center space-x-3 bg-blue-50 p-4 rounded-xl">
+                            <i class="fas fa-server text-blue-600"></i>
+                            <span class="text-slate-700 font-medium">Servidores Seguros</span>
+                        </div>
+                        <div class="flex items-center space-x-3 bg-purple-50 p-4 rounded-xl">
+                            <i class="fas fa-user-shield text-purple-600"></i>
+                            <span class="text-slate-700 font-medium">Controle de Acesso</span>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3 bg-yellow-50 p-4 rounded-xl">
+                            <i class="fas fa-backup text-yellow-600"></i>
+                            <span class="text-slate-700 font-medium">Backup Regular</span>
+                        </div>
+                        <div class="flex items-center space-x-3 bg-red-50 p-4 rounded-xl">
+                            <i class="fas fa-eye text-red-600"></i>
+                            <span class="text-slate-700 font-medium">Monitoramento 24/7</span>
+                        </div>
+                        <div class="flex items-center space-x-3 bg-indigo-50 p-4 rounded-xl">
+                            <i class="fas fa-certificate text-indigo-600"></i>
+                            <span class="text-slate-700 font-medium">Certificações</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. Seus Direitos -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-balance-scale text-purple-500 mr-3"></i>
+                    6. Seus Direitos (LGPD)
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-2xl">
+                        <h3 class="font-bold text-slate-800 mb-2 flex items-center">
+                            <i class="fas fa-eye text-blue-600 mr-2"></i>
+                            Acesso
+                        </h3>
+                        <p class="text-sm text-slate-600">Consultar quais dados temos sobre você</p>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-2xl">
+                        <h3 class="font-bold text-slate-800 mb-2 flex items-center">
+                            <i class="fas fa-edit text-green-600 mr-2"></i>
+                            Correção
+                        </h3>
+                        <p class="text-sm text-slate-600">Atualizar informações incorretas</p>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-red-50 to-red-100 p-6 rounded-2xl">
+                        <h3 class="font-bold text-slate-800 mb-2 flex items-center">
+                            <i class="fas fa-trash text-red-600 mr-2"></i>
+                            Exclusão
+                        </h3>
+                        <p class="text-sm text-slate-600">Solicitar remoção dos dados</p>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-purple-50 to-purple-100 p-6 rounded-2xl">
+                        <h3 class="font-bold text-slate-800 mb-2 flex items-center">
+                            <i class="fas fa-download text-purple-600 mr-2"></i>
+                            Portabilidade
+                        </h3>
+                        <p class="text-sm text-slate-600">Exportar seus dados</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. Cookies -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-cookie-bite text-yellow-500 mr-3"></i>
+                    7. Cookies e Tecnologias Similares
+                </h2>
+                
+                <div class="bg-yellow-50 rounded-2xl p-6">
+                    <p class="text-slate-600 leading-relaxed mb-4">
+                        Utilizamos cookies para melhorar sua experiência, lembrar suas preferências e analisar o uso da plataforma.
+                    </p>
+                    <div class="grid md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">Essenciais</h4>
+                            <p class="text-slate-600">Necessários para o funcionamento básico</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">Funcionais</h4>
+                            <p class="text-slate-600">Lembram suas preferências</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">Analíticos</h4>
+                            <p class="text-slate-600">Ajudam a melhorar o serviço</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8. Alterações na Política -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-sync-alt text-blue-500 mr-3"></i>
+                    8. Alterações nesta Política
+                </h2>
+                
+                <div class="bg-blue-50 rounded-2xl p-6">
+                    <p class="text-slate-600 leading-relaxed">
+                        Podemos atualizar esta Política de Privacidade periodicamente. Notificaremos sobre mudanças significativas 
+                        por e-mail ou através da plataforma. O uso continuado após as alterações constitui aceitação da nova política.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 9. Contato -->
+            <section class="mb-8">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 flex items-center">
+                    <i class="fas fa-envelope text-green-500 mr-3"></i>
+                    9. Entre em Contato
+                </h2>
+                
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6">
+                    <p class="text-slate-600 leading-relaxed mb-4">
+                        Se você tiver dúvidas sobre esta Política de Privacidade ou quiser exercer seus direitos, entre em contato:
+                    </p>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-bold text-slate-800 mb-3">Encarregado de Dados (DPO)</h3>
+                            <div class="space-y-2 text-sm text-slate-600">
+                                <div class="flex items-center">
+                                    <i class="fas fa-envelope mr-2 text-green-600"></i>
+                                    privacidade@medconsulta.com.br
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-phone mr-2 text-green-600"></i>
+                                    (11) 3000-0000
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-bold text-slate-800 mb-3">Atendimento Geral</h3>
+                            <div class="space-y-2 text-sm text-slate-600">
+                                <div class="flex items-center">
+                                    <i class="fas fa-envelope mr-2 text-green-600"></i>
+                                    contato@medconsulta.com.br
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-clock mr-2 text-green-600"></i>
+                                    Segunda a Sexta: 8h às 18h
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center mt-12 animate-fade-in">
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl p-8 text-white">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4">
+                    Tem mais dúvidas?
+                </h2>
+                <p class="text-lg mb-6 opacity-90">
+                    Nossa equipe está pronta para esclarecer qualquer questão sobre privacidade.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a asp-controller="Paginas" asp-action="Contato" 
+                       class="inline-flex items-center px-6 py-3 bg-white text-indigo-600 rounded-xl font-medium hover:bg-gray-100 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-envelope mr-2"></i>
+                        Entre em Contato
+                    </a>
+                    <a asp-controller="Paginas" asp-action="FAQ" 
+                       class="inline-flex items-center px-6 py-3 border-2 border-white text-white rounded-xl font-medium hover:bg-white hover:text-indigo-600 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-question mr-2"></i>
+                        Ver FAQ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

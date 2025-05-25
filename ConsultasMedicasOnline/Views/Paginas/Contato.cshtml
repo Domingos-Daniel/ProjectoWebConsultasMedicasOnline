@@ -1,0 +1,411 @@
+@{
+    ViewData["Title"] = "Contacto - MedConsulta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Contato Page -->
+<div class="min-h-screen pt-24 pb-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-16 animate-fade-in">
+            <div class="flex justify-center mb-8">
+                <div class="relative group">
+                    <div class="w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-600 rounded-3xl flex items-center justify-center shadow-2xl group-hover:shadow-3xl transition-all duration-300 transform group-hover:scale-105">
+                        <i class="fas fa-envelope text-white text-3xl group-hover:scale-110 transition-transform duration-300"></i>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 rounded-3xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+                </div>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-600 mb-6">
+                Entre em Contacto
+            </h1>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                Estamos aqui para ajudar! Nossa equipe está pronta para responder suas dúvidas 
+                e fornecer todo o suporte que você precisa.
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-12 mb-20">
+            <!-- Formulário de Contato -->
+            <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 animate-fade-in">
+                <h2 class="text-3xl font-bold text-slate-800 mb-8 flex items-center">
+                    <i class="fas fa-paper-plane text-green-500 mr-3"></i>
+                    Envie sua Mensagem
+                </h2>
+                
+                <form id="contactForm" class="space-y-6">
+                    <!-- Nome -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-slate-700">
+                            <i class="fas fa-user text-green-500 mr-1"></i>
+                            Nome Completo *
+                        </label>
+                        <div class="relative group">
+                            <input type="text" 
+                                   id="name"
+                                   required
+                                   class="w-full px-4 py-4 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300 group-hover:bg-white/70 placeholder-slate-400" 
+                                   placeholder="Seu nome completo">
+                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-slate-700">
+                            <i class="fas fa-envelope text-green-500 mr-1"></i>
+                            Email *
+                        </label>
+                        <div class="relative group">
+                            <input type="email" 
+                                   id="email"
+                                   required
+                                   class="w-full px-4 py-4 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300 group-hover:bg-white/70 placeholder-slate-400" 
+                                   placeholder="seu@email.com">
+                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Telefone -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-slate-700">
+                            <i class="fas fa-phone text-green-500 mr-1"></i>
+                            Telefone
+                        </label>
+                        <div class="relative group">
+                            <input type="tel" 
+                                   id="phone"
+                                   class="w-full px-4 py-4 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300 group-hover:bg-white/70 placeholder-slate-400" 
+                                   placeholder="(+244) 912 345 678">
+                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Assunto -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-slate-700">
+                            <i class="fas fa-tag text-green-500 mr-1"></i>
+                            Assunto *
+                        </label>
+                        <div class="relative group">
+                            <select id="subject" 
+                                    required
+                                    class="w-full px-4 py-4 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300 group-hover:bg-white/70 text-slate-700">
+                                <option value="">Selecione o assunto</option>
+                                <option value="duvida-geral">Dúvida Geral</option>
+                                <option value="suporte-tecnico">Suporte Técnico</option>
+                                <option value="agendamento">Problemas com Agendamento</option>
+                                <option value="medico">Cadastro de Médico</option>
+                                <option value="pagamento">Questões de Pagamento</option>
+                                <option value="sugestao">Sugestão</option>
+                                <option value="reclamacao">Reclamação</option>
+                                <option value="outros">Outros</option>
+                            </select>
+                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Mensagem -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-slate-700">
+                            <i class="fas fa-comment text-green-500 mr-1"></i>
+                            Mensagem *
+                        </label>
+                        <div class="relative group">
+                            <textarea id="message" 
+                                      required
+                                      rows="5"
+                                      class="w-full px-4 py-4 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-300 group-hover:bg-white/70 placeholder-slate-400 resize-none" 
+                                      placeholder="Digite sua mensagem..."></textarea>
+                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                        </div>
+                    </div>
+
+                    <!-- Botão Enviar -->
+                    <button type="submit" 
+                            id="submitBtn"
+                            class="group relative w-full flex justify-center items-center py-4 px-6 text-lg font-bold text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></span>
+                        <span class="relative flex items-center">
+                            <i class="fas fa-paper-plane mr-3 group-hover:scale-110 transition-transform duration-300" id="submitIcon"></i>
+                            <span id="submitText">Enviar Mensagem</span>
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Informações de Contato -->
+            <div class="space-y-8 animate-fade-in">
+                <!-- Canais de Contato -->
+                <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+                        <i class="fas fa-headset text-blue-500 mr-3"></i>
+                        Canais de Atendimento
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Email -->
+                        <div class="flex items-start space-x-4 p-4 bg-blue-50/50 rounded-xl hover:bg-blue-50 transition-colors duration-200">
+                            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-envelope text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 mb-1">Email</h3>
+                                <p class="text-slate-600 text-sm mb-2">contato@medconsulta.com</p>
+                                <p class="text-slate-500 text-xs">Resposta em até 24 horas</p>
+                            </div>
+                        </div>
+
+                        <!-- Telefone -->
+                        <div class="flex items-start space-x-4 p-4 bg-green-50/50 rounded-xl hover:bg-green-50 transition-colors duration-200">
+                            <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-phone text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 mb-1">Telefone</h3>
+                                <p class="text-slate-600 text-sm mb-2">(+244) 912 345 678</p>
+                                <p class="text-slate-500 text-xs">Seg à Sex: 8h às 18h</p>
+                            </div>
+                        </div>
+
+                        <!-- WhatsApp -->
+                        <div class="flex items-start space-x-4 p-4 bg-emerald-50/50 rounded-xl hover:bg-emerald-50 transition-colors duration-200">
+                            <div class="w-12 h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fab fa-whatsapp text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 mb-1">WhatsApp</h3>
+                                <p class="text-slate-600 text-sm mb-2">(+244) 912 345 678</p>
+                                <p class="text-slate-500 text-xs">Seg à Sex: 8h às 20h</p>
+                            </div>
+                        </div>
+
+                        <!-- Chat Online -->
+                        <div class="flex items-start space-x-4 p-4 bg-purple-50/50 rounded-xl hover:bg-purple-50 transition-colors duration-200">
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-comments text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 mb-1">Chat Online</h3>
+                                <p class="text-slate-600 text-sm mb-2">Disponível na plataforma</p>
+                                <p class="text-slate-500 text-xs">24 horas por dia</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Horários de Funcionamento -->
+                <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+                        <i class="fas fa-clock text-orange-500 mr-3"></i>
+                        Horários de Funcionamento
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center py-2 border-b border-slate-200">
+                            <span class="font-medium text-slate-700">Segunda à Sexta</span>
+                            <span class="text-slate-600">8:00 - 18:00</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-slate-200">
+                            <span class="font-medium text-slate-700">Sábado</span>
+                            <span class="text-slate-600">9:00 - 14:00</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="font-medium text-slate-700">Domingo</span>
+                            <span class="text-red-500 font-medium">Fechado</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-blue-50/50 rounded-xl">
+                        <p class="text-sm text-slate-600">
+                            <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                            O chat online está disponível 24h para emergências
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Localização -->
+                <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+                        <i class="fas fa-map-marker-alt text-red-500 mr-3"></i>
+                        Nossa Localização
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="font-bold text-slate-800 mb-2">Escritório Principal</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                Luanda, Angola<br>
+                                Camama 1, Talatona<br>
+                                NIF: 123456789<br>
+                            </p>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-slate-200">
+                            <button class="flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors duration-200">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                Ver no Google Maps
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Rápido -->
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-12 mb-20 animate-fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-6">
+                    Perguntas Frequentes
+                </h2>
+                <p class="text-slate-600">Veja se sua dúvida já foi respondida abaixo</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <h3 class="font-bold text-slate-800 flex items-center">
+                        <i class="fas fa-question-circle text-blue-500 mr-3"></i>
+                        Como agendar uma consulta?
+                    </h3>
+                    <p class="text-slate-600 text-sm pl-8">
+                        Faça seu cadastro, busque por especialidade ou médico, escolha um horário disponível e confirme seu agendamento.
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="font-bold text-slate-800 flex items-center">
+                        <i class="fas fa-question-circle text-green-500 mr-3"></i>
+                        Posso cancelar minha consulta?
+                    </h3>
+                    <p class="text-slate-600 text-sm pl-8">
+                        Sim, você pode cancelar até 24 horas antes do horário agendado sem nenhum custo.
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="font-bold text-slate-800 flex items-center">
+                        <i class="fas fa-question-circle text-purple-500 mr-3"></i>
+                        O serviço é gratuito?
+                    </h3>
+                    <p class="text-slate-600 text-sm pl-8">
+                        O agendamento é gratuito. Você paga apenas pela consulta conforme os preços de cada médico.
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="font-bold text-slate-800 flex items-center">
+                        <i class="fas fa-question-circle text-orange-500 mr-3"></i>
+                        Recebo lembretes da consulta?
+                    </h3>
+                    <p class="text-slate-600 text-sm pl-8">
+                        Sim, enviamos lembretes automáticos por SMS e email antes da sua consulta.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <a asp-controller="Paginas" asp-action="FAQ" 
+                   class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300">
+                    <i class="fas fa-question mr-2"></i>
+                    Ver Todas as Perguntas
+                </a>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center animate-fade-in">
+            <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-3xl p-12 text-white">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                    Não encontrou o que procura?
+                </h2>
+                <p class="text-xl mb-8 opacity-90">
+                    Nossa equipe está sempre pronta para ajudar você com qualquer dúvida ou problema.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a asp-controller="Paginas" asp-action="CentralAjuda" 
+                       class="inline-flex items-center px-8 py-4 bg-white text-green-600 rounded-xl font-bold text-lg hover:bg-gray-50 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-life-ring mr-3"></i>
+                        Central de Ajuda
+                    </a>
+                    <a href="#contactForm" 
+                       class="inline-flex items-center px-8 py-4 border-2 border-white text-white rounded-xl font-bold text-lg hover:bg-white hover:text-green-600 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-arrow-up mr-3"></i>
+                        Voltar ao Formulário
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Phone mask
+            const phoneInput = document.getElementById('phone');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 11) {
+                        value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                    } else if (value.length >= 6) {
+                        value = value.replace(/(\d{2})(\d{4})(\d+)/, '($1) $2-$3');
+                    } else if (value.length >= 2) {
+                        value = value.replace(/(\d{2})(\d+)/, '($1) $2');
+                    }
+                    e.target.value = value;
+                });
+            }
+
+            // Form submission
+            const form = document.getElementById('contactForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const submitIcon = document.getElementById('submitIcon');
+            const submitText = document.getElementById('submitText');
+
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Validate form
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+                    const subject = document.getElementById('subject').value;
+                    const message = document.getElementById('message').value;
+
+                    if (!name || !email || !subject || !message) {
+                        alert('Por favor, preencha todos os campos obrigatórios.');
+                        return;
+                    }
+
+                    // Simulate form submission
+                    submitBtn.disabled = true;
+                    submitIcon.className = 'fas fa-spinner fa-spin mr-3';
+                    submitText.textContent = 'Enviando...';
+                    submitBtn.classList.add('opacity-75');
+
+                    setTimeout(() => {
+                        alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
+                        form.reset();
+                        submitBtn.disabled = false;
+                        submitIcon.className = 'fas fa-paper-plane mr-3';
+                        submitText.textContent = 'Enviar Mensagem';
+                        submitBtn.classList.remove('opacity-75');
+                    }, 2000);
+                });
+            }
+
+            // Enhanced form animations
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.closest('.group').classList.add('ring-2', 'ring-green-500/20');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.closest('.group').classList.remove('ring-2', 'ring-green-500/20');
+                });
+            });
+        });
+    </script>
+}

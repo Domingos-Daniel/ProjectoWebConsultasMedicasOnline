@@ -1,0 +1,334 @@
+@page
+@model ConsultasMedicasOnline.Areas.Identity.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Cadastro - MedConsulta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<!-- Main Container with Glass Effect Background -->
+<div class="min-h-screen pt-24 pb-12 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl w-full space-y-8">
+        <!-- Header Section with Modern Design -->
+        <div class="text-center animate-fade-in">
+            <div class="flex justify-center mb-6">
+                <div class="relative group">
+                    <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300 transform group-hover:scale-105">
+                        <i class="fas fa-user-plus text-white text-2xl group-hover:scale-110 transition-transform duration-300"></i>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+                </div>
+            </div>
+            <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-600 mb-3">
+                Crie sua conta
+            </h1>
+            <p class="text-lg text-slate-600 max-w-md mx-auto">
+                Junte-se ao <span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">MedConsulta</span> e transforme sua experiência em saúde digital
+            </p>
+        </div>
+
+        <!-- Registration Form with Glass Morphism -->
+        <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 lg:p-10 animate-fade-in">            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="space-y-6">
+                <div asp-validation-summary="All" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-6 hidden" id="validation-summary"></div>
+                
+                <!-- Personal Information Section -->
+                <div class="space-y-6">
+                    <div class="pb-4 border-b border-slate-200">
+                        <h3 class="text-lg font-semibold text-slate-800 flex items-center">
+                            <i class="fas fa-user-circle text-blue-500 mr-2"></i>
+                            Informações Pessoais
+                        </h3>
+                    </div>
+
+                    <!-- Nome e Sobrenome -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label asp-for="Input.Nome" class="block text-sm font-semibold text-slate-700">
+                                <i class="fas fa-user text-blue-500 mr-1"></i>
+                                Nome *
+                            </label>
+                            <div class="relative group">
+                                <input asp-for="Input.Nome" 
+                                       class="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:bg-white/70 placeholder-slate-400" 
+                                       placeholder="Seu primeiro nome" 
+                                       autocomplete="given-name" />
+                                <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                            </div>
+                            <span asp-validation-for="Input.Nome" class="text-red-500 text-xs font-medium"></span>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label asp-for="Input.Sobrenome" class="block text-sm font-semibold text-slate-700">
+                                <i class="fas fa-user text-blue-500 mr-1"></i>
+                                Sobrenome *
+                            </label>
+                            <div class="relative group">
+                                <input asp-for="Input.Sobrenome" 
+                                       class="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:bg-white/70 placeholder-slate-400" 
+                                       placeholder="Seu sobrenome" 
+                                       autocomplete="family-name" />
+                                <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                            </div>
+                            <span asp-validation-for="Input.Sobrenome" class="text-red-500 text-xs font-medium"></span>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="space-y-2">
+                        <label asp-for="Input.Email" class="block text-sm font-semibold text-slate-700">
+                            <i class="fas fa-envelope text-blue-500 mr-1"></i>
+                            Email *
+                        </label>
+                        <div class="relative group">
+                            <input asp-for="Input.Email" 
+                                   type="email"
+                                   class="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:bg-white/70 placeholder-slate-400" 
+                                   placeholder="seu@email.com" 
+                                   autocomplete="email" />
+                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                        </div>
+                        <span asp-validation-for="Input.Email" class="text-red-500 text-xs font-medium"></span>
+                    </div>
+
+                    <!-- Telefone -->
+                    <div class="space-y-2">
+                        <label asp-for="Input.Telefone" class="block text-sm font-semibold text-slate-700">
+                            <i class="fas fa-phone text-blue-500 mr-1"></i>
+                            Telefone
+                        </label>
+                        <div class="relative group">
+                            <input asp-for="Input.Telefone" 
+                                   class="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:bg-white/70 placeholder-slate-400" 
+                                   placeholder="(11) 99999-9999" 
+                                   autocomplete="tel" />
+                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                        </div>
+                        <span asp-validation-for="Input.Telefone" class="text-red-500 text-xs font-medium"></span>
+                        <p class="text-xs text-slate-500">Opcional - Para contatos importantes sobre suas consultas</p>
+                    </div>
+                </div>
+
+                <!-- Security Section -->
+                <div class="space-y-6 pt-6">
+                    <div class="pb-4 border-b border-slate-200">
+                        <h3 class="text-lg font-semibold text-slate-800 flex items-center">
+                            <i class="fas fa-shield-alt text-green-500 mr-2"></i>
+                            Segurança da Conta
+                        </h3>
+                    </div>
+
+                    <!-- Password Fields -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label asp-for="Input.Password" class="block text-sm font-semibold text-slate-700">
+                                <i class="fas fa-lock text-green-500 mr-1"></i>
+                                Senha *
+                            </label>
+                            <div class="relative group">
+                                <input asp-for="Input.Password" 
+                                       type="password" 
+                                       id="password"
+                                       class="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:bg-white/70 placeholder-slate-400" 
+                                       placeholder="••••••••" 
+                                       autocomplete="new-password" />
+                                <button type="button" id="togglePassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors duration-200">
+                                    <i class="fas fa-eye" id="eyeIcon"></i>
+                                </button>
+                                <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                            </div>
+                            <span asp-validation-for="Input.Password" class="text-red-500 text-xs font-medium"></span>
+                            <p class="text-xs text-slate-500">Mínimo 6 caracteres</p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label asp-for="Input.ConfirmPassword" class="block text-sm font-semibold text-slate-700">
+                                <i class="fas fa-lock text-green-500 mr-1"></i>
+                                Confirmar Senha *
+                            </label>
+                            <div class="relative group">
+                                <input asp-for="Input.ConfirmPassword" 
+                                       type="password" 
+                                       id="confirmPassword"
+                                       class="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:bg-white/70 placeholder-slate-400" 
+                                       placeholder="••••••••" 
+                                       autocomplete="new-password" />
+                                <button type="button" id="toggleConfirmPassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors duration-200">
+                                    <i class="fas fa-eye" id="eyeConfirmIcon"></i>
+                                </button>
+                                <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-green-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                            </div>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-red-500 text-xs font-medium"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms and Privacy -->
+                <div class="flex items-start space-x-3 p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                    <div class="flex items-center h-5 mt-1">
+                        <input id="terms" 
+                               type="checkbox" 
+                               required 
+                               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded transition-colors duration-200">
+                    </div>
+                    <div class="text-sm">
+                        <label for="terms" class="text-slate-700 cursor-pointer">
+                            Eu aceito os 
+                            <a href="#" class="font-semibold text-blue-600 hover:text-blue-700 underline transition-colors duration-200">Termos de Uso</a> 
+                            e a 
+                            <a href="#" class="font-semibold text-blue-600 hover:text-blue-700 underline transition-colors duration-200">Política de Privacidade</a>
+                            do MedConsulta
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-4">
+                    <button type="submit" 
+                            id="submitBtn"
+                            class="group relative w-full flex justify-center items-center py-4 px-6 text-lg font-bold text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 to-purple-500 rounded-xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></span>
+                        <span class="relative flex items-center">
+                            <i class="fas fa-user-plus mr-3 group-hover:scale-110 transition-transform duration-300" id="submitIcon"></i>
+                            <span id="submitText">Criar minha conta</span>
+                        </span>
+                    </button>
+                </div>
+            </form>            <!-- Divider with Modern Style -->
+            <div class="relative my-8">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-slate-200"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-4 bg-white/70 text-slate-500 font-medium">Já tem uma conta?</span>
+                </div>
+            </div>
+
+            <!-- Login Link with Modern Design -->
+            <div class="text-center">
+                <a asp-page="./Login" 
+                   asp-route-returnUrl="@Model.ReturnUrl" 
+                   class="group inline-flex items-center px-6 py-3 text-sm font-semibold text-slate-700 bg-white/50 border border-slate-200 rounded-xl hover:bg-white/70 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300">
+                    <i class="fas fa-sign-in-alt mr-2 group-hover:scale-110 transition-transform duration-300"></i>
+                    <span>Fazer login na minha conta</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Back to Home Link -->
+        <div class="text-center animate-fade-in">
+            <a asp-area="" asp-controller="Home" asp-action="Index" 
+               class="inline-flex items-center text-sm text-slate-600 hover:text-blue-600 transition-colors duration-200 group">
+                <i class="fas fa-arrow-left mr-2 group-hover:transform group-hover:-translate-x-1 transition-transform duration-200"></i>
+                <span>Voltar ao início</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Phone mask functionality
+            const phoneInput = document.getElementById('Input_Telefone');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function (e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 11) {
+                        value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                    } else if (value.length >= 6) {
+                        value = value.replace(/(\d{2})(\d{4})(\d+)/, '($1) $2-$3');
+                    } else if (value.length >= 2) {
+                        value = value.replace(/(\d{2})(\d+)/, '($1) $2');
+                    }
+                    e.target.value = value;
+                });
+            }
+
+            // Password visibility toggle
+            const togglePassword = document.getElementById('togglePassword');
+            const password = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+
+            if (togglePassword) {
+                togglePassword.addEventListener('click', function () {
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    eyeIcon.classList.toggle('fa-eye');
+                    eyeIcon.classList.toggle('fa-eye-slash');
+                });
+            }
+
+            // Confirm password visibility toggle
+            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const eyeConfirmIcon = document.getElementById('eyeConfirmIcon');
+
+            if (toggleConfirmPassword) {
+                toggleConfirmPassword.addEventListener('click', function () {
+                    const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                    confirmPassword.setAttribute('type', type);
+                    eyeConfirmIcon.classList.toggle('fa-eye');
+                    eyeConfirmIcon.classList.toggle('fa-eye-slash');
+                });
+            }
+
+            // Form submission with loading state
+            const form = document.getElementById('registerForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const submitIcon = document.getElementById('submitIcon');
+            const submitText = document.getElementById('submitText');
+
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    submitBtn.disabled = true;
+                    submitIcon.className = 'fas fa-spinner fa-spin mr-3';
+                    submitText.textContent = 'Criando conta...';
+                    submitBtn.classList.add('opacity-75');
+                });
+            }
+
+            // Real-time password validation
+            const passwordField = document.getElementById('password');
+            const confirmPasswordField = document.getElementById('confirmPassword');
+
+            function validatePasswords() {
+                if (passwordField.value && confirmPasswordField.value) {
+                    if (passwordField.value !== confirmPasswordField.value) {
+                        confirmPasswordField.setCustomValidity('As senhas não coincidem');
+                        confirmPasswordField.classList.add('border-red-300');
+                        confirmPasswordField.classList.remove('border-slate-200');
+                    } else {
+                        confirmPasswordField.setCustomValidity('');
+                        confirmPasswordField.classList.remove('border-red-300');
+                        confirmPasswordField.classList.add('border-green-300');
+                    }
+                }
+            }
+
+            if (passwordField && confirmPasswordField) {
+                passwordField.addEventListener('input', validatePasswords);
+                confirmPasswordField.addEventListener('input', validatePasswords);
+            }
+
+            // Show validation summary if there are errors
+            const validationSummary = document.querySelector('[asp-validation-summary]');
+            if (validationSummary && validationSummary.querySelector('li')) {
+                document.getElementById('validation-summary').classList.remove('hidden');
+            }
+
+            // Enhanced form animations
+            const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], input[type="tel"]');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.closest('.group').classList.add('ring-2', 'ring-blue-500/20');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.closest('.group').classList.remove('ring-2', 'ring-blue-500/20');
+                });
+            });
+        });
+    </script>
+}

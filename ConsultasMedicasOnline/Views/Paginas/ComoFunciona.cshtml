@@ -1,0 +1,303 @@
+@{
+    ViewData["Title"] = "Como Funciona - MedConsulta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Como Funciona Page -->
+<div class="min-h-screen pt-24 pb-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-16 animate-fade-in">
+            <div class="flex justify-center mb-8">
+                <div class="relative group">
+                    <div class="w-20 h-20 bg-gradient-to-r from-green-500 to-blue-600 rounded-3xl flex items-center justify-center shadow-2xl group-hover:shadow-3xl transition-all duration-300 transform group-hover:scale-105">
+                        <i class="fas fa-cogs text-white text-3xl group-hover:scale-110 transition-transform duration-300"></i>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 rounded-3xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
+                </div>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-600 mb-6">
+                Como Funciona
+            </h1>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                Descubra como é simples e rápido agendar suas consultas médicas no MedConsulta. 
+                Apenas alguns cliques separam você do cuidado que merece.
+            </p>
+        </div>
+
+        <!-- Processo em 4 Passos -->
+        <div class="mb-20">
+            <h2 class="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-12">
+                Em apenas 4 passos simples
+            </h2>
+            
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- Passo 1 -->
+                <div class="text-center animate-fade-in">
+                    <div class="relative mb-6">
+                        <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                            <span class="text-white text-2xl font-bold">1</span>
+                        </div>
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user-plus text-white text-xs"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Cadastre-se</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Crie sua conta gratuita em menos de 2 minutos. 
+                        Informe seus dados básicos e comece a usar a plataforma.
+                    </p>
+                </div>
+
+                <!-- Passo 2 -->
+                <div class="text-center animate-fade-in">
+                    <div class="relative mb-6">
+                        <div class="w-20 h-20 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                            <span class="text-white text-2xl font-bold">2</span>
+                        </div>
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-search text-white text-xs"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Encontre seu Médico</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Busque por especialidade, localização ou nome do profissional. 
+                        Veja perfis completos, avaliações e horários disponíveis.
+                    </p>
+                </div>
+
+                <!-- Passo 3 -->
+                <div class="text-center animate-fade-in">
+                    <div class="relative mb-6">
+                        <div class="w-20 h-20 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                            <span class="text-white text-2xl font-bold">3</span>
+                        </div>
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-calendar-alt text-white text-xs"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Agende a Consulta</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Escolha o melhor horário para você na agenda do médico. 
+                        O agendamento é confirmado instantaneamente.
+                    </p>
+                </div>
+
+                <!-- Passo 4 -->
+                <div class="text-center animate-fade-in">
+                    <div class="relative mb-6">
+                        <div class="w-20 h-20 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                            <span class="text-white text-2xl font-bold">4</span>
+                        </div>
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-check text-white text-xs"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Compareça à Consulta</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Receba lembretes automáticos e compareça na data agendada. 
+                        Seu histórico fica sempre disponível na plataforma.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recursos da Plataforma -->
+        <div class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-6">
+                    Recursos da Plataforma
+                </h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Recurso 1 -->
+                <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                    <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <i class="fas fa-calendar-check text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Agendamento Inteligente</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Sistema avançado que sugere os melhores horários baseado na sua localização e preferências.
+                    </p>
+                </div>
+
+                <!-- Recurso 2 -->
+                <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <i class="fas fa-bell text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Lembretes Automáticos</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Receba notificações via SMS e email para nunca perder uma consulta importante.
+                    </p>
+                </div>
+
+                <!-- Recurso 3 -->
+                <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                    <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <i class="fas fa-file-medical text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Histórico Médico</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Acesse todo seu histórico de consultas, receitas e exames em um local seguro.
+                    </p>
+                </div>
+
+                <!-- Recurso 4 -->
+                <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                    <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <i class="fas fa-credit-card text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Pagamento Online</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Pague suas consultas particulares de forma segura diretamente pela plataforma.
+                    </p>
+                </div>
+
+                <!-- Recurso 5 -->
+                <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                    <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <i class="fas fa-star text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Avaliações Verificadas</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Leia avaliações reais de pacientes para escolher o melhor profissional para você.
+                    </p>
+                </div>
+
+                <!-- Recurso 6 -->
+                <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                    <div class="w-16 h-16 bg-gradient-to-r from-teal-500 to-green-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <i class="fas fa-headset text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Suporte 24/7</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Nossa equipe está sempre disponível para ajudar você com qualquer dúvida ou problema.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Para Médicos -->
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl p-12 text-white mb-20 animate-fade-in">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-8">
+                    <i class="fas fa-user-md text-white text-3xl"></i>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                    Você é um Profissional de Saúde?
+                </h2>
+                <p class="text-xl mb-8 opacity-90">
+                    Junte-se à nossa rede de médicos e transforme sua prática médica com nossa plataforma completa 
+                    de gestão de consultas e relacionamento com pacientes.
+                </p>
+                <div class="grid md:grid-cols-3 gap-6 mb-8 text-left">
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-check-circle text-green-300 text-xl mt-1"></i>
+                        <div>
+                            <h4 class="font-bold mb-2">Agenda Digital</h4>
+                            <p class="text-sm opacity-90">Gerencie seus horários de forma intuitiva</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-check-circle text-green-300 text-xl mt-1"></i>
+                        <div>
+                            <h4 class="font-bold mb-2">Prontuário Eletrônico</h4>
+                            <p class="text-sm opacity-90">Registre consultas de forma segura</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-check-circle text-green-300 text-xl mt-1"></i>
+                        <div>
+                            <h4 class="font-bold mb-2">Mais Pacientes</h4>
+                            <p class="text-sm opacity-90">Alcance novos pacientes através da plataforma</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="#" class="inline-flex items-center px-8 py-4 bg-white text-blue-600 rounded-xl font-bold text-lg hover:bg-gray-50 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                    <i class="fas fa-stethoscope mr-3"></i>
+                    Cadastrar como Médico
+                </a>
+            </div>
+        </div>
+
+        <!-- FAQ Rápido -->
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-6">
+                Dúvidas Frequentes
+            </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-20">
+            <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 animate-fade-in">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center">
+                    <i class="fas fa-question-circle text-blue-500 mr-3"></i>
+                    É gratuito para usar?
+                </h3>
+                <p class="text-slate-600 leading-relaxed">
+                    Sim! O cadastro e agendamento são completamente gratuitos. Você paga apenas pela consulta 
+                    diretamente ao médico ou clínica, conforme seus preços normais.
+                </p>
+            </div>
+
+            <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 animate-fade-in">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center">
+                    <i class="fas fa-question-circle text-purple-500 mr-3"></i>
+                    Como funciona o cancelamento?
+                </h3>
+                <p class="text-slate-600 leading-relaxed">
+                    Você pode cancelar sua consulta até 24 horas antes do horário agendado sem nenhum custo. 
+                    Cancelamentos de última hora podem estar sujeitos às políticas de cada profissional.
+                </p>
+            </div>
+
+            <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 animate-fade-in">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center">
+                    <i class="fas fa-question-circle text-green-500 mr-3"></i>
+                    Meus dados estão seguros?
+                </h3>
+                <p class="text-slate-600 leading-relaxed">
+                    Absolutamente! Utilizamos criptografia de nível médico para proteger todas as suas informações. 
+                    Seguimos rigorosamente a LGPD e as melhores práticas de segurança.
+                </p>
+            </div>
+
+            <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 animate-fade-in">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center">
+                    <i class="fas fa-question-circle text-orange-500 mr-3"></i>
+                    Posso reagendar uma consulta?
+                </h3>
+                <p class="text-slate-600 leading-relaxed">
+                    Sim! Você pode reagendar facilmente através da plataforma, desde que seja com antecedência 
+                    e haja horários disponíveis na agenda do médico.
+                </p>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center animate-fade-in">
+            <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-6">
+                    Pronto para Começar?
+                </h2>
+                <p class="text-xl text-slate-600 mb-8">
+                    Junte-se a milhares de pessoas que já descobriram uma forma mais simples de cuidar da saúde.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a asp-area="Identity" asp-page="/Account/Register" 
+                       class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-bold text-lg hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-rocket mr-3"></i>
+                        Começar Agora
+                    </a>
+                    <a asp-controller="Paginas" asp-action="FAQ" 
+                       class="inline-flex items-center px-8 py-4 border-2 border-blue-500 text-blue-600 rounded-xl font-bold text-lg hover:bg-blue-500 hover:text-white transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-question mr-3"></i>
+                        Mais Dúvidas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

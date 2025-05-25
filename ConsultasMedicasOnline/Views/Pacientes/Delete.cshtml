@@ -1,0 +1,269 @@
+@model ConsultasMedicasOnline.Models.Paciente
+
+@{
+    ViewData["Title"] = "Excluir Paciente";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-red-50 to-white py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center">
+                <a asp-action="Index" class="text-medical-600 hover:text-primary-600 mr-4 transition-colors duration-200">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-bold text-danger-800">
+                        <i class="fas fa-exclamation-triangle text-danger-600 mr-3"></i>
+                        Excluir Paciente
+                    </h1>
+                    <p class="mt-2 text-danger-600">Esta ação não pode ser desfeita</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warning Card -->
+        <div class="bg-danger-50 border-l-4 border-danger-400 p-6 mb-8">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-exclamation-triangle text-danger-400 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-lg font-medium text-danger-800">Atenção!</h3>
+                    <div class="mt-2 text-sm text-danger-700">
+                        <p>Você está prestes a excluir permanentemente este paciente do sistema. Esta ação irá:</p>
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li>Remover todos os dados pessoais e médicos do paciente</li>
+                            <li>Cancelar todas as consultas agendadas</li>
+                            <li>Remover o histórico de consultas anteriores</li>
+                            <li>Apagar todos os prontuários associados</li>
+                            <li>Esta ação não pode ser desfeita</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Information -->
+        <div class="bg-white rounded-xl shadow-sm border border-medical-200 overflow-hidden mb-8">
+            <div class="px-6 py-4 border-b border-medical-200 bg-medical-50">
+                <h3 class="text-lg font-semibold text-medical-800">Informações do Paciente</h3>
+                <p class="text-sm text-medical-600 mt-1">Confirme os dados antes de prosseguir</p>
+            </div>
+
+            <div class="p-6">
+                <!-- Patient Profile -->
+                <div class="flex items-center mb-6">
+                    <div class="h-16 w-16 rounded-full bg-primary-600 flex items-center justify-center">
+                        <span class="text-white text-xl font-bold">
+                            @Model.Usuario.Nome.First()@Model.Usuario.Sobrenome.First()
+                        </span>
+                    </div>
+                    <div class="ml-6">
+                        <h4 class="text-xl font-bold text-medical-800">@Model.Usuario.Nome @Model.Usuario.Sobrenome</h4>
+                        <p class="text-medical-600">@Model.Usuario.Email</p>
+                        <p class="text-sm text-medical-500">Paciente desde @Model.DataCadastro.ToString("dd/MM/yyyy")</p>
+                    </div>
+                </div>
+
+                <!-- Patient Details -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h5 class="font-semibold text-medical-800 mb-3">Informações Pessoais</h5>
+                        <dl class="space-y-2">
+                            <div>
+                                <dt class="text-sm font-medium text-medical-600">Telefone:</dt>
+                                <dd class="text-sm text-medical-900">@(Model.Usuario.Telefone ?? "Não informado")</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-medical-600">CPF:</dt>
+                                <dd class="text-sm text-medical-900">@(Model.Usuario.CPF ?? "Não informado")</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-medical-600">Data de Nascimento:</dt>
+                                <dd class="text-sm text-medical-900">@(Model.Usuario.DataNascimento?.ToString("dd/MM/yyyy") ?? "Não informado")</dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    <div>
+                        <h5 class="font-semibold text-medical-800 mb-3">Informações Médicas</h5>
+                        <dl class="space-y-2">
+                            <div>
+                                <dt class="text-sm font-medium text-medical-600">Tipo Sanguíneo:</dt>
+                                <dd class="text-sm text-medical-900">
+                                    @if (!string.IsNullOrEmpty(Model.TipoSanguineo))
+                                    {
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            @Model.TipoSanguineo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>Não informado</span>
+                                    }
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-medical-600">Alergias:</dt>
+                                <dd class="text-sm text-medical-900">@(Model.Alergias ?? "Nenhuma alergia informada")</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-medical-600">Medicamentos em Uso:</dt>
+                                <dd class="text-sm text-medical-900">@(Model.MedicamentosEmUso ?? "Nenhum medicamento informado")</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Emergency Contact -->
+                @if (!string.IsNullOrEmpty(Model.ContatoEmergencia))
+                {
+                    <div class="mt-6 pt-6 border-t border-medical-200">
+                        <h5 class="font-semibold text-medical-800 mb-3">Contato de Emergência</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <dt class="text-sm font-medium text-medical-600">Nome:</dt>
+                                <dd class="text-sm text-medical-900">@Model.ContatoEmergencia</dd>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.TelefoneEmergencia))
+                            {
+                                <div>
+                                    <dt class="text-sm font-medium text-medical-600">Telefone:</dt>
+                                    <dd class="text-sm text-medical-900">@Model.TelefoneEmergencia</dd>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="bg-white rounded-xl shadow-sm border border-medical-200 overflow-hidden mb-8">
+            <div class="px-6 py-4 border-b border-medical-200 bg-warning-50">
+                <h3 class="text-lg font-semibold text-warning-800">Dados que serão perdidos</h3>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center p-4 bg-danger-50 rounded-lg">
+                        <div class="text-2xl font-bold text-danger-600">@Model.Consultas.Count()</div>
+                        <div class="text-sm text-danger-700">Consultas no histórico</div>
+                    </div>
+                    <div class="text-center p-4 bg-danger-50 rounded-lg">
+                        <div class="text-2xl font-bold text-danger-600">@Model.Consultas.Count(c => c.Status == StatusConsulta.Agendada)</div>
+                        <div class="text-sm text-danger-700">Consultas agendadas</div>
+                    </div>
+                    <div class="text-center p-4 bg-danger-50 rounded-lg">
+                        <div class="text-2xl font-bold text-danger-600">@Model.Prontuarios.Count()</div>
+                        <div class="text-sm text-danger-700">Prontuários médicos</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation Form -->
+        <div class="bg-white rounded-xl shadow-sm border border-danger-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-danger-200 bg-danger-50">
+                <h3 class="text-lg font-semibold text-danger-800">Confirmação de Exclusão</h3>
+            </div>
+            <div class="p-6">
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <!-- Confirmation Checkbox -->
+                    <div class="mb-6">
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="confirm-delete" type="checkbox" required 
+                                       class="w-4 h-4 text-danger-600 bg-white border-danger-300 rounded focus:ring-danger-500">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="confirm-delete" class="text-medical-700">
+                                    Eu entendo que esta ação é <strong>irreversível</strong> e que todos os dados do paciente 
+                                    <strong>@Model.Usuario.Nome @Model.Usuario.Sobrenome</strong> serão permanentemente removidos do sistema.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row sm:justify-end sm:space-x-4 space-y-3 sm:space-y-0">
+                        <a asp-action="Index" class="w-full sm:w-auto bg-medical-100 text-medical-700 px-6 py-3 rounded-lg hover:bg-medical-200 transition-colors duration-200 text-center font-medium">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </a>
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="w-full sm:w-auto bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 text-center font-medium">
+                            <i class="fas fa-eye mr-2"></i>
+                            Ver Detalhes
+                        </a>
+                        <button type="submit" id="delete-btn" disabled 
+                                class="w-full sm:w-auto bg-danger-400 text-white px-6 py-3 rounded-lg font-medium cursor-not-allowed opacity-50 transition-all duration-200">
+                            <i class="fas fa-trash mr-2"></i>
+                            Excluir Permanentemente
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="mt-8 bg-primary-50 border border-primary-200 rounded-lg p-6">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle text-primary-600 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <h4 class="text-lg font-semibold text-primary-800">Alternativas à Exclusão</h4>
+                    <p class="text-primary-700 text-sm mt-1 mb-3">
+                        Considere estas alternativas antes de excluir permanentemente o paciente:
+                    </p>
+                    <ul class="text-primary-700 text-sm space-y-1">
+                        <li>• <strong>Desativar a conta:</strong> Mantém os dados históricos mas impede novos agendamentos</li>
+                        <li>• <strong>Exportar dados:</strong> Faça backup das informações importantes antes da exclusão</li>
+                        <li>• <strong>Transferir registros:</strong> Mova os prontuários para outro sistema se necessário</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const confirmCheckbox = document.getElementById('confirm-delete');
+            const deleteBtn = document.getElementById('delete-btn');
+            
+            confirmCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    deleteBtn.disabled = false;
+                    deleteBtn.classList.remove('bg-danger-400', 'cursor-not-allowed', 'opacity-50');
+                    deleteBtn.classList.add('bg-danger-600', 'hover:bg-danger-700');
+                } else {
+                    deleteBtn.disabled = true;
+                    deleteBtn.classList.add('bg-danger-400', 'cursor-not-allowed', 'opacity-50');
+                    deleteBtn.classList.remove('bg-danger-600', 'hover:bg-danger-700');
+                }
+            });
+
+            // Double-click protection
+            let isSubmitting = false;
+            deleteBtn.addEventListener('click', function(e) {
+                if (isSubmitting) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                if (this.disabled) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                isSubmitting = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Excluindo...';
+                this.disabled = true;
+            });
+        });
+    </script>
+}

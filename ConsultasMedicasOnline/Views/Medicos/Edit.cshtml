@@ -1,0 +1,325 @@
+@model ConsultasMedicasOnline.Models.Medico
+
+@{
+    ViewData["Title"] = "Editar Médico";
+}
+
+<div class="min-h-screen bg-medical-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-medical-800">Editar Perfil Médico</h1>
+                    <p class="text-medical-600 mt-2">Dr. @Model.Usuario?.Nome @Model.Usuario?.Sobrenome - CRM @Model.CRM/@Model.EstadoCRM</p>
+                </div>
+                <div class="flex space-x-3">
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="bg-info-100 text-info-700 px-4 py-2 rounded-lg hover:bg-info-200 transition-colors duration-200 inline-flex items-center">
+                        <i class="fas fa-eye mr-2"></i>
+                        Ver Perfil
+                    </a>
+                    <a asp-action="Index" class="bg-medical-100 text-medical-700 px-4 py-2 rounded-lg hover:bg-medical-200 transition-colors duration-200 inline-flex items-center">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Voltar à Lista
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auto-save indicator -->
+        <div id="autoSaveStatus" class="hidden mb-4 p-3 bg-success-50 border border-success-200 rounded-lg text-success-700 text-sm">
+            <i class="fas fa-check-circle mr-2"></i>
+            Alterações salvas automaticamente
+        </div>
+
+        <!-- Edit Form -->
+        <div class="bg-white rounded-xl shadow-sm border border-medical-200 overflow-hidden">
+            <div class="px-6 py-4 bg-gradient-to-r from-primary-600 to-primary-700 border-b border-medical-200">
+                <h2 class="text-xl font-semibold text-white flex items-center">
+                    <i class="fas fa-edit mr-3"></i>
+                    Atualizar Informações Profissionais
+                </h2>
+            </div>
+
+            <form asp-action="Edit" method="post" class="space-y-6 p-6" id="editForm">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="UsuarioId" />
+                <input type="hidden" asp-for="DataCadastro" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Professional Information -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label asp-for="CRM" class="block text-sm font-medium text-medical-700 mb-2">
+                            <i class="fas fa-id-card mr-1 text-primary-600"></i>
+                            CRM
+                        </label>
+                        <input asp-for="CRM" class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200" 
+                               maxlength="20" />
+                        <span asp-validation-for="CRM" class="text-danger text-sm"></span>
+                        <p class="text-xs text-medical-500 mt-1">Só altere se houver transferência de estado</p>
+                    </div>
+
+                    <div>
+                        <label asp-for="EstadoCRM" class="block text-sm font-medium text-medical-700 mb-2">
+                            <i class="fas fa-map-marker-alt mr-1 text-primary-600"></i>
+                            Estado do CRM
+                        </label>
+                        <select asp-for="EstadoCRM" class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200">
+                            <option value="AC">Acre</option>
+                            <option value="AL">Alagoas</option>
+                            <option value="AP">Amapá</option>
+                            <option value="AM">Amazonas</option>
+                            <option value="BA">Bahia</option>
+                            <option value="CE">Ceará</option>
+                            <option value="DF">Distrito Federal</option>
+                            <option value="ES">Espírito Santo</option>
+                            <option value="GO">Goiás</option>
+                            <option value="MA">Maranhão</option>
+                            <option value="MT">Mato Grosso</option>
+                            <option value="MS">Mato Grosso do Sul</option>
+                            <option value="MG">Minas Gerais</option>
+                            <option value="PA">Pará</option>
+                            <option value="PB">Paraíba</option>
+                            <option value="PR">Paraná</option>
+                            <option value="PE">Pernambuco</option>
+                            <option value="PI">Piauí</option>
+                            <option value="RJ">Rio de Janeiro</option>
+                            <option value="RN">Rio Grande do Norte</option>
+                            <option value="RS">Rio Grande do Sul</option>
+                            <option value="RO">Rondônia</option>
+                            <option value="RR">Roraima</option>
+                            <option value="SC">Santa Catarina</option>
+                            <option value="SP">São Paulo</option>
+                            <option value="SE">Sergipe</option>
+                            <option value="TO">Tocantins</option>
+                        </select>
+                        <span asp-validation-for="EstadoCRM" class="text-danger text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="EspecialidadeId" class="block text-sm font-medium text-medical-700 mb-2">
+                            <i class="fas fa-stethoscope mr-1 text-primary-600"></i>
+                            Especialidade
+                        </label>
+                        <select asp-for="EspecialidadeId" asp-items="ViewBag.EspecialidadeId" class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200">
+                        </select>
+                        <span asp-validation-for="EspecialidadeId" class="text-danger text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="TempoConsultaMinutos" class="block text-sm font-medium text-medical-700 mb-2">
+                            <i class="fas fa-clock mr-1 text-primary-600"></i>
+                            Duração da Consulta (minutos)
+                        </label>
+                        <input asp-for="TempoConsultaMinutos" type="number" min="15" max="120" class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200" />
+                        <span asp-validation-for="TempoConsultaMinutos" class="text-danger text-sm"></span>
+                    </div>
+                </div>
+
+                <!-- Biography -->
+                <div>
+                    <label asp-for="Biografia" class="block text-sm font-medium text-medical-700 mb-2">
+                        <i class="fas fa-user mr-1 text-primary-600"></i>
+                        Biografia Profissional
+                        <span class="text-xs text-medical-500 ml-2" id="biografiaCount">@(Model.Biografia?.Length ?? 0) / 1000</span>
+                    </label>
+                    <textarea asp-for="Biografia" rows="4" class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200" 
+                              placeholder="Descreva sua formação, experiência e áreas de atuação..." maxlength="1000"></textarea>
+                    <span asp-validation-for="Biografia" class="text-danger text-sm"></span>
+                    <p class="text-xs text-medical-500 mt-1">Esta informação aparecerá no seu perfil público</p>
+                </div>
+
+                <!-- Consultation Settings -->
+                <div class="bg-medical-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-medical-800 mb-4 flex items-center">
+                        <i class="fas fa-cogs text-primary-600 mr-2"></i>
+                        Configurações de Consulta
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label asp-for="ValorConsulta" class="block text-sm font-medium text-medical-700 mb-2">
+                                <i class="fas fa-dollar-sign mr-1 text-success-600"></i>
+                                Valor da Consulta (R$)
+                            </label>
+                            <input asp-for="ValorConsulta" type="number" step="0.01" min="0" class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200" />
+                            <span asp-validation-for="ValorConsulta" class="text-danger text-sm"></span>
+                            <p class="text-xs text-medical-500 mt-1">Deixe em branco se não atende particular</p>
+                        </div>
+
+                        <div class="flex items-center">
+                            <div class="flex items-center h-5">
+                                <input asp-for="AceitaParticular" type="checkbox" class="h-4 w-4 text-primary-600 border-medical-300 rounded focus:ring-primary-500" />
+                            </div>
+                            <div class="ml-3">
+                                <label asp-for="AceitaParticular" class="text-sm font-medium text-medical-700">
+                                    <i class="fas fa-user mr-1 text-primary-600"></i>
+                                    Aceita consulta particular
+                                </label>
+                                <p class="text-xs text-medical-500">Atendimento de pacientes particulares</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <div class="flex items-center h-5">
+                                <input asp-for="AceitaConvenio" type="checkbox" class="h-4 w-4 text-primary-600 border-medical-300 rounded focus:ring-primary-500" />
+                            </div>
+                            <div class="ml-3">
+                                <label asp-for="AceitaConvenio" class="text-sm font-medium text-medical-700">
+                                    <i class="fas fa-hospital mr-1 text-primary-600"></i>
+                                    Aceita convênio
+                                </label>
+                                <p class="text-xs text-medical-500">Atendimento por planos de saúde</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Section (Read-only) -->
+                <div class="bg-info-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-info-800 mb-4 flex items-center">
+                        <i class="fas fa-chart-bar text-info-600 mr-2"></i>
+                        Estatísticas do Perfil
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-info-600">@Model.Consultas.Count()</div>
+                            <div class="text-sm text-info-700">Total de Consultas</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-success-600">@Model.Consultas.Count(c => c.Status == StatusConsulta.Concluida)</div>
+                            <div class="text-sm text-success-700">Concluídas</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-primary-600">@Model.DataCadastro.ToString("dd/MM/yyyy")</div>
+                            <div class="text-sm text-primary-700">Cadastrado em</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-between items-center pt-6 border-t border-medical-200">
+                    <div class="flex space-x-3">
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="px-4 py-2 bg-danger-100 text-danger-700 rounded-lg hover:bg-danger-200 transition-colors duration-200 inline-flex items-center">
+                                <i class="fas fa-trash mr-2"></i>
+                                Excluir Médico
+                            </a>
+                        }
+                    </div>
+                    <div class="flex space-x-4">
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="px-6 py-3 border border-medical-300 text-medical-700 rounded-lg hover:bg-medical-50 transition-colors duration-200 inline-flex items-center">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </a>
+                        <button type="submit" class="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
+                            <i class="fas fa-save mr-2"></i>
+                            Salvar Alterações
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="mt-6 bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+            <h3 class="text-lg font-semibold text-medical-800 mb-4 flex items-center">
+                <i class="fas fa-external-link-alt text-primary-600 mr-2"></i>
+                Ações Adicionais
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <a href="#" class="bg-primary-50 border border-primary-200 rounded-lg p-4 hover:bg-primary-100 transition-colors duration-200 text-center">
+                    <i class="fas fa-calendar-alt text-primary-600 text-xl mb-2"></i>
+                    <div class="text-sm font-medium text-primary-700">Gerenciar Horários</div>
+                </a>
+                <a asp-controller="Consultas" asp-action="Index" asp-route-medicoId="@Model.Id" class="bg-success-50 border border-success-200 rounded-lg p-4 hover:bg-success-100 transition-colors duration-200 text-center">
+                    <i class="fas fa-list text-success-600 text-xl mb-2"></i>
+                    <div class="text-sm font-medium text-success-700">Minhas Consultas</div>
+                </a>
+                <a href="#" class="bg-warning-50 border border-warning-200 rounded-lg p-4 hover:bg-warning-100 transition-colors duration-200 text-center">
+                    <i class="fas fa-file-medical text-warning-600 text-xl mb-2"></i>
+                    <div class="text-sm font-medium text-warning-700">Prontuários</div>
+                </a>
+                <a href="#" class="bg-info-50 border border-info-200 rounded-lg p-4 hover:bg-info-100 transition-colors duration-200 text-center">
+                    <i class="fas fa-chart-line text-info-600 text-xl mb-2"></i>
+                    <div class="text-sm font-medium text-info-700">Relatórios</div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            let originalFormData = $('#editForm').serialize();
+            let saveTimeout;
+
+            // Character count for biografia
+            $('#Biografia').on('input', function() {
+                const length = this.value.length;
+                $('#biografiaCount').text(length + ' / 1000');
+                
+                if (length > 900) {
+                    $('#biografiaCount').addClass('text-warning-600');
+                } else {
+                    $('#biografiaCount').removeClass('text-warning-600');
+                }
+            });
+
+            // Auto-save indication
+            function showAutoSaveStatus() {
+                $('#autoSaveStatus').removeClass('hidden');
+                setTimeout(() => {
+                    $('#autoSaveStatus').addClass('hidden');
+                }, 3000);
+            }
+
+            // Detect form changes
+            $('#editForm input, #editForm select, #editForm textarea').on('change input', function() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    if ($('#editForm').serialize() !== originalFormData) {
+                        showAutoSaveStatus();
+                        originalFormData = $('#editForm').serialize();
+                    }
+                }, 2000);
+            });
+
+            // Sync particular checkbox with value input
+            $('#ValorConsulta').on('input', function() {
+                if (this.value && parseFloat(this.value) > 0) {
+                    $('#AceitaParticular').prop('checked', true);
+                }
+            });
+
+            $('#AceitaParticular').change(function() {
+                if (!this.checked) {
+                    $('#ValorConsulta').val('');
+                }
+            });
+
+            // Format CRM input
+            $('#CRM').on('input', function() {
+                this.value = this.value.replace(/\D/g, '');
+            });
+
+            // Warn before leaving with unsaved changes
+            window.addEventListener('beforeunload', function(e) {
+                if ($('#editForm').serialize() !== originalFormData) {
+                    e.preventDefault();
+                    e.returnValue = '';
+                }
+            });
+
+            // Remove warning when form is submitted
+            $('#editForm').on('submit', function() {
+                window.removeEventListener('beforeunload', function(){});
+            });
+        });
+    </script>
+}

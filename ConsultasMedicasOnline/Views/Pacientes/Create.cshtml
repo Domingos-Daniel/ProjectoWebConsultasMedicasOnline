@@ -1,0 +1,231 @@
+@model ConsultasMedicasOnline.Models.Paciente
+
+@{
+    ViewData["Title"] = "Cadastro de Paciente";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-white py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center">
+                <a asp-action="Index" class="text-medical-600 hover:text-primary-600 mr-4 transition-colors duration-200">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-bold text-medical-800">
+                        <i class="fas fa-user-plus text-primary-600 mr-3"></i>
+                        Cadastro de Paciente
+                    </h1>
+                    <p class="mt-2 text-medical-600">Complete seu perfil de paciente para agendar consultas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="bg-white rounded-xl shadow-sm border border-medical-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-medical-200 bg-primary-50">
+                <h3 class="text-lg font-semibold text-primary-800">Informações do Paciente</h3>
+                <p class="text-sm text-primary-600 mt-1">Preencha as informações abaixo para completar seu cadastro</p>
+            </div>
+
+            <form asp-action="Create" class="p-6" id="pacienteForm">
+                <div asp-validation-summary="ModelOnly" class="mb-6 p-4 bg-danger-50 border border-danger-200 rounded-lg text-danger-700"></div>
+
+                <!-- Basic Medical Info -->
+                <div class="mb-8">
+                    <h4 class="text-md font-semibold text-medical-800 mb-4 flex items-center">
+                        <i class="fas fa-heartbeat text-primary-600 mr-2"></i>
+                        Informações Médicas Básicas
+                    </h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label asp-for="TipoSanguineo" class="block text-sm font-medium text-medical-700 mb-2">
+                                <i class="fas fa-tint text-red-500 mr-1"></i>
+                                Tipo Sanguíneo
+                            </label>
+                            <select asp-for="TipoSanguineo" class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200">
+                                <option value="">Selecione o tipo sanguíneo</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                            <span asp-validation-for="TipoSanguineo" class="text-danger-600 text-sm mt-1"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medical History -->
+                <div class="mb-8">
+                    <h4 class="text-md font-semibold text-medical-800 mb-4 flex items-center">
+                        <i class="fas fa-clipboard-list text-primary-600 mr-2"></i>
+                        Histórico Médico
+                    </h4>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label asp-for="Alergias" class="block text-sm font-medium text-medical-700 mb-2">
+                                <i class="fas fa-exclamation-triangle text-warning-500 mr-1"></i>
+                                Alergias Conhecidas
+                            </label>
+                            <textarea asp-for="Alergias" 
+                                      rows="3" 
+                                      placeholder="Descreva suas alergias conhecidas (medicamentos, alimentos, etc.)"
+                                      class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 resize-none"></textarea>
+                            <span asp-validation-for="Alergias" class="text-danger-600 text-sm mt-1"></span>
+                            <p class="text-sm text-medical-500 mt-1">Esta informação é crucial para sua segurança</p>
+                        </div>
+
+                        <div>
+                            <label asp-for="MedicamentosEmUso" class="block text-sm font-medium text-medical-700 mb-2">
+                                <i class="fas fa-pills text-primary-500 mr-1"></i>
+                                Medicamentos em Uso
+                            </label>
+                            <textarea asp-for="MedicamentosEmUso" 
+                                      rows="3" 
+                                      placeholder="Liste os medicamentos que você utiliza atualmente"
+                                      class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 resize-none"></textarea>
+                            <span asp-validation-for="MedicamentosEmUso" class="text-danger-600 text-sm mt-1"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="HistoricoFamiliar" class="block text-sm font-medium text-medical-700 mb-2">
+                                <i class="fas fa-family text-medical-500 mr-1"></i>
+                                Histórico Familiar
+                            </label>
+                            <textarea asp-for="HistoricoFamiliar" 
+                                      rows="4" 
+                                      placeholder="Informe doenças hereditárias ou condições médicas relevantes na família"
+                                      class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 resize-none"></textarea>
+                            <span asp-validation-for="HistoricoFamiliar" class="text-danger-600 text-sm mt-1"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Contact -->
+                <div class="mb-8">
+                    <h4 class="text-md font-semibold text-medical-800 mb-4 flex items-center">
+                        <i class="fas fa-ambulance text-danger-600 mr-2"></i>
+                        Contato de Emergência
+                    </h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label asp-for="ContatoEmergencia" class="block text-sm font-medium text-medical-700 mb-2">
+                                Nome do Contato
+                            </label>
+                            <input asp-for="ContatoEmergencia" 
+                                   type="text" 
+                                   placeholder="Nome completo da pessoa para contato"
+                                   class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200" />
+                            <span asp-validation-for="ContatoEmergencia" class="text-danger-600 text-sm mt-1"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="TelefoneEmergencia" class="block text-sm font-medium text-medical-700 mb-2">
+                                Telefone de Emergência
+                            </label>
+                            <input asp-for="TelefoneEmergencia" 
+                                   type="tel" 
+                                   placeholder="(00) 00000-0000"
+                                   class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200" />
+                            <span asp-validation-for="TelefoneEmergencia" class="text-danger-600 text-sm mt-1"></span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-medical-500 mt-2">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Este contato será utilizado apenas em situações de emergência
+                    </p>
+                </div>
+
+                <!-- Terms and Privacy -->
+                <div class="mb-8 p-4 bg-medical-50 border border-medical-200 rounded-lg">
+                    <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                            <input id="terms" type="checkbox" required class="w-4 h-4 text-primary-600 bg-white border-medical-300 rounded focus:ring-primary-500">
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="terms" class="text-medical-700">
+                                Concordo com os <a href="#" class="text-primary-600 hover:text-primary-700 font-medium">Termos de Uso</a> 
+                                e <a href="#" class="text-primary-600 hover:text-primary-700 font-medium">Política de Privacidade</a>
+                            </label>
+                            <p class="text-medical-500 mt-1">
+                                Ao marcar esta opção, você confirma que leu e concorda com nossos termos e política de privacidade.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="flex flex-col sm:flex-row sm:justify-end sm:space-x-4 space-y-3 sm:space-y-0">
+                    <a asp-action="Index" class="w-full sm:w-auto bg-medical-100 text-medical-700 px-6 py-3 rounded-lg hover:bg-medical-200 transition-colors duration-200 text-center font-medium">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancelar
+                    </a>
+                    <button type="submit" class="w-full sm:w-auto bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium">
+                        <i class="fas fa-save mr-2"></i>
+                        Completar Cadastro
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-primary-50 border border-primary-200 rounded-lg p-6">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-shield-alt text-primary-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="text-lg font-semibold text-primary-800">Segurança dos Dados</h4>
+                        <p class="text-primary-700 text-sm mt-1">
+                            Todas as suas informações médicas são protegidas por criptografia e mantidas em conformidade com a LGPD.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-success-50 border border-success-200 rounded-lg p-6">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-user-md text-success-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="text-lg font-semibold text-success-800">Acesso aos Médicos</h4>
+                        <p class="text-success-700 text-sm mt-1">
+                            Após completar seu cadastro, você poderá agendar consultas com nossos médicos especialistas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Phone mask
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInput = document.querySelector('input[name="TelefoneEmergencia"]');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length <= 11) {
+                        value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+                        value = value.replace(/(\d{2}) (\d{4,5})(\d{0,4})/, '$1 $2-$3');
+                        e.target.value = value;
+                    }
+                });
+            }
+        });
+    </script>
+}
