@@ -99,7 +99,8 @@
                         <div class="relative group">
                             <input asp-for="Input.Telefone" 
                                    class="w-full px-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 group-hover:bg-white/70 placeholder-slate-400" 
-                                   placeholder="(11) 99999-9999" 
+                                   placeholder="(+244) 912 345 678"
+                                   type="tel" 
                                    autocomplete="tel" />
                             <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                         </div>
@@ -235,13 +236,15 @@
             if (phoneInput) {
                 phoneInput.addEventListener('input', function (e) {
                     let value = e.target.value.replace(/\D/g, '');
-                    if (value.length >= 11) {
-                        value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-                    } else if (value.length >= 6) {
-                        value = value.replace(/(\d{2})(\d{4})(\d+)/, '($1) $2-$3');
-                    } else if (value.length >= 2) {
-                        value = value.replace(/(\d{2})(\d+)/, '($1) $2');
+                    if (value.startsWith('244')) {
+                        value = '+' + value;
+                    } else if (!value.startsWith('+244')) {
+                        value = '+244' + value;
                     }
+                    if (value.length > 13) {
+                        value = value.slice(0, 13);
+                    }
+                    value = value.replace(/(\+244)(\d{3})(\d{3})(\d{3})/, '$1 $2 $3 $4');
                     e.target.value = value;
                 });
             }

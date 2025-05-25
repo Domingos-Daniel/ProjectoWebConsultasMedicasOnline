@@ -437,3 +437,4 @@ D:\ProjectoWeb\ConsultasMedicasOnline\bin\Debug\net9.0\ru\Microsoft.CodeAnalysis
 D:\ProjectoWeb\ConsultasMedicasOnline\bin\Debug\net9.0\tr\Microsoft.CodeAnalysis.Scripting.resources.dll
 D:\ProjectoWeb\ConsultasMedicasOnline\bin\Debug\net9.0\zh-Hans\Microsoft.CodeAnalysis.Scripting.resources.dll
 D:\ProjectoWeb\ConsultasMedicasOnline\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Scripting.resources.dll
+D:\ProjectoWeb\ConsultasMedicasOnline\obj\Debug\net9.0\ConsultasMedicasOnline.sourcelink.json

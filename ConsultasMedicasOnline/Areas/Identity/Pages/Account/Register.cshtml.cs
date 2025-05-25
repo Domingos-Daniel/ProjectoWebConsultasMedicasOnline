@@ -60,7 +60,7 @@ namespace ConsultasMedicasOnline.Areas.Identity.Pages.Account
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [StringLength(15, ErrorMessage = "O telefone deve ter no máximo 15 caracteres")]
+            [StringLength(20, ErrorMessage = "O telefone deve ter no máximo 20 caracteres")]
             [Display(Name = "Telefone")]
             public string Telefone { get; set; }
 
