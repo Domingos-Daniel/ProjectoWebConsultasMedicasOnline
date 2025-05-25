@@ -5,70 +5,70 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-white py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
-        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-medical-200 p-8 mb-8">
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">
-                        <i class="fas fa-calendar-plus text-blue-600 mr-3"></i>
+                    <h1 class="text-3xl font-bold text-medical-800 mb-2">
+                        <i class="fas fa-calendar-plus text-primary-600 mr-3"></i>
                         Agendar Nova Consulta
                     </h1>
-                    <p class="text-gray-600">Preencha os dados para agendar sua consulta médica</p>
+                    <p class="text-medical-600">Preencha os dados para agendar sua consulta médica</p>
                 </div>
-                <div class="hidden md:flex items-center space-x-2 text-blue-600">
-                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <div class="hidden md:flex items-center space-x-2 text-primary-600">
+                    <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
                         <span class="text-sm font-bold">1</span>
                     </div>
-                    <div class="w-16 h-1 bg-blue-100"></div>
-                    <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                        <span class="text-sm font-bold text-gray-400">2</span>
+                    <div class="w-16 h-1 bg-primary-100"></div>
+                    <div class="w-8 h-8 bg-medical-100 rounded-full flex items-center justify-center">
+                        <span class="text-sm font-bold text-medical-400">2</span>
                     </div>
-                    <div class="w-16 h-1 bg-gray-100"></div>
-                    <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                        <span class="text-sm font-bold text-gray-400">3</span>
+                    <div class="w-16 h-1 bg-medical-100"></div>
+                    <div class="w-8 h-8 bg-medical-100 rounded-full flex items-center justify-center">
+                        <span class="text-sm font-bold text-medical-400">3</span>
                     </div>
                 </div>
             </div>
 
             <!-- Validation Summary -->
-            <div asp-validation-summary="ModelOnly" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 hidden" id="validation-summary"></div>
+            <div asp-validation-summary="ModelOnly" class="mb-6 p-4 bg-danger-50 border border-danger-200 rounded-lg text-danger-700 hidden" id="validation-summary"></div>
         </div>
 
         <!-- Form -->
         <form asp-action="Create" id="consultaForm" class="space-y-8">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger-600"></div>
             
             <!-- Step 1: Médico e Especialidade -->
-            <div class="bg-white rounded-2xl shadow-xl p-8">
-                <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
-                    <i class="fas fa-user-md text-blue-600 mr-3"></i>
+            <div class="bg-white rounded-2xl shadow-sm border border-medical-200 p-8">
+                <h2 class="text-xl font-bold text-medical-800 mb-6 flex items-center">
+                    <i class="fas fa-user-md text-primary-600 mr-3"></i>
                     Seleção do Médico
                 </h2>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <!-- Médico -->
                     <div class="form-group">
-                        <label asp-for="MedicoId" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <label asp-for="MedicoId" class="block text-sm font-semibold text-medical-700 mb-2">
                             Médico *
                         </label>
                         <select asp-for="MedicoId" 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
                                 asp-items="ViewBag.MedicoId"
                                 required>
                             <option value="">Selecione um médico...</option>
                         </select>
-                        <span asp-validation-for="MedicoId" class="text-red-500 text-sm mt-1 block"></span>
-                        <div id="medico-info" class="mt-3 p-4 bg-blue-50 rounded-lg hidden">
-                            <h4 class="font-semibold text-blue-900 mb-2">Informações do Médico</h4>
-                            <div id="medico-details" class="text-blue-700 text-sm"></div>
+                        <span asp-validation-for="MedicoId" class="text-danger-600 text-sm mt-1 block"></span>
+                        <div id="medico-info" class="mt-3 p-4 bg-primary-50 rounded-lg hidden">
+                            <h4 class="font-semibold text-primary-800 mb-2">Informações do Médico</h4>
+                            <div id="medico-details" class="text-primary-700 text-sm"></div>
                         </div>
                     </div>
 
                     <!-- Tipo de Consulta -->
                     <div class="form-group">
-                        <label asp-for="Tipo" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <label asp-for="Tipo" class="block text-sm font-semibold text-medical-700 mb-2">
                             Tipo de Consulta *
                         </label>
                         <div class="grid grid-cols-2 gap-4">
@@ -76,11 +76,11 @@
                                 <input type="radio" asp-for="Tipo" value="1" id="presencial" 
                                        class="sr-only peer" checked />
                                 <label for="presencial" 
-                                       class="flex items-center p-4 bg-white border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all duration-200">
-                                    <i class="fas fa-clinic-medical text-gray-600 peer-checked:text-blue-600 mr-3"></i>
+                                       class="flex items-center p-4 bg-white border-2 border-medical-200 rounded-lg cursor-pointer hover:bg-medical-50 peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all duration-200">
+                                    <i class="fas fa-clinic-medical text-medical-600 peer-checked:text-primary-600 mr-3"></i>
                                     <div>
-                                        <div class="font-semibold text-gray-900">Presencial</div>
-                                        <div class="text-sm text-gray-600">No consultório</div>
+                                        <div class="font-semibold text-medical-800">Presencial</div>
+                                        <div class="text-sm text-medical-600">No consultório</div>
                                     </div>
                                 </label>
                             </div>
@@ -88,51 +88,51 @@
                                 <input type="radio" asp-for="Tipo" value="2" id="online" 
                                        class="sr-only peer" />
                                 <label for="online" 
-                                       class="flex items-center p-4 bg-white border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all duration-200">
-                                    <i class="fas fa-video text-gray-600 peer-checked:text-blue-600 mr-3"></i>
+                                       class="flex items-center p-4 bg-white border-2 border-medical-200 rounded-lg cursor-pointer hover:bg-medical-50 peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all duration-200">
+                                    <i class="fas fa-video text-medical-600 peer-checked:text-primary-600 mr-3"></i>
                                     <div>
-                                        <div class="font-semibold text-gray-900">Online</div>
-                                        <div class="text-sm text-gray-600">Por videochamada</div>
+                                        <div class="font-semibold text-medical-800">Online</div>
+                                        <div class="text-sm text-medical-600">Por videochamada</div>
                                     </div>
                                 </label>
                             </div>
                         </div>
-                        <span asp-validation-for="Tipo" class="text-red-500 text-sm mt-1 block"></span>
+                        <span asp-validation-for="Tipo" class="text-danger-600 text-sm mt-1 block"></span>
                     </div>
                 </div>
             </div>
 
             <!-- Step 2: Data e Horário -->
-            <div class="bg-white rounded-2xl shadow-xl p-8">
-                <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
-                    <i class="fas fa-calendar-alt text-blue-600 mr-3"></i>
+            <div class="bg-white rounded-2xl shadow-sm border border-medical-200 p-8">
+                <h2 class="text-xl font-bold text-medical-800 mb-6 flex items-center">
+                    <i class="fas fa-calendar-alt text-primary-600 mr-3"></i>
                     Data e Horário
                 </h2>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Data -->
                     <div class="form-group">
-                        <label asp-for="DataHora" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <label asp-for="DataHora" class="block text-sm font-semibold text-medical-700 mb-2">
                             Data da Consulta *
                         </label>
                         <input asp-for="DataHora" type="date" 
                                min="@DateTime.Now.ToString("yyyy-MM-dd")"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                               class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
                                required />
-                        <span asp-validation-for="DataHora" class="text-red-500 text-sm mt-1 block"></span>
+                        <span asp-validation-for="DataHora" class="text-danger-600 text-sm mt-1 block"></span>
                     </div>
 
                     <!-- Horário -->
                     <div class="form-group">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <label class="block text-sm font-semibold text-medical-700 mb-2">
                             Horário *
                         </label>
                         <select id="horario" 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
                                 required>
                             <option value="">Selecione um horário...</option>
                         </select>
-                        <div class="mt-2 text-xs text-gray-500">
+                        <div class="mt-2 text-xs text-medical-500">
                             <i class="fas fa-info-circle mr-1"></i>
                             Horários disponíveis serão exibidos após selecionar data e médico
                         </div>
@@ -140,52 +140,52 @@
 
                     <!-- Duração -->
                     <div class="form-group">
-                        <label asp-for="DuracaoMinutos" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <label asp-for="DuracaoMinutos" class="block text-sm font-semibold text-medical-700 mb-2">
                             Duração (minutos)
                         </label>
                         <select asp-for="DuracaoMinutos" 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200">
                             <option value="30" selected>30 minutos</option>
                             <option value="45">45 minutos</option>
                             <option value="60">60 minutos</option>
                         </select>
-                        <span asp-validation-for="DuracaoMinutos" class="text-red-500 text-sm mt-1 block"></span>
+                        <span asp-validation-for="DuracaoMinutos" class="text-danger-600 text-sm mt-1 block"></span>
                     </div>
                 </div>
             </div>
 
             <!-- Step 3: Detalhes da Consulta -->
-            <div class="bg-white rounded-2xl shadow-xl p-8">
-                <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
-                    <i class="fas fa-clipboard-list text-blue-600 mr-3"></i>
+            <div class="bg-white rounded-2xl shadow-sm border border-medical-200 p-8">
+                <h2 class="text-xl font-bold text-medical-800 mb-6 flex items-center">
+                    <i class="fas fa-clipboard-list text-primary-600 mr-3"></i>
                     Detalhes da Consulta
                 </h2>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <!-- Motivo da Consulta -->
                     <div class="form-group">
-                        <label asp-for="MotivoConsulta" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <label asp-for="MotivoConsulta" class="block text-sm font-semibold text-medical-700 mb-2">
                             Motivo da Consulta
                         </label>
                         <textarea asp-for="MotivoConsulta" rows="4"
                                   placeholder="Descreva brevemente o motivo da consulta..."
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"></textarea>
-                        <span asp-validation-for="MotivoConsulta" class="text-red-500 text-sm mt-1 block"></span>
-                        <div class="mt-1 text-xs text-gray-500">
+                                  class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 resize-none"></textarea>
+                        <span asp-validation-for="MotivoConsulta" class="text-danger-600 text-sm mt-1 block"></span>
+                        <div class="mt-1 text-xs text-medical-500">
                             <span id="motivo-count">0</span>/500 caracteres
                         </div>
                     </div>
 
                     <!-- Observações -->
                     <div class="form-group">
-                        <label asp-for="ObservacoesGerais" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <label asp-for="ObservacoesGerais" class="block text-sm font-semibold text-medical-700 mb-2">
                             Observações Gerais
                         </label>
                         <textarea asp-for="ObservacoesGerais" rows="4"
                                   placeholder="Observações adicionais, alergias, medicamentos em uso..."
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"></textarea>
-                        <span asp-validation-for="ObservacoesGerais" class="text-red-500 text-sm mt-1 block"></span>
-                        <div class="mt-1 text-xs text-gray-500">
+                                  class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 resize-none"></textarea>
+                        <span asp-validation-for="ObservacoesGerais" class="text-danger-600 text-sm mt-1 block"></span>
+                        <div class="mt-1 text-xs text-medical-500">
                             <span id="obs-count">0</span>/1000 caracteres
                         </div>
                     </div>
@@ -193,8 +193,8 @@
             </div>
 
             <!-- Resumo e Confirmação -->
-            <div class="bg-white rounded-2xl shadow-xl p-8" id="resumo-section" style="display: none;">
-                <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+            <div class="bg-white rounded-2xl shadow-sm border border-medical-200 p-8" id="resumo-section" style="display: none;">
+                <h2 class="text-xl font-bold text-medical-800 mb-6 flex items-center">
                     <i class="fas fa-check-circle text-green-600 mr-3"></i>
                     Resumo da Consulta
                 </h2>
@@ -215,23 +215,23 @@
             </div>
 
             <!-- Botões de Ação -->
-            <div class="bg-white rounded-2xl shadow-xl p-8">
+            <div class="bg-white rounded-2xl shadow-sm border border-medical-200 p-8">
                 <div class="flex flex-col sm:flex-row gap-4 justify-between">
                     <a asp-action="Index" 
-                       class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                       class="inline-flex items-center px-6 py-3 border border-medical-300 text-medical-700 rounded-lg hover:bg-medical-50 transition-all duration-200">
                         <i class="fas fa-arrow-left mr-2"></i>
                         Voltar
                     </a>
                     
                     <div class="flex flex-col sm:flex-row gap-4">
                         <button type="button" id="preview-btn"
-                                class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200">
+                                class="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200">
                             <i class="fas fa-eye mr-2"></i>
                             Visualizar Resumo
                         </button>
                         
                         <button type="submit" id="submit-btn" 
-                                class="inline-flex items-center px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 font-semibold"
+                                class="inline-flex items-center px-8 py-3 bg-success-600 text-white rounded-lg hover:bg-success-700 transition-all duration-200 font-semibold"
                                 disabled>
                             <i class="fas fa-calendar-check mr-2"></i>
                             <span class="loading-text">Agendar Consulta</span>

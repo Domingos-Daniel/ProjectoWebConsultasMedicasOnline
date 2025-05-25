@@ -1,0 +1,199 @@
+@model ConsultasMedicasOnline.Models.Paciente
+
+@{
+    ViewData["Title"] = "Configurações";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-white py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center">
+                <a asp-action="MeuPerfil" class="text-medical-600 hover:text-primary-600 mr-4 transition-colors duration-200">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-bold text-medical-800">
+                        <i class="fas fa-cog text-primary-600 mr-3"></i>
+                        Configurações
+                    </h1>
+                    <p class="mt-2 text-medical-600">Gerencie suas preferências e informações pessoais</p>
+                </div>
+            </div>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="mb-6 p-4 bg-success-50 border border-success-200 rounded-lg text-success-700">
+                <i class="fas fa-check-circle mr-2"></i>
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        <div class="space-y-6">
+            <!-- Personal Information -->
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-medical-200 bg-primary-50">
+                    <h3 class="text-lg font-semibold text-primary-800">Informações Pessoais</h3>
+                    <p class="text-sm text-primary-600 mt-1">Atualize suas informações médicas e de contato</p>
+                </div>
+
+                <form asp-action="AtualizarConfiguracoes" class="p-6">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="UsuarioId" />
+                    <input type="hidden" asp-for="DataCadastro" />
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label asp-for="TipoSanguineo" class="block text-sm font-medium text-medical-700 mb-2">
+                                <i class="fas fa-tint text-red-500 mr-1"></i>
+                                Tipo Sanguíneo
+                            </label>
+                            <select asp-for="TipoSanguineo" class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200">
+                                <option value="">Selecione o tipo sanguíneo</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label asp-for="TelefoneEmergencia" class="block text-sm font-medium text-medical-700 mb-2">
+                                <i class="fas fa-phone text-green-500 mr-1"></i>
+                                Telefone de Emergência
+                            </label>
+                            <input asp-for="TelefoneEmergencia" 
+                                   type="tel" 
+                                   placeholder="+244 923 456 789"
+                                   class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200" />
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <label asp-for="ContatoEmergencia" class="block text-sm font-medium text-medical-700 mb-2">
+                            <i class="fas fa-user text-medical-500 mr-1"></i>
+                            Contato de Emergência
+                        </label>
+                        <input asp-for="ContatoEmergencia" 
+                               type="text" 
+                               placeholder="Nome completo da pessoa para contato"
+                               class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200" />
+                    </div>
+
+                    <div class="mt-6 space-y-4">
+                        <div>
+                            <label asp-for="Alergias" class="block text-sm font-medium text-medical-700 mb-2">
+                                <i class="fas fa-exclamation-triangle text-warning-500 mr-1"></i>
+                                Alergias
+                            </label>
+                            <textarea asp-for="Alergias" 
+                                      rows="3" 
+                                      placeholder="Descreva suas alergias conhecidas"
+                                      class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 resize-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label asp-for="MedicamentosEmUso" class="block text-sm font-medium text-medical-700 mb-2">
+                                <i class="fas fa-pills text-primary-500 mr-1"></i>
+                                Medicamentos em Uso
+                            </label>
+                            <textarea asp-for="MedicamentosEmUso" 
+                                      rows="3" 
+                                      placeholder="Liste os medicamentos que você utiliza atualmente"
+                                      class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 resize-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label asp-for="HistoricoFamiliar" class="block text-sm font-medium text-medical-700 mb-2">
+                                <i class="fas fa-family text-medical-500 mr-1"></i>
+                                Histórico Familiar
+                            </label>
+                            <textarea asp-for="HistoricoFamiliar" 
+                                      rows="4" 
+                                      placeholder="Informe doenças hereditárias ou condições médicas relevantes na família"
+                                      class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-end space-x-4">
+                        <a asp-action="MeuPerfil" class="bg-medical-100 text-medical-700 px-6 py-3 rounded-lg hover:bg-medical-200 transition-colors duration-200 font-medium">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </a>
+                        <button type="submit" class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium">
+                            <i class="fas fa-save mr-2"></i>
+                            Salvar Alterações
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Notification Preferences -->
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-medical-200 bg-primary-50">
+                    <h3 class="text-lg font-semibold text-primary-800">Preferências de Notificação</h3>
+                    <p class="text-sm text-primary-600 mt-1">Configure como deseja receber lembretes e atualizações</p>
+                </div>
+
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <label class="font-medium text-medical-800">Notificações por Email</label>
+                                <p class="text-sm text-medical-600">Receber lembretes de consulta por email</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" checked class="sr-only peer">
+                                <div class="w-11 h-6 bg-medical-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-medical-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <label class="font-medium text-medical-800">Notificações por SMS</label>
+                                <p class="text-sm text-medical-600">Receber lembretes de consulta por SMS</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-medical-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-medical-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Angolan phone mask for emergency contact
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInput = document.querySelector('input[name="TelefoneEmergencia"]');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    
+                    if (value.length > 0 && !value.startsWith('244')) {
+                        if (value.length === 9) {
+                            value = '244' + value;
+                        }
+                    }
+                    
+                    if (value.length <= 12) {
+                        if (value.length >= 3) {
+                            value = value.replace(/(\d{3})(\d{0,3})(\d{0,3})(\d{0,3})/, '+$1 $2 $3 $4');
+                            value = value.trim().replace(/\s+/g, ' ');
+                        }
+                        e.target.value = value;
+                    }
+                });
+            }
+        });
+    </script>
+}

@@ -201,14 +201,28 @@
                             <!-- Dropdown Menu -->
                             <div id="userMenu" class="absolute right-0 mt-2 w-48 bg-white/90 backdrop-blur-lg rounded-xl shadow-lg border border-white/20 opacity-0 invisible transform translate-y-2 transition-all duration-300">
                                 <div class="py-2">
-                                    <a href="#" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
-                                        <i class="fas fa-user-circle mr-3"></i>
-                                        Meu Perfil
-                                    </a>
-                                    <a href="#" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
-                                        <i class="fas fa-cog mr-3"></i>
-                                        Configurações
-                                    </a>
+                                    @if (User.IsInRole("Paciente"))
+                                    {
+                                        <a asp-controller="Pacientes" asp-action="MeuPerfil" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
+                                            <i class="fas fa-user-circle mr-3"></i>
+                                            Meu Perfil
+                                        </a>
+                                        <a asp-controller="Pacientes" asp-action="Configuracoes" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
+                                            <i class="fas fa-cog mr-3"></i>
+                                            Configurações
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
+                                            <i class="fas fa-user-circle mr-3"></i>
+                                            Meu Perfil
+                                        </a>
+                                        <a href="#" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
+                                            <i class="fas fa-cog mr-3"></i>
+                                            Configurações
+                                        </a>
+                                    }
                                     <hr class="my-1 border-slate-200">
                                     <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" class="block">
                                         <button type="submit" class="w-full text-left flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200">
@@ -285,10 +299,28 @@
                                 </div>
                                 @User.Identity.Name
                             </div>
-                            <a href="#" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
-                                <i class="fas fa-user-circle mr-3 w-4"></i>
-                                Meu Perfil
-                            </a>
+                            @if (User.IsInRole("Paciente"))
+                            {
+                                <a asp-controller="Pacientes" asp-action="MeuPerfil" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
+                                    <i class="fas fa-user-circle mr-3 w-4"></i>
+                                    Meu Perfil
+                                </a>
+                                <a asp-controller="Pacientes" asp-action="Configuracoes" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
+                                    <i class="fas fa-cog mr-3 w-4"></i>
+                                    Configurações
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="#" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
+                                    <i class="fas fa-user-circle mr-3 w-4"></i>
+                                    Meu Perfil
+                                </a>
+                                <a href="#" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300">
+                                    <i class="fas fa-cog mr-3 w-4"></i>
+                                    Configurações
+                                </a>
+                            }
                             <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" class="block">
                                 <button type="submit" class="w-full text-left flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300">
                                     <i class="fas fa-sign-out-alt mr-3 w-4"></i>

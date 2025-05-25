@@ -1,0 +1,158 @@
+@model ConsultasMedicasOnline.Models.Paciente
+
+@{
+    ViewData["Title"] = "Meu Perfil";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-white py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-medical-800">
+                <i class="fas fa-user-circle text-primary-600 mr-3"></i>
+                Meu Perfil
+            </h1>
+            <p class="mt-2 text-medical-600">Visualize e gerencie suas informações pessoais e médicas</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Profile Card -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                    <div class="text-center">
+                        <div class="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-user text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-medical-800">@Model.Usuario.Nome</h3>
+                        <p class="text-medical-600">@Model.Usuario.Email</p>
+                        <div class="mt-4 flex justify-center space-x-2">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 text-sm">
+                                <i class="fas fa-edit mr-1"></i>
+                                Editar
+                            </a>
+                            <a asp-action="Configuracoes" class="bg-medical-100 text-medical-700 px-4 py-2 rounded-lg hover:bg-medical-200 transition-colors duration-200 text-sm">
+                                <i class="fas fa-cog mr-1"></i>
+                                Configurações
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6 mt-6">
+                    <h4 class="text-lg font-semibold text-medical-800 mb-4">Ações Rápidas</h4>
+                    <div class="space-y-3">
+                        <a asp-controller="Consultas" asp-action="Create" class="flex items-center p-3 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors duration-200">
+                            <i class="fas fa-plus text-primary-600 mr-3"></i>
+                            <span class="text-primary-700 font-medium">Agendar Consulta</span>
+                        </a>
+                        <a asp-controller="Consultas" asp-action="Index" class="flex items-center p-3 bg-medical-50 rounded-lg hover:bg-medical-100 transition-colors duration-200">
+                            <i class="fas fa-calendar-alt text-medical-600 mr-3"></i>
+                            <span class="text-medical-700 font-medium">Minhas Consultas</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Details -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Medical Information -->
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                    <h4 class="text-lg font-semibold text-medical-800 mb-4 flex items-center">
+                        <i class="fas fa-heartbeat text-primary-600 mr-2"></i>
+                        Informações Médicas
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-medical-700 mb-1">Tipo Sanguíneo</label>
+                            <p class="text-medical-600">@(Model.TipoSanguineo ?? "Não informado")</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-medical-700 mb-1">Telefone</label>
+                            <p class="text-medical-600">@(Model.Telefone ?? "Não informado")</p>
+                        </div>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Alergias))
+                    {
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-medical-700 mb-1">Alergias</label>
+                            <p class="text-medical-600 bg-warning-50 p-3 rounded-lg border border-warning-200">@Model.Alergias</p>
+                        </div>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(Model.MedicamentosEmUso))
+                    {
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-medical-700 mb-1">Medicamentos em Uso</label>
+                            <p class="text-medical-600">@Model.MedicamentosEmUso</p>
+                        </div>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(Model.HistoricoFamiliar))
+                    {
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-medical-700 mb-1">Histórico Familiar</label>
+                            <p class="text-medical-600">@Model.HistoricoFamiliar</p>
+                        </div>
+                    }
+                </div>
+
+                <!-- Emergency Contact -->
+                @if (!string.IsNullOrEmpty(Model.ContatoEmergencia))
+                {
+                    <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                        <h4 class="text-lg font-semibold text-medical-800 mb-4 flex items-center">
+                            <i class="fas fa-ambulance text-danger-600 mr-2"></i>
+                            Contato de Emergência
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-medical-700 mb-1">Nome</label>
+                                <p class="text-medical-600">@Model.ContatoEmergencia</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-medical-700 mb-1">Telefone</label>
+                                <p class="text-medical-600">@(Model.TelefoneEmergencia ?? "Não informado")</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Recent Consultations -->
+                @if (Model.Consultas?.Any() == true)
+                {
+                    <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                        <h4 class="text-lg font-semibold text-medical-800 mb-4 flex items-center">
+                            <i class="fas fa-history text-primary-600 mr-2"></i>
+                            Consultas Recentes
+                        </h4>
+                        <div class="space-y-3">
+                            @foreach (var consulta in Model.Consultas.OrderByDescending(c => c.DataHora).Take(5))
+                            {
+                                <div class="flex items-center justify-between p-3 bg-medical-50 rounded-lg">
+                                    <div>
+                                        <p class="font-medium text-medical-800">@consulta.Medico.Usuario.Nome</p>
+                                        <p class="text-sm text-medical-600">@consulta.DataHora.ToString("dd/MM/yyyy HH:mm")</p>
+                                    </div>
+                                    <span class="px-3 py-1 text-xs font-medium rounded-full
+                                        @(consulta.Status == StatusConsulta.Agendada ? "bg-blue-100 text-blue-800" :
+                                          consulta.Status == StatusConsulta.Confirmada ? "bg-green-100 text-green-800" :
+                                          consulta.Status == StatusConsulta.Concluida ? "bg-success-100 text-success-800" :
+                                          "bg-red-100 text-red-800")">
+                                        @consulta.Status
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                        <div class="mt-4">
+                            <a asp-controller="Consultas" asp-action="Index" class="text-primary-600 hover:text-primary-700 text-sm font-medium">
+                                Ver todas as consultas <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

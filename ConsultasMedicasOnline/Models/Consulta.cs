@@ -32,6 +32,8 @@ namespace ConsultasMedicasOnline.Models
 
         public int DuracaoMinutos { get; set; } = 30;
 
+        [Required]
+        [Display(Name = "Status da Consulta")]
         public StatusConsulta Status { get; set; } = StatusConsulta.Agendada;
         public TipoConsulta Tipo { get; set; } = TipoConsulta.Presencial;
 

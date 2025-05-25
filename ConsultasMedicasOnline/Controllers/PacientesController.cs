@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ConsultasMedicasOnline.Data;
 using ConsultasMedicasOnline.Models;
+using System.Security.Claims;
 
 namespace ConsultasMedicasOnline.Controllers
 {
@@ -81,38 +82,51 @@ namespace ConsultasMedicasOnline.Controllers
         {
             if (ModelState.IsValid)
             {
-                var currentUserId = _userManager.GetUserId(User);
-                var usuario = await _userManager.FindByIdAsync(currentUserId);
-                
-                if (usuario == null)
+                try
                 {
-                    return NotFound();
-                }
+                    var currentUserId = _userManager.GetUserId(User);
+                    var usuario = await _userManager.FindByIdAsync(currentUserId);
+                    
+                    if (usuario == null)
+                    {
+                        return NotFound();
+                    }
 
-                // Verificar se o usuário já não é paciente
-                var pacienteExistente = await _context.Pacientes
-                    .FirstOrDefaultAsync(p => p.UsuarioId == currentUserId);
-                
-                if (pacienteExistente != null)
+                    // Verificar se o usuário já não é paciente
+                    var pacienteExistente = await _context.Pacientes
+                        .FirstOrDefaultAsync(p => p.UsuarioId == currentUserId);
+                    
+                    if (pacienteExistente != null)
+                    {
+                        ModelState.AddModelError("", "Você já está cadastrado como paciente.");
+                        return View(paciente);
+                    }
+
+                    paciente.UsuarioId = currentUserId;
+                    paciente.DataCadastro = DateTime.UtcNow;
+                    
+                    _context.Add(paciente);
+                    await _context.SaveChangesAsync();
+
+                    // Adicionar role de Paciente
+                    if (!await _userManager.IsInRoleAsync(usuario, "Paciente"))
+                    {
+                        await _userManager.AddToRoleAsync(usuario, "Paciente");
+                    }
+
+                    TempData["SuccessMessage"] = "Cadastro realizado com sucesso!";
+                    return RedirectToAction(nameof(Details), new { id = paciente.Id });
+                }
+                catch (Exception ex)
                 {
-                    ModelState.AddModelError("", "Você já está cadastrado como paciente.");
-                    return View(paciente);
+                    ModelState.AddModelError("", "Erro ao salvar os dados: " + ex.Message);
                 }
-
-                paciente.UsuarioId = currentUserId;
-                paciente.DataCadastro = DateTime.UtcNow;
-                
-                _context.Add(paciente);
-                await _context.SaveChangesAsync();
-
-                // Adicionar role de Paciente
-                if (!await _userManager.IsInRoleAsync(usuario, "Paciente"))
-                {
-                    await _userManager.AddToRoleAsync(usuario, "Paciente");
-                }
-
-                return RedirectToAction(nameof(Details), new { id = paciente.Id });
             }
+            else
+            {
+                ModelState.AddModelError("", "Por favor, corrija os erros no formulário.");
+            }
+
             return View(paciente);
         }
 
@@ -227,11 +241,20 @@ namespace ConsultasMedicasOnline.Controllers
         // GET: Pacientes/MeuPerfil
         public async Task<IActionResult> MeuPerfil()
         {
-            var currentUserId = _userManager.GetUserId(User);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var usuario = await _userManager.FindByIdAsync(userId);
             var paciente = await _context.Pacientes
                 .Include(p => p.Usuario)
                 .Include(p => p.Endereco)
-                .FirstOrDefaultAsync(p => p.UsuarioId == currentUserId);
+                .Include(p => p.Consultas)
+                    .ThenInclude(c => c.Medico)
+                    .ThenInclude(m => m.Usuario)
+                .FirstOrDefaultAsync(p => p.UsuarioId == userId);
 
             if (paciente == null)
             {
@@ -239,7 +262,61 @@ namespace ConsultasMedicasOnline.Controllers
                 return RedirectToAction(nameof(Create));
             }
 
-            return View("Details", paciente);
+            return View("MeuPerfil", paciente);
+        }
+
+        // GET: Pacientes/Configuracoes
+        public async Task<IActionResult> Configuracoes()
+        {
+            var currentUserId = _userManager.GetUserId(User);
+            var paciente = await _context.Pacientes
+                .Include(p => p.Usuario)
+                .FirstOrDefaultAsync(p => p.UsuarioId == currentUserId);
+
+            if (paciente == null)
+            {
+                return RedirectToAction(nameof(Create));
+            }
+
+            return View("Configuracoes", paciente);
+        }
+
+        // POST: Pacientes/AtualizarConfiguracoes
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AtualizarConfiguracoes([Bind("Id,UsuarioId,TipoSanguineo,Alergias,MedicamentosEmUso,HistoricoFamiliar,ContatoEmergencia,TelefoneEmergencia,DataCadastro")] Paciente paciente, bool receberNotificacoesSMS = false, bool receberNotificacoesEmail = true)
+        {
+            var currentUserId = _userManager.GetUserId(User);
+            
+            if (paciente.UsuarioId != currentUserId)
+            {
+                return Forbid();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(paciente);
+                    await _context.SaveChangesAsync();
+                    
+                    // Aqui você pode adicionar lógica para salvar preferências de notificação
+                    TempData["SuccessMessage"] = "Configurações atualizadas com sucesso!";
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!PacienteExists(paciente.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Configuracoes));
+            }
+            return View("Configuracoes", paciente);
         }
     }
 }
