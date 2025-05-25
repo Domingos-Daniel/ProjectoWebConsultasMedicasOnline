@@ -13,11 +13,15 @@ namespace ConsultasMedicasOnline.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Usuario> _userManager;
+        private readonly SignInManager<Usuario> _signInManager;
+        private readonly ILogger<PacientesController> _logger;
 
-        public PacientesController(ApplicationDbContext context, UserManager<Usuario> userManager)
+        public PacientesController(ApplicationDbContext context, UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ILogger<PacientesController> logger)
         {
             _context = context;
             _userManager = userManager;
+            _signInManager = signInManager;
+            _logger = logger;
         }
 
         // GET: Pacientes
@@ -160,6 +164,7 @@ namespace ConsultasMedicasOnline.Controllers
         }
 
         // GET: Pacientes/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -167,16 +172,18 @@ namespace ConsultasMedicasOnline.Controllers
                 return NotFound();
             }
 
-            var currentUserId = _userManager.GetUserId(User);
-            var paciente = await _context.Pacientes.FindAsync(id);
-            
+            var paciente = await _context.Pacientes
+                .Include(p => p.Usuario)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
             if (paciente == null)
             {
                 return NotFound();
             }
 
-            // Verificar se o usuário pode editar
-            if (!User.IsInRole("Administrador") && paciente.UsuarioId != currentUserId)
+            // Security check - ensure user can only edit their own profile
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (paciente.UsuarioId != currentUserId && !User.IsInRole("Administrador"))
             {
                 return Forbid();
             }
@@ -187,17 +194,16 @@ namespace ConsultasMedicasOnline.Controllers
         // POST: Pacientes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UsuarioId,TipoSanguineo,Alergias,MedicamentosEmUso,HistoricoFamiliar,ContatoEmergencia,TelefoneEmergencia,DataCadastro")] Paciente paciente)
+        public async Task<IActionResult> Edit(int id, Paciente paciente)
         {
             if (id != paciente.Id)
             {
                 return NotFound();
             }
 
-            var currentUserId = _userManager.GetUserId(User);
-            
-            // Verificar se o usuário pode editar
-            if (!User.IsInRole("Administrador") && paciente.UsuarioId != currentUserId)
+            // Security check - ensure user can only edit their own profile
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (paciente.UsuarioId != currentUserId && !User.IsInRole("Administrador"))
             {
                 return Forbid();
             }
@@ -206,8 +212,28 @@ namespace ConsultasMedicasOnline.Controllers
             {
                 try
                 {
-                    _context.Update(paciente);
+                    // Get original entity to update only the edited properties
+                    var originalPaciente = await _context.Pacientes.FindAsync(id);
+                    if (originalPaciente == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Update editable properties
+                    originalPaciente.NumeroIdentificacao = paciente.NumeroIdentificacao;
+                    originalPaciente.Telefone = paciente.Telefone;
+                    originalPaciente.TipoSanguineo = paciente.TipoSanguineo;
+                    originalPaciente.Alergias = paciente.Alergias;
+                    originalPaciente.MedicamentosEmUso = paciente.MedicamentosEmUso;
+                    originalPaciente.HistoricoFamiliar = paciente.HistoricoFamiliar;
+                    originalPaciente.ContatoEmergencia = paciente.ContatoEmergencia;
+                    originalPaciente.TelefoneEmergencia = paciente.TelefoneEmergencia;
+
+                    _context.Update(originalPaciente);
                     await _context.SaveChangesAsync();
+                    
+                    TempData["SuccessMessage"] = "Perfil atualizado com sucesso!";
+                    return RedirectToAction(nameof(MeuPerfil));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -220,7 +246,6 @@ namespace ConsultasMedicasOnline.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Details), new { id = paciente.Id });
             }
             return View(paciente);
         }
