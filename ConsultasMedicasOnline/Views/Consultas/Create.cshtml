@@ -33,13 +33,15 @@
             </div>
 
             <!-- Validation Summary -->
-            <div asp-validation-summary="ModelOnly" class="mb-6 p-4 bg-danger-50 border border-danger-200 rounded-lg text-danger-700 hidden" id="validation-summary"></div>
+            <div asp-validation-summary="ModelOnly"
+                class="mb-6 p-4 bg-danger-50 border border-danger-200 rounded-lg text-danger-700 hidden"
+                id="validation-summary"></div>
         </div>
 
         <!-- Form -->
         <form asp-action="Create" id="consultaForm" class="space-y-8">
             <div asp-validation-summary="ModelOnly" class="text-danger-600"></div>
-            
+
             <!-- Step 1: Médico e Especialidade -->
             <div class="bg-white rounded-2xl shadow-sm border border-medical-200 p-8">
                 <h2 class="text-xl font-bold text-medical-800 mb-6 flex items-center">
@@ -53,10 +55,9 @@
                         <label asp-for="MedicoId" class="block text-sm font-semibold text-medical-700 mb-2">
                             Médico *
                         </label>
-                        <select asp-for="MedicoId" 
-                                class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                                asp-items="ViewBag.MedicoId"
-                                required>
+                        <select asp-for="MedicoId"
+                            class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                            asp-items="ViewBag.MedicoId" required>
                             <option value="">Selecione um médico...</option>
                         </select>
                         <span asp-validation-for="MedicoId" class="text-danger-600 text-sm mt-1 block"></span>
@@ -73,11 +74,12 @@
                         </label>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="relative">
-                                <input type="radio" asp-for="Tipo" value="1" id="presencial" 
-                                       class="sr-only peer" checked />
-                                <label for="presencial" 
-                                       class="flex items-center p-4 bg-white border-2 border-medical-200 rounded-lg cursor-pointer hover:bg-medical-50 peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all duration-200">
-                                    <i class="fas fa-clinic-medical text-medical-600 peer-checked:text-primary-600 mr-3"></i>
+                                <input type="radio" asp-for="Tipo" value="1" id="presencial" class="sr-only peer"
+                                    checked />
+                                <label for="presencial"
+                                    class="flex items-center p-4 bg-white border-2 border-medical-200 rounded-lg cursor-pointer hover:bg-medical-50 peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all duration-200">
+                                    <i
+                                        class="fas fa-clinic-medical text-medical-600 peer-checked:text-primary-600 mr-3"></i>
                                     <div>
                                         <div class="font-semibold text-medical-800">Presencial</div>
                                         <div class="text-sm text-medical-600">No consultório</div>
@@ -85,10 +87,9 @@
                                 </label>
                             </div>
                             <div class="relative">
-                                <input type="radio" asp-for="Tipo" value="2" id="online" 
-                                       class="sr-only peer" />
-                                <label for="online" 
-                                       class="flex items-center p-4 bg-white border-2 border-medical-200 rounded-lg cursor-pointer hover:bg-medical-50 peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all duration-200">
+                                <input type="radio" asp-for="Tipo" value="2" id="online" class="sr-only peer" />
+                                <label for="online"
+                                    class="flex items-center p-4 bg-white border-2 border-medical-200 rounded-lg cursor-pointer hover:bg-medical-50 peer-checked:border-primary-500 peer-checked:bg-primary-50 transition-all duration-200">
                                     <i class="fas fa-video text-medical-600 peer-checked:text-primary-600 mr-3"></i>
                                     <div>
                                         <div class="font-semibold text-medical-800">Online</div>
@@ -115,10 +116,10 @@
                         <label asp-for="DataHora" class="block text-sm font-semibold text-medical-700 mb-2">
                             Data da Consulta *
                         </label>
-                        <input asp-for="DataHora" type="date" 
-                               min="@DateTime.Now.ToString("yyyy-MM-dd")"
-                               class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                               required />
+                        <input asp-for="DataHora" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")"
+                            min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                            class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                            required />
                         <span asp-validation-for="DataHora" class="text-danger-600 text-sm mt-1 block"></span>
                     </div>
 
@@ -132,6 +133,8 @@
                                 required>
                             <option value="">Selecione um horário...</option>
                         </select>
+                        <!-- Campo hidden para capturar o horário selecionado -->
+                        <input type="hidden" id="horario-hidden" name="Horario" />
                         <div class="mt-2 text-xs text-medical-500">
                             <i class="fas fa-info-circle mr-1"></i>
                             Horários disponíveis serão exibidos após selecionar data e médico
@@ -143,8 +146,8 @@
                         <label asp-for="DuracaoMinutos" class="block text-sm font-semibold text-medical-700 mb-2">
                             Duração (minutos)
                         </label>
-                        <select asp-for="DuracaoMinutos" 
-                                class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200">
+                        <select asp-for="DuracaoMinutos"
+                            class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200">
                             <option value="30" selected>30 minutos</option>
                             <option value="45">45 minutos</option>
                             <option value="60">60 minutos</option>
@@ -168,8 +171,8 @@
                             Motivo da Consulta
                         </label>
                         <textarea asp-for="MotivoConsulta" rows="4"
-                                  placeholder="Descreva brevemente o motivo da consulta..."
-                                  class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 resize-none"></textarea>
+                            placeholder="Descreva brevemente o motivo da consulta..."
+                            class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 resize-none"></textarea>
                         <span asp-validation-for="MotivoConsulta" class="text-danger-600 text-sm mt-1 block"></span>
                         <div class="mt-1 text-xs text-medical-500">
                             <span id="motivo-count">0</span>/500 caracteres
@@ -182,8 +185,8 @@
                             Observações Gerais
                         </label>
                         <textarea asp-for="ObservacoesGerais" rows="4"
-                                  placeholder="Observações adicionais, alergias, medicamentos em uso..."
-                                  class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 resize-none"></textarea>
+                            placeholder="Observações adicionais, alergias, medicamentos em uso..."
+                            class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 resize-none"></textarea>
                         <span asp-validation-for="ObservacoesGerais" class="text-danger-600 text-sm mt-1 block"></span>
                         <div class="mt-1 text-xs text-medical-500">
                             <span id="obs-count">0</span>/1000 caracteres
@@ -193,12 +196,13 @@
             </div>
 
             <!-- Resumo e Confirmação -->
-            <div class="bg-white rounded-2xl shadow-sm border border-medical-200 p-8" id="resumo-section" style="display: none;">
+            <div class="bg-white rounded-2xl shadow-sm border border-medical-200 p-8" id="resumo-section"
+                style="display: none;">
                 <h2 class="text-xl font-bold text-medical-800 mb-6 flex items-center">
                     <i class="fas fa-check-circle text-green-600 mr-3"></i>
                     Resumo da Consulta
                 </h2>
-                
+
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="resumo-content">
                         <!-- Conteúdo será preenchido via JavaScript -->
@@ -209,7 +213,8 @@
                     <i class="fas fa-exclamation-triangle text-yellow-600 mr-3"></i>
                     <div class="text-yellow-800">
                         <p class="font-semibold">Importante:</p>
-                        <p class="text-sm">Você receberá uma confirmação por email. Lembre-se de chegar 15 minutos antes do horário agendado.</p>
+                        <p class="text-sm">Você receberá uma confirmação por email. Lembre-se de chegar 15 minutos antes
+                            do horário agendado.</p>
                     </div>
                 </div>
             </div>
@@ -217,22 +222,21 @@
             <!-- Botões de Ação -->
             <div class="bg-white rounded-2xl shadow-sm border border-medical-200 p-8">
                 <div class="flex flex-col sm:flex-row gap-4 justify-between">
-                    <a asp-action="Index" 
-                       class="inline-flex items-center px-6 py-3 border border-medical-300 text-medical-700 rounded-lg hover:bg-medical-50 transition-all duration-200">
+                    <a asp-action="Index"
+                        class="inline-flex items-center px-6 py-3 border border-medical-300 text-medical-700 rounded-lg hover:bg-medical-50 transition-all duration-200">
                         <i class="fas fa-arrow-left mr-2"></i>
                         Voltar
                     </a>
-                    
+
                     <div class="flex flex-col sm:flex-row gap-4">
                         <button type="button" id="preview-btn"
-                                class="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200">
+                            class="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200">
                             <i class="fas fa-eye mr-2"></i>
                             Visualizar Resumo
                         </button>
-                        
-                        <button type="submit" id="submit-btn" 
-                                class="inline-flex items-center px-8 py-3 bg-success-600 text-white rounded-lg hover:bg-success-700 transition-all duration-200 font-semibold"
-                                disabled>
+
+                        <button type="submit" id="submit-btn"
+                            class="inline-flex items-center px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:bg-green-700 transition-all duration-200 font-semibold shadow-lg">
                             <i class="fas fa-calendar-check mr-2"></i>
                             <span class="loading-text">Agendar Consulta</span>
                             <span class="loading-spinner hidden">
@@ -240,6 +244,7 @@
                                 Agendando...
                             </span>
                         </button>
+
                     </div>
                 </div>
             </div>
@@ -247,17 +252,39 @@
     </div>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<style>
+    #submit-btn {
+        background-color: #16a34a !important;
+        color: white !important;
+    }
     
+    #submit-btn:hover {
+        background-color: #15803d !important;
+    }
+    
+    #submit-btn:disabled {
+        background-color: #9ca3af !important;
+        cursor: not-allowed !important;
+    }
+    
+    .border-danger-300 {
+        border-color: #fca5a5 !important;
+    }
+</style>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Character counters
-            $('#MotivoConsulta').on('input', function() {
+            $('#MotivoConsulta').on('input', function () {
                 $('#motivo-count').text($(this).val().length);
             });
-            
-            $('#ObservacoesGerais').on('input', function() {
+
+            $('#ObservacoesGerais').on('input', function () {
                 $('#obs-count').text($(this).val().length);
             });
 
@@ -266,12 +293,12 @@
             $('#DataHora').attr('min', today);
 
             // Load available times when date or doctor changes
-            $('#MedicoId, #DataHora').on('change', function() {
+            $('#MedicoId, #DataHora').on('change', function () {
                 loadAvailableTimes();
             });
 
             // Preview functionality
-            $('#preview-btn').on('click', function() {
+            $('#preview-btn').on('click', function () {
                 updateResumo();
                 $('#resumo-section').slideDown();
                 $('html, body').animate({
@@ -279,29 +306,55 @@
                 }, 500);
             });
 
-            // Form validation
-            $('#consultaForm').on('input change', function() {
-                validateForm();
-            });
-
-            // Form submission
-            $('#consultaForm').on('submit', function(e) {
+            // Form submission - CORRIGIDO
+            $('#consultaForm').on('submit', function (e) {
+                // Validate the form first
                 if (!validateForm()) {
                     e.preventDefault();
+
+                    // Show validation errors
+                    $('#validation-summary').removeClass('hidden').html(
+                        '<i class="fas fa-exclamation-circle mr-2"></i>' +
+                        'Por favor, preencha todos os campos obrigatórios antes de agendar a consulta.'
+                    );
+
+                    // Scroll to validation summary
+                    $('html, body').animate({
+                        scrollTop: $('#validation-summary').offset().top - 20
+                    }, 500);
+
                     return false;
                 }
-                
-                // Show loading state
-                $('#submit-btn').prop('disabled', true);
-                $('.loading-text').hide();
-                $('.loading-spinner').show();
-                
-                // Combine date and time
+
+                // Format the datetime before submission
                 const date = $('#DataHora').val();
                 const time = $('#horario').val();
+
                 if (date && time) {
-                    const datetime = date + 'T' + time;
-                    $('#DataHora').val(datetime);
+                    // Create a proper datetime string
+                    const formattedDateTime = date + 'T' + time + ':00';
+                    console.log("Formatted date-time:", formattedDateTime);
+
+                    // Update the DataHora field value
+                    $('#DataHora').val(formattedDateTime);
+
+                    // Show loading state
+                    $('#submit-btn').prop('disabled', true);
+                    $('.loading-text').hide();
+                    $('.loading-spinner').removeClass('hidden');
+
+                    // Let the form submit naturally
+                    return true;
+                } else {
+                    e.preventDefault();
+
+                    // Show error for missing date or time
+                    $('#validation-summary').removeClass('hidden').html(
+                        '<i class="fas fa-exclamation-circle mr-2"></i>' +
+                        'Por favor, selecione uma data e horário para a consulta.'
+                    );
+
+                    return false;
                 }
             });
 
@@ -309,80 +362,89 @@
                 const medicoId = $('#MedicoId').val();
                 const data = $('#DataHora').val();
                 const horarioSelect = $('#horario');
-                
+
                 horarioSelect.empty().append('<option value="">Carregando...</option>');
-                
+
                 if (medicoId && data) {
                     // Simulate API call - replace with actual endpoint
                     setTimeout(() => {
                         horarioSelect.empty().append('<option value="">Selecione um horário...</option>');
-                        
+
                         // Generate time slots (8:00 to 18:00, every 30 minutes)
                         for (let hour = 8; hour <= 18; hour++) {
                             for (let minute = 0; minute < 60; minute += 30) {
                                 if (hour === 18 && minute > 0) break;
-                                
+
                                 const timeStr = String(hour).padStart(2, '0') + ':' + String(minute).padStart(2, '0');
                                 horarioSelect.append(`<option value="${timeStr}">${timeStr}</option>`);
                             }
                         }
-                        
+
                         validateForm();
+                        showMedicoInfo(medicoId);
                     }, 500);
                 }
             }
 
             function validateForm() {
-                const isValid = $('#MedicoId').val() && 
-                               $('#DataHora').val() && 
-                               $('#horario').val();
-                
-                $('#submit-btn').prop('disabled', !isValid);
+                const isValid = $('#MedicoId').val() &&
+                    $('#DataHora').val() &&
+                    $('#horario').val();
+
+                // Visual feedback for required fields
+                ['#MedicoId', '#DataHora', '#horario'].forEach(selector => {
+                    const element = $(selector);
+                    if (!element.val()) {
+                        element.addClass('border-danger-300');
+                    } else {
+                        element.removeClass('border-danger-300');
+                    }
+                });
+
                 return isValid;
             }
 
+            function showMedicoInfo(medicoId) {
+                if (medicoId) {
+                    const medicoNome = $('#MedicoId option:selected').text();
+                    const especialidade = "Cardiologia"; // Example - replace with actual data
+                    const valorConsulta = "15.000 AOA"; // Example - replace with actual data
+
+                    $('#medico-details').html(`
+                            <div class="mb-2"><strong>Nome:</strong> ${medicoNome}</div>
+                            <div class="mb-2"><strong>Especialidade:</strong> ${especialidade}</div>
+                            <div><strong>Valor da Consulta:</strong> ${valorConsulta}</div>
+                        `);
+
+                    $('#medico-info').removeClass('hidden');
+                } else {
+                    $('#medico-info').addClass('hidden');
+                }
+            }
+
+            // Add missing updateResumo function
             function updateResumo() {
                 const medico = $('#MedicoId option:selected').text();
                 const data = $('#DataHora').val();
                 const horario = $('#horario').val();
                 const tipo = $('input[name="Tipo"]:checked').next('label').find('div:first').text();
-                const duracao = $('#DuracaoMinutos').val();
-                const motivo = $('#MotivoConsulta').val() || 'Não informado';
+                const motivo = $('#MotivoConsulta').val();
 
-                const resumoHtml = `
-                    <div>
-                        <div class="text-sm text-gray-600 mb-1">Médico</div>
-                        <div class="font-semibold text-gray-900">${medico}</div>
-                    </div>
-                    <div>
-                        <div class="text-sm text-gray-600 mb-1">Data e Horário</div>
-                        <div class="font-semibold text-gray-900">${formatDate(data)} às ${horario}</div>
-                    </div>
-                    <div>
-                        <div class="text-sm text-gray-600 mb-1">Tipo</div>
-                        <div class="font-semibold text-gray-900">${tipo}</div>
-                    </div>
-                    <div>
-                        <div class="text-sm text-gray-600 mb-1">Duração</div>
-                        <div class="font-semibold text-gray-900">${duracao} minutos</div>
-                    </div>
-                    <div class="col-span-2">
-                        <div class="text-sm text-gray-600 mb-1">Motivo</div>
-                        <div class="font-semibold text-gray-900">${motivo}</div>
-                    </div>
-                `;
-                
-                $('#resumo-content').html(resumoHtml);
-            }
-
-            function formatDate(dateStr) {
-                const date = new Date(dateStr);
-                return date.toLocaleDateString('pt-BR', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                });
+                $('#resumo-content').html(`
+                        <div>
+                            <div class="font-semibold text-medical-800 mb-2">Dados da Consulta</div>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Médico:</strong> ${medico}</div>
+                                <div><strong>Data:</strong> ${new Date(data).toLocaleDateString('pt-BR')}</div>
+                                <div><strong>Horário:</strong> ${horario}</div>
+                                <div><strong>Tipo:</strong> ${tipo}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-medical-800 mb-2">Motivo</div>
+                            <div class="text-sm">${motivo || 'Não informado'}</div>
+                        </div>
+                    `);
             }
 
             // Initialize form validation

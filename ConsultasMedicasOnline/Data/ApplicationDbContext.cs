@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ConsultasMedicasOnline.Models;
+using System.Threading.Tasks;
 
 namespace ConsultasMedicasOnline.Data;
 
@@ -16,11 +18,7 @@ public class ApplicationDbContext : IdentityDbContext<Usuario>
     public DbSet<Medico> Medicos { get; set; }
     public DbSet<Especialidade> Especialidades { get; set; }
     public DbSet<Consulta> Consultas { get; set; }
-    public DbSet<Endereco> Enderecos { get; set; }
     public DbSet<Prontuario> Prontuarios { get; set; }
-    public DbSet<HorarioDisponivel> HorariosDisponiveis { get; set; }
-    public DbSet<Pagamento> Pagamentos { get; set; }
-    public DbSet<Transacao> Transacoes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -109,5 +107,24 @@ public class ApplicationDbContext : IdentityDbContext<Usuario>
             new Especialidade { Id = 9, Nome = "Otorrinolaringologia", Descricao = "Especialidade médica que cuida do ouvido, nariz e garganta", Ativa = true, DataCriacao = new DateTime(2025, 1, 1) },
             new Especialidade { Id = 10, Nome = "Clínica Geral", Descricao = "Atendimento médico geral e preventivo", Ativa = true, DataCriacao = new DateTime(2025, 1, 1) }
         );
+    }
+
+    // Método para semear dados iniciais
+    public static async Task SeedData(ApplicationDbContext context, 
+                                     UserManager<Usuario> userManager, 
+                                     RoleManager<IdentityRole> roleManager)
+    {
+        // Garantir que os papéis existem
+        if (!await roleManager.RoleExistsAsync("Administrador"))
+            await roleManager.CreateAsync(new IdentityRole("Administrador"));
+        
+        if (!await roleManager.RoleExistsAsync("Medico"))
+            await roleManager.CreateAsync(new IdentityRole("Medico"));
+        
+        if (!await roleManager.RoleExistsAsync("Paciente"))
+            await roleManager.CreateAsync(new IdentityRole("Paciente"));
+        
+        // Semear médicos
+        await Seeders.MedicoSeeder.SeedMedicos(context, userManager);
     }
 }

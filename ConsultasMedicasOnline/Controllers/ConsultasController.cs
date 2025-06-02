@@ -140,9 +140,13 @@ namespace ConsultasMedicasOnline.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Paciente,Administrador")]
-        public async Task<IActionResult> Create([Bind("MedicoId,DataHora,DuracaoMinutos,Tipo,MotivoConsulta,ObservacoesGerais")] Consulta consulta, int? PacienteId = null)
+        public async Task<IActionResult> Create([Bind("MedicoId,DataHora,DuracaoMinutos,Tipo,MotivoConsulta,ObservacoesGerais")] Consulta consulta, int? pacienteId = null)
         {
             var currentUserId = _userManager.GetUserId(User);
+            
+            // Debug logs
+            Console.WriteLine($"Received DataHora: {consulta.DataHora}");
+            Console.WriteLine($"Received MedicoId: {consulta.MedicoId}");
             
             // Determinar o paciente
             if (User.IsInRole("Paciente"))
@@ -156,44 +160,75 @@ namespace ConsultasMedicasOnline.Controllers
                 }
                 
                 consulta.PacienteId = paciente.Id;
+                Console.WriteLine($"Set PacienteId from user: {consulta.PacienteId}");
             }
-            else if (User.IsInRole("Administrador") && PacienteId.HasValue)
+            else if (User.IsInRole("Administrador") && pacienteId.HasValue)
             {
-                consulta.PacienteId = PacienteId.Value;
+                consulta.PacienteId = pacienteId.Value;
+                Console.WriteLine($"Set PacienteId from parameter: {consulta.PacienteId}");
             }
             else
             {
                 ModelState.AddModelError("", "Paciente não identificado.");
+                Console.WriteLine("Paciente não identificado");
             }
 
+            // Ensure we have a valid DateTime
+            if (consulta.DataHora == default)
+            {
+                ModelState.AddModelError("DataHora", "A data e hora da consulta é obrigatória.");
+                Console.WriteLine("Data/hora inválida");
+            }
+            
             // Validações de negócio
             if (consulta.DataHora <= DateTime.Now)
             {
                 ModelState.AddModelError("DataHora", "A data e hora da consulta deve ser futura.");
+                Console.WriteLine("Data/hora deve ser futura");
             }
 
             // Verificar disponibilidade do médico
             var conflito = await _context.Consultas
                 .AnyAsync(c => c.MedicoId == consulta.MedicoId && 
-                              c.DataHora.Date == consulta.DataHora.Date &&
-                              c.DataHora.Hour == consulta.DataHora.Hour &&
-                              c.Status != StatusConsulta.Cancelada);
+                             c.DataHora.Date == consulta.DataHora.Date &&
+                             c.DataHora.Hour == consulta.DataHora.Hour &&
+                             c.Status != StatusConsulta.Cancelada);
 
             if (conflito)
             {
                 ModelState.AddModelError("DataHora", "Médico já possui consulta agendada neste horário.");
+                Console.WriteLine("Conflito de horário");
             }
 
             if (ModelState.IsValid)
             {
-                consulta.DataCriacao = DateTime.UtcNow;
-                consulta.Status = StatusConsulta.Agendada;
-                
-                _context.Add(consulta);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Details), new { id = consulta.Id });
+                try
+                {
+                    consulta.DataCriacao = DateTime.UtcNow;
+                    consulta.Status = StatusConsulta.Agendada;
+                    
+                    _context.Add(consulta);
+                    await _context.SaveChangesAsync();
+                    
+                    Console.WriteLine($"Consulta criada com sucesso, ID: {consulta.Id}");
+                    return RedirectToAction(nameof(Details), new { id = consulta.Id });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erro ao salvar consulta: {ex.Message}");
+                    ModelState.AddModelError("", $"Erro ao salvar: {ex.Message}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("ModelState inválido:");
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine($"- {error.ErrorMessage}");
+                }
             }
 
+            // If we got here, something failed, redisplay form
             ViewData["MedicoId"] = new SelectList(
                 await _context.Medicos
                     .Include(m => m.Usuario)
