@@ -5,6 +5,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <p>@TempData["ErrorMessage"]</p>
+    </div>
+}
+
+@if (TempData["DebugInfo"] != null)
+{
+    <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4">
+        <pre>@TempData["DebugInfo"]</pre>
+    </div>
+}
+
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-white py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
@@ -128,13 +142,13 @@
                         <label class="block text-sm font-semibold text-medical-700 mb-2">
                             Horário *
                         </label>
-                        <select id="horario" 
+                        <select id="horario"
                                 class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
                                 required>
                             <option value="">Selecione um horário...</option>
                         </select>
-                        <!-- Campo hidden para capturar o horário selecionado -->
-                        <input type="hidden" id="horario-hidden" name="Horario" />
+                        <!-- Campo oculto para passar o horário completo -->
+                        <input type="hidden" name="HorarioSelecionado" id="horario-hidden" />
                         <div class="mt-2 text-xs text-medical-500">
                             <i class="fas fa-info-circle mr-1"></i>
                             Horários disponíveis serão exibidos após selecionar data e médico
@@ -253,22 +267,32 @@
 </div>
 
 <style>
+    /* Estilos mais fortes para garantir que o botão esteja visível */
     #submit-btn {
         background-color: #16a34a !important;
         color: white !important;
+        opacity: 1 !important;
     }
     
-    #submit-btn:hover {
+    #submit-btn:hover:not(:disabled) {
         background-color: #15803d !important;
     }
     
     #submit-btn:disabled {
         background-color: #9ca3af !important;
         cursor: not-allowed !important;
+        opacity: 0.6 !important;
     }
     
-    .border-danger-300 {
+    /* Estilos de borda para validação */
+    .border-danger-300,
+    .border-red-300 {
         border-color: #fca5a5 !important;
+    }
+    
+    /* Remover qualquer possível conflito de cores */
+    .bg-gray-400 {
+        background-color: #9ca3af !important;
     }
 </style>
 
@@ -297,32 +321,29 @@
                 loadAvailableTimes();
             });
 
-            // Preview functionality
-            $('#preview-btn').on('click', function () {
-                updateResumo();
-                $('#resumo-section').slideDown();
-                $('html, body').animate({
-                    scrollTop: $('#resumo-section').offset().top - 100
-                }, 500);
+            // Validate form on field changes
+            $('#MedicoId, #DataHora, #horario').on('change', function () {
+                validateFormAndToggleButton();
             });
 
-            // Form submission - CORRIGIDO
-            $('#consultaForm').on('submit', function (e) {
-                // Validate the form first
+            // Preview functionality
+            $('#preview-btn').on('click', function () {
+                if (validateForm()) {
+                    updateResumo();
+                    $('#resumo-section').slideDown();
+                    $('html, body').animate({
+                        scrollTop: $('#resumo-section').offset().top - 100
+                    }, 500);
+                } else {
+                    showValidationError();
+                }
+            });
+
+            // CORREÇÃO IMPORTANTE: Remover o handler jQuery do submit e usar o handler nativo
+            document.getElementById('consultaForm').addEventListener('submit', function(e) {
                 if (!validateForm()) {
                     e.preventDefault();
-
-                    // Show validation errors
-                    $('#validation-summary').removeClass('hidden').html(
-                        '<i class="fas fa-exclamation-circle mr-2"></i>' +
-                        'Por favor, preencha todos os campos obrigatórios antes de agendar a consulta.'
-                    );
-
-                    // Scroll to validation summary
-                    $('html, body').animate({
-                        scrollTop: $('#validation-summary').offset().top - 20
-                    }, 500);
-
+                    showValidationError();
                     return false;
                 }
 
@@ -331,29 +352,29 @@
                 const time = $('#horario').val();
 
                 if (date && time) {
-                    // Create a proper datetime string
-                    const formattedDateTime = date + 'T' + time + ':00';
-                    console.log("Formatted date-time:", formattedDateTime);
+                    try {
+                        // Create a proper datetime string
+                        const formattedDateTime = `${date}T${time}:00`;
+                        console.log("Enviando data e hora:", formattedDateTime);
 
-                    // Update the DataHora field value
-                    $('#DataHora').val(formattedDateTime);
-
-                    // Show loading state
-                    $('#submit-btn').prop('disabled', true);
-                    $('.loading-text').hide();
-                    $('.loading-spinner').removeClass('hidden');
-
-                    // Let the form submit naturally
-                    return true;
+                        // Update the DataHora field value
+                        $('#DataHora').val(formattedDateTime);
+                        
+                        // Show loading state
+                        $('#submit-btn').prop('disabled', false); // Garantir que não está desabilitado
+                        $('.loading-text').hide();
+                        $('.loading-spinner').removeClass('hidden');
+                        
+                        // Não interromper o envio do formulário
+                        return true;
+                    } catch (error) {
+                        console.error("Erro ao formatar data/hora:", error);
+                        e.preventDefault();
+                        return false;
+                    }
                 } else {
                     e.preventDefault();
-
-                    // Show error for missing date or time
-                    $('#validation-summary').removeClass('hidden').html(
-                        '<i class="fas fa-exclamation-circle mr-2"></i>' +
-                        'Por favor, selecione uma data e horário para a consulta.'
-                    );
-
+                    showValidationError();
                     return false;
                 }
             });
@@ -364,9 +385,9 @@
                 const horarioSelect = $('#horario');
 
                 horarioSelect.empty().append('<option value="">Carregando...</option>');
+                validateFormAndToggleButton();
 
                 if (medicoId && data) {
-                    // Simulate API call - replace with actual endpoint
                     setTimeout(() => {
                         horarioSelect.empty().append('<option value="">Selecione um horário...</option>');
 
@@ -380,41 +401,100 @@
                             }
                         }
 
-                        validateForm();
+                        validateFormAndToggleButton();
                         showMedicoInfo(medicoId);
                     }, 500);
                 }
             }
 
             function validateForm() {
-                const isValid = $('#MedicoId').val() &&
-                    $('#DataHora').val() &&
-                    $('#horario').val();
+                const medicoId = $('#MedicoId').val();
+                const dataHora = $('#DataHora').val();
+                const horario = $('#horario').val();
+
+                // Verificação mais detalhada
+                console.log("Validando formulário:");
+                console.log("- MedicoId:", medicoId);
+                console.log("- DataHora:", dataHora);
+                console.log("- Horario:", horario);
+
+                return medicoId && dataHora && horario;
+            }
+
+            function validateFormAndToggleButton() {
+                const isValid = validateForm();
+                
+                // Toggle submit button state
+                console.log("Formulário válido?", isValid);
+                $('#submit-btn').prop('disabled', !isValid);
+                
+                if (!isValid) {
+                    $('#submit-btn').css({
+                        'background-color': '#9ca3af',
+                        'cursor': 'not-allowed',
+                        'opacity': '0.6'
+                    });
+                } else {
+                    $('#submit-btn').css({
+                        'background-color': '#16a34a',
+                        'cursor': 'pointer',
+                        'opacity': '1'
+                    });
+                }
 
                 // Visual feedback for required fields
-                ['#MedicoId', '#DataHora', '#horario'].forEach(selector => {
-                    const element = $(selector);
+                const fields = [
+                    { selector: '#MedicoId', label: 'Médico' },
+                    { selector: '#DataHora', label: 'Data' },
+                    { selector: '#horario', label: 'Horário' }
+                ];
+
+                fields.forEach(field => {
+                    const element = $(field.selector);
                     if (!element.val()) {
-                        element.addClass('border-danger-300');
+                        element.addClass('border-red-300');
                     } else {
-                        element.removeClass('border-danger-300');
+                        element.removeClass('border-red-300');
                     }
                 });
 
+                // Hide validation summary if form is valid
+                if (isValid) {
+                    $('#validation-summary').addClass('hidden');
+                }
+
                 return isValid;
+            }
+
+            function showValidationError() {
+                const errors = [];
+                
+                if (!$('#MedicoId').val()) errors.push('Médico');
+                if (!$('#DataHora').val()) errors.push('Data da consulta');
+                if (!$('#horario').val()) errors.push('Horário');
+
+                $('#validation-summary').removeClass('hidden').html(
+                    '<i class="fas fa-exclamation-circle mr-2"></i>' +
+                    `Por favor, preencha os seguintes campos obrigatórios: ${errors.join(', ')}`
+                );
+
+                // Scroll to validation summary
+                $('html, body').animate({
+                    scrollTop: $('#validation-summary').offset().top - 20
+                }, 500);
             }
 
             function showMedicoInfo(medicoId) {
                 if (medicoId) {
                     const medicoNome = $('#MedicoId option:selected').text();
-                    const especialidade = "Cardiologia"; // Example - replace with actual data
-                    const valorConsulta = "15.000 AOA"; // Example - replace with actual data
+                    const especialidade = "Cardiologia";
+                    const valorConsulta = "15.000 AOA";
 
                     $('#medico-details').html(`
-                            <div class="mb-2"><strong>Nome:</strong> ${medicoNome}</div>
-                            <div class="mb-2"><strong>Especialidade:</strong> ${especialidade}</div>
-                            <div><strong>Valor da Consulta:</strong> ${valorConsulta}</div>
-                        `);
+                        <div class="mb-2"><strong>Nome:</strong> ${medicoNome}</div>
+                        <div class="mb-2"><strong>Especialidade:</strong> ${especialidade}</div>
+                        <div><strong>Valor da Consulta:</strong> ${valorConsulta}</div>
+                    `);
 
                     $('#medico-info').removeClass('hidden');
                 } else {
@@ -422,33 +502,33 @@
                 }
             }
 
-            // Add missing updateResumo function
             function updateResumo() {
                 const medico = $('#MedicoId option:selected').text();
                 const data = $('#DataHora').val();
                 const horario = $('#horario').val();
-                const tipo = $('input[name="Tipo"]:checked').next('label').find('div:first').text();
+                const tipoElement = $('input[name="Tipo"]:checked');
+                const tipo = tipoElement.length ? tipoElement.next('label').find('div:first').text() : 'Não selecionado';
                 const motivo = $('#MotivoConsulta').val();
 
                 $('#resumo-content').html(`
-                        <div>
-                            <div class="font-semibold text-medical-800 mb-2">Dados da Consulta</div>
-                            <div class="space-y-2 text-sm">
-                                <div><strong>Médico:</strong> ${medico}</div>
-                                <div><strong>Data:</strong> ${new Date(data).toLocaleDateString('pt-BR')}</div>
-                                <div><strong>Horário:</strong> ${horario}</div>
-                                <div><strong>Tipo:</strong> ${tipo}</div>
-                            </div>
+                    <div>
+                        <div class="font-semibold text-medical-800 mb-2">Dados da Consulta</div>
+                        <div class="space-y-2 text-sm">
+                            <div><strong>Médico:</strong> ${medico}</div>
+                            <div><strong>Data:</strong> ${data ? new Date(data).toLocaleDateString('pt-BR') : 'Não informada'}</div>
+                            <div><strong>Horário:</strong> ${horario || 'Não informado'}</div>
+                            <div><strong>Tipo:</strong> ${tipo}</div>
                         </div>
-                        <div>
-                            <div class="font-semibold text-medical-800 mb-2">Motivo</div>
-                            <div class="text-sm">${motivo || 'Não informado'}</div>
-                        </div>
-                    `);
+                    </div>
+                    <div>
+                        <div class="font-semibold text-medical-800 mb-2">Motivo</div>
+                        <div class="text-sm">${motivo || 'Não informado'}</div>
+                    </div>
+                `);
             }
 
             // Initialize form validation
-            validateForm();
+            validateFormAndToggleButton();
         });
     </script>
 }

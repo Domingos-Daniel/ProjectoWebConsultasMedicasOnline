@@ -142,6 +142,17 @@ namespace ConsultasMedicasOnline.Controllers
         [Authorize(Roles = "Paciente,Administrador")]
         public async Task<IActionResult> Create([Bind("MedicoId,DataHora,DuracaoMinutos,Tipo,MotivoConsulta,ObservacoesGerais")] Consulta consulta, int? pacienteId = null)
         {
+            // Adicionar mais logs para depuração
+            var formValues = string.Join(", ", Request.Form.Select(x => $"{x.Key}={x.Value}"));
+            Console.WriteLine($"Form values: {formValues}");
+            Console.WriteLine($"Received DataHora: {consulta?.DataHora}");
+            
+            if (consulta == null)
+            {
+                TempData["ErrorMessage"] = "Dados do formulário não foram recebidos corretamente";
+                return View(new Consulta());
+            }
+
             var currentUserId = _userManager.GetUserId(User);
             
             // Debug logs
