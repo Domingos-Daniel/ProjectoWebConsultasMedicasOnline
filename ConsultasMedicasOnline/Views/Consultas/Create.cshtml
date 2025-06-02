@@ -506,22 +506,50 @@
             // Função para exibir informações do médico
             function showMedicoInfo(medicoId) {
                 if (medicoId) {
-                    const medicoNome = $('#MedicoId option:selected').text();
-                    // Extrair especialidade do texto selecionado (formato: "Nome - Especialidade")
-                    const especialidade = medicoNome.includes('-') ?
-                        medicoNome.split('-')[1].trim() :
-                        "Especialidade não informada";
-
-                    // Valor de consulta padrão, idealmente viria do backend
-                    const valorConsulta = "15.000 AOA";
-
-                    $('#medico-details').html(`
-                            <div class="mb-2"><strong>Nome:</strong> ${medicoNome}</div>
-                            <div class="mb-2"><strong>Especialidade:</strong> ${especialidade}</div>
-                            <div><strong>Valor da Consulta:</strong> ${valorConsulta}</div>
-                        `);
-
+                    // Mostrar loader enquanto busca os dados
+                    $('#medico-details').html('<div class="text-center py-2"><i class="fas fa-spinner fa-spin"></i> Carregando informações...</div>');
                     $('#medico-info').removeClass('hidden');
+                    
+                    // Fazer chamada AJAX para buscar detalhes do médico
+                    $.ajax({
+                        url: `/Medicos/GetDetails/${medicoId}`,
+                        method: 'GET',
+                        success: function(data) {
+                            if (data) {
+                                $('#medico-details').html(`
+                                    <div class="mb-2"><strong>Nome:</strong> ${data.nome}</div>
+                                    <div class="mb-2"><strong>Especialidade:</strong> ${data.especialidade}</div>
+                                    <div class="mb-2"><strong>CRM:</strong> ${data.crm || 'Não informado'}</div>
+                                    <div><strong>Valor da Consulta:</strong> ${data.valorConsulta || '15.000 AOA'}</div>
+                                `);
+                            } else {
+                                // Fallback para informações básicas
+                                const medicoNome = $('#MedicoId option:selected').text();
+                                const especialidade = medicoNome.includes('-') ? 
+                                    medicoNome.split('-')[1].trim() : 
+                                    "Especialidade não informada";
+                                    
+                                $('#medico-details').html(`
+                                    <div class="mb-2"><strong>Nome:</strong> ${medicoNome}</div>
+                                    <div class="mb-2"><strong>Especialidade:</strong> ${especialidade}</div>
+                                    <div><strong>Valor da Consulta:</strong> 15.000 AOA</div>
+                                `);
+                            }
+                        },
+                        error: function() {
+                            // Em caso de erro, mostrar informações básicas
+                            const medicoNome = $('#MedicoId option:selected').text();
+                            const especialidade = medicoNome.includes('-') ? 
+                                medicoNome.split('-')[1].trim() : 
+                                "Especialidade não informada";
+                                
+                            $('#medico-details').html(`
+                                <div class="mb-2"><strong>Nome:</strong> ${medicoNome}</div>
+                                <div class="mb-2"><strong>Especialidade:</strong> ${especialidade}</div>
+                                <div><strong>Valor da Consulta:</strong> 15.000 AOA</div>
+                            `);
+                        }
+                    });
                 } else {
                     $('#medico-info').addClass('hidden');
                 }
