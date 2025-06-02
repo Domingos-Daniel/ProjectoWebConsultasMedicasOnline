@@ -27,7 +27,9 @@
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-9v4a1 1 0 102 0V9a1 1 0 10-2 0z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-9v4a1 1 0 102 0V9a1 1 0 10-2 0z"
+                                clip-rule="evenodd" />
                         </svg>
                     </div>
                     <div class="ml-3">
@@ -171,8 +173,8 @@
                             Horário *
                         </label>
                         <select id="horario" name="Horario"
-                                class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                                required>
+                            class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
+                            required>
                             <option value="">Selecione um horário...</option>
                             @for (int hour = 8; hour <= 17; hour++)
                             {
@@ -279,9 +281,9 @@
                             Visualizar Resumo
                         </button>
 
-                        <button type="submit" id="submit-btn" 
-                                class="inline-flex items-center justify-center px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:bg-green-700 transition-all duration-200 font-semibold shadow-lg"
-                                style="background-color: #16a34a !important; color: white !important;">
+                        <button type="submit" id="submit-btn"
+                            class="inline-flex items-center justify-center px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:bg-green-700 transition-all duration-200 font-semibold shadow-lg"
+                            style="background-color: #16a34a !important; color: white !important;">
                             <i class="fas fa-calendar-check mr-2"></i>
                             <span class="loading-text">Agendar Consulta</span>
                             <span class="loading-spinner hidden">
@@ -307,26 +309,46 @@
         color: white !important;
         opacity: 1 !important;
     }
-    
+
     #submit-btn:hover:not(:disabled) {
         background-color: #15803d !important;
     }
-    
+
     #submit-btn:disabled {
         background-color: #9ca3af !important;
         cursor: not-allowed !important;
         opacity: 0.6 !important;
     }
-    
+
     /* Estilos de borda para validação */
     .border-danger-300,
     .border-red-300 {
         border-color: #fca5a5 !important;
     }
-    
+
     /* Remover qualquer possível conflito de cores */
     .bg-gray-400 {
         background-color: #9ca3af !important;
+    }
+
+    /* Estilo para o box de informações do médico */
+    #medico-info {
+        transition: all 0.3s ease;
+        border-left: 4px solid #60a5fa;
+    }
+
+    #medico-info.hidden {
+        display: none;
+    }
+
+    /* Melhorar apresentação de detalhes do médico */
+    #medico-details .mb-2 {
+        margin-bottom: 0.5rem;
+    }
+
+    #medico-details strong {
+        color: #1e40af;
+        font-weight: 600;
     }
 </style>
 
@@ -340,15 +362,15 @@
             // Contadores de caracteres
             updateCharCount('#MotivoConsulta', '#motivo-count', 500);
             updateCharCount('#ObservacoesGerais', '#obs-count', 1000);
-            
+
             // Validação mais completa antes do submit
             $('#consultaForm').on('submit', function (e) {
                 console.log("Formulário sendo enviado...");
-                
+
                 const medicoId = $('#MedicoId').val();
                 const dataHora = $('#DataHora').val();
                 const horario = $('#horario').val();
-                
+
                 if (!medicoId || !dataHora || !horario) {
                     e.preventDefault();
                     showErrorMessage("Por favor, preencha todos os campos obrigatórios.");
@@ -359,25 +381,25 @@
                 $('#submit-btn').prop('disabled', true);
                 $('.loading-text').hide();
                 $('.loading-spinner').removeClass('hidden');
-                
+
                 console.log("Formulário validado com sucesso, enviando...");
                 return true;
             });
-            
+
             function showErrorMessage(message) {
                 $('#validation-summary').removeClass('hidden')
                     .html(`<i class="fas fa-exclamation-circle mr-2"></i>${message}`);
-                
+
                 $('html, body').animate({
                     scrollTop: $('#validation-summary').offset().top - 20
                 }, 500);
             }
-            
+
             // Seleção de horário
-            $('#horario').on('change', function() {
+            $('#horario').on('change', function () {
                 validateForm();
             });
-            
+
             // Validação e submissão do formulário
             $('#consultaForm').on('submit', function (e) {
                 if (!validateForm()) {
@@ -385,16 +407,16 @@
                     alert("Por favor, preencha todos os campos obrigatórios.");
                     return false;
                 }
-                
+
                 // Desabilita o botão para evitar submissões duplicadas
                 $('#submit-btn').prop('disabled', true)
                     .find('.loading-text').hide();
                 $('#submit-btn').find('.loading-spinner').removeClass('hidden');
-                
+
                 // Permitir que o formulário seja enviado
                 return true;
             });
-            
+
             // Visualização do resumo
             $('#preview-btn').on('click', function () {
                 if (validateForm()) {
@@ -407,68 +429,108 @@
                     alert("Por favor, preencha todos os campos obrigatórios antes de visualizar o resumo.");
                 }
             });
-            
+
             function validateForm() {
                 const medicoId = $('#MedicoId').val();
                 const dataHora = $('#DataHora').val();
                 const horario = $('#horario').val();
-                
+
                 console.log("MedicoId:", medicoId);
                 console.log("DataHora:", dataHora);
                 console.log("Horario:", horario);
-                
+
                 const isValid = medicoId && dataHora && horario;
                 console.log("Formulário válido?", isValid);
-                
+
                 return isValid;
             }
-            
+
             function updateCharCount(fieldSelector, countSelector, maxLength) {
-                $(fieldSelector).on('input', function() {
+                $(fieldSelector).on('input', function () {
                     const length = $(this).val().length;
                     $(countSelector).text(length);
-                    
+
                     if (length > maxLength) {
                         $(countSelector).addClass('text-red-500');
                     } else {
                         $(countSelector).removeClass('text-red-500');
                     }
                 });
-                
+
                 // Inicializar contagem
                 const initialLength = $(fieldSelector).val()?.length || 0;
                 $(countSelector).text(initialLength);
             }
-            
+
             function updateResumo() {
                 const medico = $('#MedicoId option:selected').text();
                 const data = $('#DataHora').val();
                 let formattedDate = '';
-                
+
                 if (data) {
                     const dateObj = new Date(data);
                     formattedDate = dateObj.toLocaleDateString('pt-BR');
                 }
-                
+
                 const horario = $('#horario').val();
                 const tipo = $('input[name="Tipo"]:checked').next('label').text() || 'Presencial';
                 const motivo = $('#MotivoConsulta').val() || 'Não informado';
-                
+
                 $('#resumo-content').html(`
-                    <div>
-                        <div class="font-semibold text-medical-800 mb-2">Dados da Consulta</div>
-                        <div class="space-y-2 text-sm">
-                            <div><strong>Médico:</strong> ${medico}</div>
-                            <div><strong>Data:</strong> ${formattedDate}</div>
-                            <div><strong>Horário:</strong> ${horario}</div>
-                            <div><strong>Tipo:</strong> ${tipo}</div>
+                        <div>
+                            <div class="font-semibold text-medical-800 mb-2">Dados da Consulta</div>
+                            <div class="space-y-2 text-sm">
+                                <div><strong>Médico:</strong> ${medico}</div>
+                                <div><strong>Data:</strong> ${formattedDate}</div>
+                                <div><strong>Horário:</strong> ${horario}</div>
+                                <div><strong>Tipo:</strong> ${tipo}</div>
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                        <div class="font-semibold text-medical-800 mb-2">Motivo</div>
-                        <div class="text-sm">${motivo}</div>
-                    </div>
-                `);
+                        <div>
+                            <div class="font-semibold text-medical-800 mb-2">Motivo</div>
+                            <div class="text-sm">${motivo}</div>
+                        </div>
+                    `);
+            }
+
+            // Adicionar evento para mostrar informações do médico quando selecionado
+            $('#MedicoId').on('change', function () {
+                const medicoId = $(this).val();
+                if (medicoId) {
+                    showMedicoInfo(medicoId);
+                } else {
+                    $('#medico-info').addClass('hidden');
+                }
+            });
+
+            // Função para exibir informações do médico
+            function showMedicoInfo(medicoId) {
+                if (medicoId) {
+                    const medicoNome = $('#MedicoId option:selected').text();
+                    // Extrair especialidade do texto selecionado (formato: "Nome - Especialidade")
+                    const especialidade = medicoNome.includes('-') ?
+                        medicoNome.split('-')[1].trim() :
+                        "Especialidade não informada";
+
+                    // Valor de consulta padrão, idealmente viria do backend
+                    const valorConsulta = "15.000 AOA";
+
+                    $('#medico-details').html(`
+                            <div class="mb-2"><strong>Nome:</strong> ${medicoNome}</div>
+                            <div class="mb-2"><strong>Especialidade:</strong> ${especialidade}</div>
+                            <div><strong>Valor da Consulta:</strong> ${valorConsulta}</div>
+                        `);
+
+                    $('#medico-info').removeClass('hidden');
+                } else {
+                    $('#medico-info').addClass('hidden');
+                }
+            }
+
+            // Inicializar - verificar se já tem médico selecionado ao carregar a página
+            const initialMedicoId = $('#MedicoId').val();
+            if (initialMedicoId) {
+                showMedicoInfo(initialMedicoId);
             }
         });
     </script>

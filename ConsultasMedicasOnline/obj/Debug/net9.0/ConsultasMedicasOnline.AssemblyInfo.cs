@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ConsultasMedicasOnline")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b15af83a4f4973193dde5ecbb4e6e3f441db78ce")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1b86f21533c4ae97cfa8879d2a29ed1a649493ef")]
 [assembly: System.Reflection.AssemblyProductAttribute("ConsultasMedicasOnline")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ConsultasMedicasOnline")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
