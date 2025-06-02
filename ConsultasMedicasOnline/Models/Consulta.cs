@@ -24,7 +24,10 @@ namespace ConsultasMedicasOnline.Models
         [Key]
         public int Id { get; set; }
 
+        [Required]
         public int PacienteId { get; set; }
+        
+        [Required]
         public int MedicoId { get; set; }
 
         [Required]

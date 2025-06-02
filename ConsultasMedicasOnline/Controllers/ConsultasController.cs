@@ -104,10 +104,9 @@ namespace ConsultasMedicasOnline.Controllers
         [Authorize(Roles = "Paciente,Administrador")]
         public async Task<IActionResult> Create()
         {
-            var currentUserId = _userManager.GetUserId(User);
-            
             if (User.IsInRole("Paciente"))
             {
+                var currentUserId = _userManager.GetUserId(User);
                 var paciente = await _context.Pacientes
                     .FirstOrDefaultAsync(p => p.UsuarioId == currentUserId);
                 
@@ -115,8 +114,17 @@ namespace ConsultasMedicasOnline.Controllers
                 {
                     return RedirectToAction("Create", "Pacientes");
                 }
+                
+                // Passar o ID do paciente para a view
+                ViewBag.PacienteId = paciente.Id;
             }
 
+            var consulta = new Consulta
+            {
+                DataHora = DateTime.Now.AddDays(1).Date.AddHours(9)
+            };
+
+            // Carregar lista de médicos
             ViewData["MedicoId"] = new SelectList(
                 await _context.Medicos
                     .Include(m => m.Usuario)
@@ -125,13 +133,8 @@ namespace ConsultasMedicasOnline.Controllers
                         m.Id, 
                         Nome = m.Usuario.Nome + " - " + m.Especialidade.Nome 
                     })
-                    .ToListAsync(), 
+                    .ToListAsync(),
                 "Id", "Nome");
-
-            var consulta = new Consulta
-            {
-                DataHora = DateTime.Now.AddDays(1).Date.AddHours(9) // Padrão: amanhã às 9h
-            };
 
             return View(consulta);
         }
@@ -140,12 +143,11 @@ namespace ConsultasMedicasOnline.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Paciente,Administrador")]
-        public async Task<IActionResult> Create([Bind("MedicoId,DataHora,DuracaoMinutos,Tipo,MotivoConsulta,ObservacoesGerais")] Consulta consulta, int? pacienteId = null)
+        public async Task<IActionResult> Create([Bind("MedicoId,DataHora,DuracaoMinutos,Tipo,MotivoConsulta,ObservacoesGerais")] Consulta consulta, string Horario, int? pacienteId = null)
         {
             // Adicionar mais logs para depuração
             var formValues = string.Join(", ", Request.Form.Select(x => $"{x.Key}={x.Value}"));
             Console.WriteLine($"Form values: {formValues}");
-            Console.WriteLine($"Received DataHora: {consulta?.DataHora}");
             
             if (consulta == null)
             {
@@ -153,11 +155,44 @@ namespace ConsultasMedicasOnline.Controllers
                 return View(new Consulta());
             }
 
+            // IMPORTANTE: Inicialize as propriedades de navegação para evitar erros de validação
+            consulta.Medico = await _context.Medicos.FindAsync(consulta.MedicoId);
+            
             var currentUserId = _userManager.GetUserId(User);
             
-            // Debug logs
-            Console.WriteLine($"Received DataHora: {consulta.DataHora}");
-            Console.WriteLine($"Received MedicoId: {consulta.MedicoId}");
+            // Verificar se temos data e horário e combiná-los
+            if (!string.IsNullOrEmpty(Horario) && consulta.DataHora != default)
+            {
+                try {
+                    // Separar os componentes de hora e minuto
+                    var horaParts = Horario.Split(':');
+                    if (horaParts.Length == 2 && 
+                        int.TryParse(horaParts[0], out int hora) && 
+                        int.TryParse(horaParts[1], out int minuto))
+                    {
+                        // Combinar a data com o horário selecionado
+                        consulta.DataHora = consulta.DataHora.Date
+                            .AddHours(hora)
+                            .AddMinutes(minuto);
+                        
+                        Console.WriteLine($"Data e hora combinados: {consulta.DataHora}");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Formato de horário inválido.");
+                        Console.WriteLine("Formato de horário inválido");
+                    }
+                }
+                catch (Exception ex) {
+                    ModelState.AddModelError("", $"Erro ao processar o horário: {ex.Message}");
+                    Console.WriteLine($"Erro ao processar horário: {ex.Message}");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "É necessário selecionar uma data e um horário.");
+                Console.WriteLine("Data ou horário não informados");
+            }
             
             // Determinar o paciente
             if (User.IsInRole("Paciente"))
@@ -171,11 +206,15 @@ namespace ConsultasMedicasOnline.Controllers
                 }
                 
                 consulta.PacienteId = paciente.Id;
+                // IMPORTANTE: Inicialize a propriedade de navegação do paciente
+                consulta.Paciente = paciente;
                 Console.WriteLine($"Set PacienteId from user: {consulta.PacienteId}");
             }
             else if (User.IsInRole("Administrador") && pacienteId.HasValue)
             {
                 consulta.PacienteId = pacienteId.Value;
+                // IMPORTANTE: Inicialize a propriedade de navegação do paciente
+                consulta.Paciente = await _context.Pacientes.FindAsync(pacienteId.Value);
                 Console.WriteLine($"Set PacienteId from parameter: {consulta.PacienteId}");
             }
             else
@@ -184,18 +223,21 @@ namespace ConsultasMedicasOnline.Controllers
                 Console.WriteLine("Paciente não identificado");
             }
 
+            // IMPORTANTE: Remova erros de validação para Medico e Paciente já que
+            // estamos definindo essas propriedades manualmente
+            ModelState.Remove("Medico");
+            ModelState.Remove("Paciente");
+
             // Ensure we have a valid DateTime
             if (consulta.DataHora == default)
             {
                 ModelState.AddModelError("DataHora", "A data e hora da consulta é obrigatória.");
-                Console.WriteLine("Data/hora inválida");
             }
             
             // Validações de negócio
             if (consulta.DataHora <= DateTime.Now)
             {
                 ModelState.AddModelError("DataHora", "A data e hora da consulta deve ser futura.");
-                Console.WriteLine("Data/hora deve ser futura");
             }
 
             // Verificar disponibilidade do médico
@@ -208,7 +250,6 @@ namespace ConsultasMedicasOnline.Controllers
             if (conflito)
             {
                 ModelState.AddModelError("DataHora", "Médico já possui consulta agendada neste horário.");
-                Console.WriteLine("Conflito de horário");
             }
 
             if (ModelState.IsValid)
@@ -239,7 +280,7 @@ namespace ConsultasMedicasOnline.Controllers
                 }
             }
 
-            // If we got here, something failed, redisplay form
+            // Se chegarmos aqui, algo falhou, redisplay form
             ViewData["MedicoId"] = new SelectList(
                 await _context.Medicos
                     .Include(m => m.Usuario)
