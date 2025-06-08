@@ -8461,19 +8461,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\User\\.nuget\\packages\\": {}
+    "C:\\Users\\Domingos Daniel\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\ConsultasMedicasOnline.csproj",
+      "projectUniqueName": "C:\\Users\\Domingos Daniel\\Desktop\\ProjectoWebConsultasMedicasOnline\\ConsultasMedicasOnline\\ConsultasMedicasOnline.csproj",
       "projectName": "ConsultasMedicasOnline",
-      "projectPath": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\ConsultasMedicasOnline.csproj",
-      "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "D:\\ProjectoWeb\\ConsultasMedicasOnline\\obj\\",
+      "projectPath": "C:\\Users\\Domingos Daniel\\Desktop\\ProjectoWebConsultasMedicasOnline\\ConsultasMedicasOnline\\ConsultasMedicasOnline.csproj",
+      "packagesPath": "C:\\Users\\Domingos Daniel\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Domingos Daniel\\Desktop\\ProjectoWebConsultasMedicasOnline\\ConsultasMedicasOnline\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Domingos Daniel\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -8551,7 +8551,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.202/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

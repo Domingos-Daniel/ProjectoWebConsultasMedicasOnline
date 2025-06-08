@@ -77,9 +77,25 @@ namespace ConsultasMedicasOnline.Areas.Identity.Pages.Account
         
             if (ModelState.IsValid)
             {
+                // Verificar se o usuário existe
+                var user = await _userManager.FindByEmailAsync(Input.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Email ou senha incorretos.");
+                    return Page();
+                }
+
+                // Verificar se a conta está ativa
+                if (!user.Ativo)
+                {
+                    ModelState.AddModelError(string.Empty, "Sua conta foi desativada. Entre em contato com o suporte.");
+                    return Page();
+                }
+
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
@@ -92,11 +108,12 @@ namespace ConsultasMedicasOnline.Areas.Identity.Pages.Account
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
+                    ModelState.AddModelError(string.Empty, "Sua conta foi temporariamente bloqueada devido a várias tentativas de login malsucedidas.");
+                    return Page();
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Tentativa de login inválida.");
+                    ModelState.AddModelError(string.Empty, "Email ou senha incorretos.");
                     return Page();
                 }
             }

@@ -25,7 +25,8 @@
         <!-- Login Card -->
         <div class="bg-white/70 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-8 space-y-6">
             <form id="account" method="post" class="space-y-6">
-                <div asp-validation-summary="ModelOnly" class="text-red-600 bg-red-50 border border-red-200 rounded-xl p-4 hidden" role="alert"></div>
+                <!-- Validation Summary -->
+                <div asp-validation-summary="ModelOnly" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm" role="alert"></div>
                 
                 <!-- Email Field -->
                 <div class="space-y-2">
@@ -157,53 +158,51 @@
             }
         }
 
-        // Form validation animation
-        document.getElementById('account').addEventListener('submit', function(e) {
-            const email = document.querySelector('input[name="Input.Email"]').value;
-            const password = document.querySelector('input[name="Input.Password"]').value;
-            
-            if (!email || !password) {
-                e.preventDefault();
-                
-                // Show validation summary
-                const validationSummary = document.querySelector('[asp-validation-summary]');
-                if (validationSummary) {
-                    validationSummary.textContent = 'Por favor, preencha todos os campos obrigatórios.';
-                    validationSummary.classList.remove('hidden');
-                    validationSummary.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-                
-                // Shake animation for empty fields
-                if (!email) {
-                    const emailField = document.querySelector('input[name="Input.Email"]');
-                    emailField.classList.add('animate-pulse');
-                    emailField.style.borderColor = '#ef4444';
-                    setTimeout(() => {
-                        emailField.classList.remove('animate-pulse');
-                        emailField.style.borderColor = '';
-                    }, 1000);
-                }
-                
-                if (!password) {
-                    const passwordField = document.querySelector('input[name="Input.Password"]');
-                    passwordField.classList.add('animate-pulse');
-                    passwordField.style.borderColor = '#ef4444';
-                    setTimeout(() => {
-                        passwordField.classList.remove('animate-pulse');
-                        passwordField.style.borderColor = '';
-                    }, 1000);
-                }
+        // Enhanced validation and error handling
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show validation errors if they exist
+            const validationSummary = document.querySelector('[asp-validation-summary="ModelOnly"]');
+            if (validationSummary && validationSummary.innerHTML.trim() !== '') {
+                validationSummary.style.display = 'block';
+                validationSummary.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-        });
 
-        // Enhanced focus effects
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.classList.add('scale-105');
+            // Form submission handling
+            document.getElementById('account').addEventListener('submit', function(e) {
+                const email = document.querySelector('input[name="Input.Email"]').value;
+                const password = document.querySelector('input[name="Input.Password"]').value;
+                
+                if (!email || !password) {
+                    e.preventDefault();
+                    
+                    // Highlight empty fields
+                    if (!email) {
+                        const emailField = document.querySelector('input[name="Input.Email"]');
+                        emailField.classList.add('border-red-500');
+                        emailField.focus();
+                    }
+                    
+                    if (!password) {
+                        const passwordField = document.querySelector('input[name="Input.Password"]');
+                        passwordField.classList.add('border-red-500');
+                        if (!email) passwordField.focus();
+                    }
+                }
             });
-            
-            input.addEventListener('blur', function() {
-                this.parentElement.classList.remove('scale-105');
+
+            // Remove red border on input
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.classList.remove('border-red-500');
+                });
+                
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('scale-105');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('scale-105');
+                });
             });
         });
     </script>
