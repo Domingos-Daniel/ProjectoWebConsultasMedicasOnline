@@ -5,6 +5,28 @@
 
 <div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Success/Error Messages -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">@TempData["Success"]</span>
+                <span class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onclick="this.parentElement.style.display='none'">
+                    <i class="fas fa-times"></i>
+                </span>
+            </div>
+        }
+        
+        @if (TempData["Error"] != null)
+        {
+            <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">@TempData["Error"]</span>
+                <span class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onclick="this.parentElement.style.display='none'">
+                    <i class="fas fa-times"></i>
+                </span>
+            </div>
+        }
+
         <div class="mb-8 flex justify-between items-center">
             <div>
                 <h1 class="text-3xl font-bold text-gray-900">Gerenciar Médicos</h1>
@@ -91,6 +113,12 @@
     <script>
         function excluirMedico(id) {
             if (confirm('Tem certeza de que deseja excluir este médico? Esta ação não pode ser desfeita.')) {
+                // Show loading state
+                const button = event.target.closest('button');
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                button.disabled = true;
+                
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = '@Url.Action("ExcluirMedico")';
@@ -100,10 +128,28 @@
                 idInput.name = 'id';
                 idInput.value = id;
                 
+                // Add anti-forgery token
+                const token = document.querySelector('input[name="__RequestVerificationToken"]');
+                if (token) {
+                    const tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = '__RequestVerificationToken';
+                    tokenInput.value = token.value;
+                    form.appendChild(tokenInput);
+                }
+                
                 form.appendChild(idInput);
                 document.body.appendChild(form);
                 form.submit();
             }
         }
+
+        // Auto-hide success messages after 5 seconds
+        setTimeout(() => {
+            const successAlert = document.querySelector('.bg-green-100');
+            if (successAlert) {
+                successAlert.style.display = 'none';
+            }
+        }, 5000);
     </script>
 }

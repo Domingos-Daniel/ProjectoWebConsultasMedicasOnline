@@ -1,6 +1,6 @@
-@model ConsultasMedicasOnline.Models.ViewModels.CriarMedicoViewModel
+@model ConsultasMedicasOnline.Models.ViewModels.EditarMedicoViewModel
 @{
-    ViewData["Title"] = "Adicionar Médico";
+    ViewData["Title"] = "Editar Médico";
 }
 
 <div class="min-h-screen bg-gray-50 py-8">
@@ -11,6 +11,9 @@
         {
             <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
                 <span class="block sm:inline">@TempData["Success"]</span>
+                <span class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onclick="this.parentElement.style.display='none'">
+                    <i class="fas fa-times"></i>
+                </span>
             </div>
         }
         
@@ -18,6 +21,9 @@
         {
             <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
                 <span class="block sm:inline">@TempData["Error"]</span>
+                <span class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onclick="this.parentElement.style.display='none'">
+                    <i class="fas fa-times"></i>
+                </span>
             </div>
         }
 
@@ -35,13 +41,15 @@
         }
 
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Adicionar Médico</h1>
-            <p class="text-gray-600 mt-2">Cadastrar novo médico no sistema</p>
+            <h1 class="text-3xl font-bold text-gray-900">Editar Médico</h1>
+            <p class="text-gray-600 mt-2">Atualizar informações do médico</p>
         </div>
 
         <div class="bg-white rounded-lg shadow p-6">
-            <form asp-action="CriarMedico" method="post" id="criarMedicoForm">
+            <form asp-action="EditarMedico" method="post" id="editarMedicoForm">
                 @Html.AntiForgeryToken()
+                <input asp-for="Id" type="hidden" />
+                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
@@ -57,8 +65,8 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input asp-for="Email" type="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
-                        <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+                        <input asp-for="Email" type="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly />
+                        <p class="text-xs text-gray-500 mt-1">O email não pode ser alterado</p>
                     </div>
 
                     <div>
@@ -74,37 +82,55 @@
                     </div>
 
                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Estado CRM</label>
+                        <input asp-for="EstadoCRM" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                        <span asp-validation-for="EstadoCRM" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Especialidade</label>
                         <select asp-for="EspecialidadeId" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                             <option value="">Selecione uma especialidade</option>
                             @foreach (var especialidade in ViewBag.Especialidades as IEnumerable<ConsultasMedicasOnline.Models.Especialidade>)
                             {
-                                <option value="@especialidade.Id">@especialidade.Nome</option>
+                                <option value="@especialidade.Id" selected="@(especialidade.Id == Model.EspecialidadeId)">@especialidade.Nome</option>
                             }
                         </select>
                         <span asp-validation-for="EspecialidadeId" class="text-red-500 text-sm"></span>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Valor da Consulta</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Valor da Consulta (Kz)</label>
                         <input asp-for="ValorConsulta" type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
                         <span asp-validation-for="ValorConsulta" class="text-red-500 text-sm"></span>
                     </div>
+                </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-                        <input asp-for="Senha" type="password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
-                        <span asp-validation-for="Senha" class="text-red-500 text-sm"></span>
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Biografia</label>
+                    <textarea asp-for="Biografia" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Descreva a experiência e qualificações do médico..."></textarea>
+                    <span asp-validation-for="Biografia" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex items-center">
+                        <input asp-for="AceitaParticular" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                        <label asp-for="AceitaParticular" class="ml-2 block text-sm text-gray-900">Aceita consultas particulares</label>
+                    </div>
+
+                    <div class="flex items-center">
+                        <input asp-for="AceitaConvenio" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                        <label asp-for="AceitaConvenio" class="ml-2 block text-sm text-gray-900">Aceita convênios</label>
                     </div>
                 </div>
 
-                <div class="mt-6 flex justify-end space-x-3">
-                    <a asp-action="Medicos" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+                <div class="mt-8 flex justify-end space-x-3">
+                    <a asp-action="Medicos" class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
                         Cancelar
                     </a>
-                    <button type="submit" id="submitBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <button type="submit" id="submitBtn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                         <i class="fas fa-save mr-2"></i>
-                        <span id="submitText">Salvar Médico</span>
+                        <span id="submitText">Atualizar Médico</span>
                     </button>
                 </div>
             </form>
@@ -114,18 +140,18 @@
 
 @section Scripts {
     <script>
-        document.getElementById('criarMedicoForm').addEventListener('submit', function() {
+        document.getElementById('editarMedicoForm').addEventListener('submit', function() {
             const submitBtn = document.getElementById('submitBtn');
             const submitText = document.getElementById('submitText');
             
             // Show loading state
             submitBtn.disabled = true;
-            submitText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
+            submitText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Atualizando...';
         });
 
         // Client-side validation
         document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('criarMedicoForm');
+            const form = document.getElementById('editarMedicoForm');
             const inputs = form.querySelectorAll('input[required], select[required]');
             
             inputs.forEach(input => {
@@ -147,5 +173,13 @@
                 field.classList.add('border-red-500');
             }
         }
+
+        // Auto-hide success messages after 5 seconds
+        setTimeout(() => {
+            const successAlert = document.querySelector('.bg-green-100');
+            if (successAlert) {
+                successAlert.style.display = 'none';
+            }
+        }, 5000);
     </script>
 }
