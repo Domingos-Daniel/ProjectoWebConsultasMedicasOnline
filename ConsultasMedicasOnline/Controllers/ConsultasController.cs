@@ -23,8 +23,8 @@ namespace ConsultasMedicasOnline.Controllers
         // GET: Consultas
         public async Task<IActionResult> Index()
         {
-            var currentUserId = _userManager.GetUserId(User);
-            IQueryable<Consulta> consultasQuery = _context.Consultas
+            var userId = _userManager.GetUserId(User);
+            IQueryable<Consulta> query = _context.Consultas
                 .Include(c => c.Paciente)
                     .ThenInclude(p => p.Usuario)
                 .Include(c => c.Medico)
@@ -32,32 +32,34 @@ namespace ConsultasMedicasOnline.Controllers
                 .Include(c => c.Medico)
                     .ThenInclude(m => m.Especialidade);
 
+            // Filter by user role
             if (User.IsInRole("Paciente"))
             {
-                var paciente = await _context.Pacientes
-                    .FirstOrDefaultAsync(p => p.UsuarioId == currentUserId);
-                
+                var paciente = await _context.Pacientes.FirstOrDefaultAsync(p => p.UsuarioId == userId);
                 if (paciente != null)
                 {
-                    consultasQuery = consultasQuery.Where(c => c.PacienteId == paciente.Id);
+                    query = query.Where(c => c.PacienteId == paciente.Id);
+                }
+                else
+                {
+                    return View(new List<Consulta>());
                 }
             }
             else if (User.IsInRole("Medico"))
             {
-                var medico = await _context.Medicos
-                    .FirstOrDefaultAsync(m => m.UsuarioId == currentUserId);
-                
+                var medico = await _context.Medicos.FirstOrDefaultAsync(m => m.UsuarioId == userId);
                 if (medico != null)
                 {
-                    consultasQuery = consultasQuery.Where(c => c.MedicoId == medico.Id);
+                    query = query.Where(c => c.MedicoId == medico.Id);
+                }
+                else
+                {
+                    return View(new List<Consulta>());
                 }
             }
-            // Administradores veem todas as consultas
+            // Administrators see all consultations (no filter needed)
 
-            var consultas = await consultasQuery
-                .OrderByDescending(c => c.DataHora)
-                .ToListAsync();
-
+            var consultas = await query.OrderByDescending(c => c.DataHora).ToListAsync();
             return View(consultas);
         }
 

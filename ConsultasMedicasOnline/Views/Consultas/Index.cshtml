@@ -6,6 +6,23 @@
     if (User.IsInRole("Paciente")) userRole = "Paciente";
     else if (User.IsInRole("Medico")) userRole = "Médico";
     else if (User.IsInRole("Administrador")) userRole = "Administrador";
+
+    // Chart data preparation
+    var consultasThisMonth = Model.Where(c => c.DataHora.Month == DateTime.Now.Month && c.DataHora.Year == DateTime.Now.Year);
+    var statusCounts = new Dictionary<string, int>
+    {
+        ["Agendada"] = Model.Count(c => c.Status == StatusConsulta.Agendada),
+        ["Confirmada"] = Model.Count(c => c.Status == StatusConsulta.Confirmada),
+        ["Em Andamento"] = Model.Count(c => c.Status == StatusConsulta.EmAndamento),
+        ["Concluída"] = Model.Count(c => c.Status == StatusConsulta.Concluida),
+        ["Cancelada"] = Model.Count(c => c.Status == StatusConsulta.Cancelada),
+        ["Não Compareceu"] = Model.Count(c => c.Status == StatusConsulta.NaoCompareceu)
+    };
+    
+    var last7Days = Enumerable.Range(0, 7)
+        .Select(i => DateTime.Today.AddDays(-6 + i))
+        .ToDictionary(date => date.ToString("dd/MM"), 
+                     date => Model.Count(c => c.DataHora.Date == date));
 }
 
 <div class="min-h-screen bg-medical-50 py-8">
@@ -110,6 +127,41 @@
                         <p class="text-sm font-medium text-medical-600">Hoje</p>
                         <p class="text-2xl font-bold text-medical-800">@Model.Count(c => c.DataHora.Date == DateTime.Today)</p>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Status Distribution Chart -->
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <h3 class="text-lg font-semibold text-medical-800 mb-4">Distribuição por Status</h3>
+                <div class="relative h-64">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Consultas por Dia (Últimos 7 dias) -->
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <h3 class="text-lg font-semibold text-medical-800 mb-4">Consultas - Últimos 7 Dias</h3>
+                <div class="relative h-64">
+                    <canvas id="weeklyChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Monthly Trend -->
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <h3 class="text-lg font-semibold text-medical-800 mb-4">Tendência Mensal</h3>
+                <div class="relative h-64">
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Tipo de Consulta -->
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <h3 class="text-lg font-semibold text-medical-800 mb-4">Tipo de Consulta</h3>
+                <div class="relative h-64">
+                    <canvas id="typeChart"></canvas>
                 </div>
             </div>
         </div>
@@ -350,6 +402,193 @@
 
 @section Scripts {
     <script>
+        // Ensure Chart.js is loaded and DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chart data from server - fix syntax
+            const statusLabels = [@Html.Raw(string.Join(",", statusCounts.Keys.Select(k => $"'{k}'")))];
+            const statusValues = [@Html.Raw(string.Join(",", statusCounts.Values))];
+            
+            const weeklyLabels = [@Html.Raw(string.Join(",", last7Days.Keys.Select(k => $"'{k}'")))];
+            const weeklyValues = [@Html.Raw(string.Join(",", last7Days.Values))];
+
+            // Status Distribution Doughnut Chart
+            const statusCtx = document.getElementById('statusChart');
+            if (statusCtx) {
+                new Chart(statusCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: statusLabels,
+                        datasets: [{
+                            data: statusValues,
+                            backgroundColor: [
+                                '#fbbf24', // Agendada - Warning
+                                '#3b82f6', // Confirmada - Info  
+                                '#8b5cf6', // Em Andamento - Primary
+                                '#10b981', // Concluída - Success
+                                '#ef4444', // Cancelada - Danger
+                                '#6b7280'  // Não Compareceu - Gray
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 15
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Weekly Trend Line Chart
+            const weeklyCtx = document.getElementById('weeklyChart');
+            if (weeklyCtx) {
+                new Chart(weeklyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: weeklyLabels,
+                        datasets: [{
+                            label: 'Consultas',
+                            data: weeklyValues,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#3b82f6',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Monthly Trend Bar Chart
+            const consultasData = @Html.Raw(Json.Serialize(Model.Select(c => new { DataHora = c.DataHora.ToString("yyyy-MM-dd") })));
+            const monthlyLabels = [];
+            const monthlyDataValues = [];
+            
+            // Generate last 6 months data
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date();
+                date.setMonth(date.getMonth() - i);
+                const monthYear = date.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
+                monthlyLabels.push(monthYear);
+                
+                // Count consultations for this month
+                const count = consultasData.filter(c => {
+                    const consultaDate = new Date(c.DataHora);
+                    return consultaDate.getMonth() === date.getMonth() && 
+                           consultaDate.getFullYear() === date.getFullYear();
+                }).length;
+                
+                monthlyDataValues.push(count);
+            }
+
+            const monthlyCtx = document.getElementById('monthlyChart');
+            if (monthlyCtx) {
+                new Chart(monthlyCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: monthlyLabels,
+                        datasets: [{
+                            label: 'Consultas',
+                            data: monthlyDataValues,
+                            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                            borderColor: '#10b981',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Type Distribution Chart
+            const onlineCount = @Model.Count(c => c.Tipo == TipoConsulta.Online);
+            const presencialCount = @Model.Count(c => c.Tipo == TipoConsulta.Presencial);
+            
+            const typeCtx = document.getElementById('typeChart');
+            if (typeCtx) {
+                new Chart(typeCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Online', 'Presencial'],
+                        datasets: [{
+                            data: [onlineCount, presencialCount],
+                            backgroundColor: ['#8b5cf6', '#f59e0b'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 15
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Debug: Log chart creation
+            console.log('Charts initialized with data:', {
+                status: { labels: statusLabels, values: statusValues },
+                weekly: { labels: weeklyLabels, values: weeklyValues },
+                monthly: { labels: monthlyLabels, values: monthlyDataValues },
+                type: { online: onlineCount, presencial: presencialCount }
+            });
+        });
+
+        // jQuery document ready for other functionality
         $(document).ready(function() {
             // Filter functionality
             function filterConsultas() {
