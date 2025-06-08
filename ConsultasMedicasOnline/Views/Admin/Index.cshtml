@@ -2,45 +2,155 @@
     ViewData["Title"] = "Painel Administrativo";
 }
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-white py-8">
+<div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-medical-800">
-                <i class="fas fa-cog text-primary-600 mr-3"></i>
-                Painel Administrativo
-            </h1>
-            <p class="mt-2 text-medical-600">Gerenciamento do sistema</p>
+            <h1 class="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
+            <p class="text-gray-600 mt-2">Central de controle e gestão do sistema MedConsulta</p>
         </div>
 
-        <!-- Message Display -->
-        @if (TempData["Message"] != null)
-        {
-            <div class="mb-6 p-4 bg-success-50 border border-success-200 rounded-lg text-success-700">
-                <i class="fas fa-check-circle mr-2"></i>
-                @TempData["Message"]
-            </div>
-        }
+        <!-- Quick Access Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Dashboard -->
+            <a asp-action="Dashboard" class="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow duration-300 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-blue-100 rounded-lg">
+                        <i class="fas fa-chart-line text-blue-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Dashboard</h3>
+                        <p class="text-gray-600">Visão geral e estatísticas</p>
+                    </div>
+                </div>
+            </a>
 
-        <!-- Admin Tools -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Seed Database Card -->
-            <div class="bg-white rounded-xl shadow-sm border border-medical-200 overflow-hidden">
-                <div class="px-6 py-4 border-b border-medical-200 bg-primary-50">
-                    <h3 class="text-lg font-semibold text-primary-800">Dados de Demonstração</h3>
+            <!-- Gestão de Usuários -->
+            <a asp-action="Usuarios" class="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow duration-300 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-green-100 rounded-lg">
+                        <i class="fas fa-users text-green-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Usuários</h3>
+                        <p class="text-gray-600">Gerenciar todos os usuários</p>
+                    </div>
                 </div>
-                <div class="p-6">
-                    <p class="text-medical-600 mb-4">
-                        Adicione médicos de demonstração para testar o agendamento de consultas.
-                    </p>
-                    <form asp-action="SeedDemoData" method="post">
-                        <button type="submit" class="w-full bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200">
-                            <i class="fas fa-database mr-2"></i>
-                            Adicionar Dados de Demonstração
-                        </button>
-                    </form>
+            </a>
+
+            <!-- Gestão de Médicos -->
+            <a asp-action="Medicos" class="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow duration-300 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-purple-100 rounded-lg">
+                        <i class="fas fa-user-md text-purple-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Médicos</h3>
+                        <p class="text-gray-600">Cadastrar e gerenciar médicos</p>
+                    </div>
                 </div>
+            </a>
+
+            <!-- Gestão de Pacientes -->
+            <a asp-action="Pacientes" class="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow duration-300 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-yellow-100 rounded-lg">
+                        <i class="fas fa-user-injured text-yellow-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Pacientes</h3>
+                        <p class="text-gray-600">Visualizar pacientes</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Especialidades -->
+            <a asp-action="Especialidades" class="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow duration-300 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-red-100 rounded-lg">
+                        <i class="fas fa-stethoscope text-red-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Especialidades</h3>
+                        <p class="text-gray-600">Gerenciar especialidades médicas</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Consultas -->
+            <a asp-action="TodasConsultas" class="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow duration-300 p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-indigo-100 rounded-lg">
+                        <i class="fas fa-calendar-alt text-indigo-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Todas Consultas</h3>
+                        <p class="text-gray-600">Visualizar e gerenciar consultas</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Management Actions -->
+        <div class="bg-white rounded-lg shadow-sm border p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Ações de Gestão</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <a asp-action="ValidarAgendamentos" class="bg-orange-100 text-orange-800 p-4 rounded-lg hover:bg-orange-200 transition-colors flex items-center">
+                    <i class="fas fa-check-circle mr-3"></i>
+                    Validar Agendamentos
+                </a>
+                
+                <a asp-action="Relatorios" class="bg-blue-100 text-blue-800 p-4 rounded-lg hover:bg-blue-200 transition-colors flex items-center">
+                    <i class="fas fa-chart-bar mr-3"></i>
+                    Relatórios
+                </a>
+
+                <a asp-action="Configuracoes" class="bg-gray-100 text-gray-800 p-4 rounded-lg hover:bg-gray-200 transition-colors flex items-center">
+                    <i class="fas fa-cog mr-3"></i>
+                    Configurações
+                </a>
+
+                <a asp-action="Logs" class="bg-red-100 text-red-800 p-4 rounded-lg hover:bg-red-200 transition-colors flex items-center">
+                    <i class="fas fa-file-alt mr-3"></i>
+                    Logs do Sistema
+                </a>
+            </div>
+        </div>
+
+        <!-- System Info -->
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Informações do Sistema</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-600">@DateTime.Now.ToString("dd/MM/yyyy")</div>
+                    <div class="text-gray-600">Data Atual</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-600">Online</div>
+                    <div class="text-gray-600">Status do Sistema</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-purple-600">v1.0</div>
+                    <div class="text-gray-600">Versão</div>
+                </div>
+            </div>
+            
+            <div class="mt-6 text-center">
+                <form asp-action="SeedDemoData" method="post" class="inline">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-database mr-2"></i>
+                        Carregar Dados de Demonstração
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
+        <i class="fas fa-check-circle mr-2"></i>
+        @TempData["Message"]
+    </div>
+}

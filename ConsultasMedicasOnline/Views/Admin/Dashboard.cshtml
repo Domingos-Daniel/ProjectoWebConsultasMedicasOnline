@@ -1,0 +1,146 @@
+@model ConsultasMedicasOnline.Models.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Painel Administrativo";
+}
+
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
+            <p class="text-gray-600 mt-2">Visão geral do sistema e ferramentas de gestão</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-blue-100 rounded-lg">
+                        <i class="fas fa-users text-blue-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Total Usuários</p>
+                        <p class="text-2xl font-bold text-gray-900">@Model.TotalUsuarios</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-green-100 rounded-lg">
+                        <i class="fas fa-user-md text-green-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Médicos</p>
+                        <p class="text-2xl font-bold text-gray-900">@Model.TotalMedicos</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-purple-100 rounded-lg">
+                        <i class="fas fa-calendar text-purple-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Consultas</p>
+                        <p class="text-2xl font-bold text-gray-900">@Model.TotalConsultas</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-yellow-100 rounded-lg">
+                        <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Pendentes</p>
+                        <p class="text-2xl font-bold text-gray-900">@Model.ConsultasPendentesValidacao</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <a asp-action="CriarMedico" class="bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                <i class="fas fa-user-plus mr-3"></i>
+                Adicionar Médico
+            </a>
+            <a asp-action="Especialidades" class="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition-colors flex items-center">
+                <i class="fas fa-stethoscope mr-3"></i>
+                Especialidades
+            </a>
+            <a asp-action="ValidarAgendamentos" class="bg-yellow-600 text-white p-4 rounded-lg hover:bg-yellow-700 transition-colors flex items-center">
+                <i class="fas fa-check-circle mr-3"></i>
+                Validar Agendamentos
+            </a>
+            <a asp-action="Relatorios" class="bg-purple-600 text-white p-4 rounded-lg hover:bg-purple-700 transition-colors flex items-center">
+                <i class="fas fa-chart-bar mr-3"></i>
+                Relatórios
+            </a>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Últimos Usuários -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b">
+                    <h3 class="text-lg font-semibold">Últimos Usuários Registrados</h3>
+                </div>
+                <div class="p-6">
+                    @if (Model.UltimosUsuarios.Any())
+                    {
+                        @foreach (var usuario in Model.UltimosUsuarios)
+                        {
+                            <div class="flex items-center py-3 border-b last:border-b-0">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-gray-600"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="font-medium">@usuario.Nome @usuario.Sobrenome</p>
+                                    <p class="text-sm text-gray-600">@usuario.Email</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-gray-500">Nenhum usuário registrado recentemente.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Consultas Recentes -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b">
+                    <h3 class="text-lg font-semibold">Consultas Recentes</h3>
+                </div>
+                <div class="p-6">
+                    @if (Model.ConsultasRecentes.Any())
+                    {
+                        @foreach (var consulta in Model.ConsultasRecentes)
+                        {
+                            <div class="flex items-center justify-between py-3 border-b last:border-b-0">
+                                <div>
+                                    <p class="font-medium">
+                                        @consulta.Paciente.Usuario.Nome - Dr. @consulta.Medico.Usuario.Nome
+                                    </p>
+                                    <p class="text-sm text-gray-600">@consulta.DataHora.ToString("dd/MM/yyyy HH:mm")</p>
+                                </div>
+                                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+                                    @consulta.Status
+                                </span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-gray-500">Nenhuma consulta registrada recentemente.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

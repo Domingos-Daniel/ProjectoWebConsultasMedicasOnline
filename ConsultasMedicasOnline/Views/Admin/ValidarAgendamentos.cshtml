@@ -1,0 +1,102 @@
+@model IEnumerable<Consulta>
+@{
+    ViewData["Title"] = "Validar Agendamentos";
+}
+
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Validar Agendamentos</h1>
+            <p class="text-gray-600 mt-2">Consultas pendentes de aprovação</p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            @if (Model.Any())
+            {
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Paciente</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Médico</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Data/Hora</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        @foreach (var consulta in Model)
+                        {
+                            <tr>
+                                <td class="px-6 py-4">
+                                    <div>
+                                        <div class="font-medium">@consulta.Paciente.Usuario.Nome @consulta.Paciente.Usuario.Sobrenome</div>
+                                        <div class="text-sm text-gray-600">@consulta.Paciente.Usuario.Email</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div>
+                                        <div class="font-medium">Dr. @consulta.Medico.Usuario.Nome @consulta.Medico.Usuario.Sobrenome</div>
+                                        <div class="text-sm text-gray-600">@consulta.Medico.Especialidade.Nome</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-sm">
+                                    @consulta.DataHora.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td class="px-6 py-4 text-sm">
+                                    @consulta.Tipo
+                                </td>
+                                <td class="px-6 py-4 text-right space-x-2">
+                                    <form asp-action="AprovarConsulta" method="post" class="inline">
+                                        <input type="hidden" name="id" value="@consulta.Id" />
+                                        <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">
+                                            Aprovar
+                                        </button>
+                                    </form>
+                                    <button onclick="rejeitarConsulta(@consulta.Id)" class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
+                                        Rejeitar
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="text-center py-12">
+                    <i class="fas fa-check-circle text-green-400 text-6xl mb-4"></i>
+                    <h3 class="text-lg font-semibold text-gray-900">Nenhuma consulta pendente</h3>
+                    <p class="text-gray-600">Todas as consultas foram validadas.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function rejeitarConsulta(id) {
+            const motivo = prompt('Informe o motivo da rejeição:');
+            if (motivo && motivo.trim()) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '@Url.Action("RejeitarConsulta")';
+                
+                const idInput = document.createElement('input');
+                idInput.type = 'hidden';
+                idInput.name = 'id';
+                idInput.value = id;
+                
+                const motivoInput = document.createElement('input');
+                motivoInput.type = 'hidden';
+                motivoInput.name = 'motivo';
+                motivoInput.value = motivo.trim();
+                
+                form.appendChild(idInput);
+                form.appendChild(motivoInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+}
