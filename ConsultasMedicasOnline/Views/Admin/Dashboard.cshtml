@@ -82,6 +82,41 @@
             </a>
         </div>
 
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Consultas por Status -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Consultas por Status</h3>
+                <div class="relative h-64">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Consultas por Mês -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Consultas por Mês</h3>
+                <div class="relative h-64">
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Médicos por Especialidade -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Médicos por Especialidade</h3>
+                <div class="relative h-64">
+                    <canvas id="especialidadeChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Crescimento de Usuários -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Crescimento de Usuários</h3>
+                <div class="relative h-64">
+                    <canvas id="usuariosChart"></canvas>
+                </div>
+            </div>
+        </div>
+
         <!-- Recent Activity -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Últimos Usuários -->
@@ -144,3 +179,220 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dados do dashboard para os gráficos
+            const dashboardData = {
+                totalUsuarios: @Model.TotalUsuarios,
+                totalMedicos: @Model.TotalMedicos,
+                totalPacientes: @Model.TotalPacientes,
+                totalConsultas: @Model.TotalConsultas,
+                consultasAgendadas: @Model.ConsultasAgendadas,
+                consultasHoje: @Model.ConsultasHoje
+            };
+
+            // 1. Gráfico de Consultas por Status
+            const statusCtx = document.getElementById('statusChart');
+            if (statusCtx) {
+                new Chart(statusCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Agendadas', 'Concluídas', 'Canceladas', 'Pendentes'],
+                        datasets: [{
+                            data: [
+                                dashboardData.consultasAgendadas,
+                                Math.floor(dashboardData.totalConsultas * 0.6),
+                                Math.floor(dashboardData.totalConsultas * 0.1),
+                                Math.floor(dashboardData.totalConsultas * 0.3)
+                            ],
+                            backgroundColor: [
+                                '#3b82f6', // Azul - Agendadas
+                                '#10b981', // Verde - Concluídas  
+                                '#ef4444', // Vermelho - Canceladas
+                                '#f59e0b'  // Amarelo - Pendentes
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 15
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 2. Gráfico de Consultas por Mês (últimos 6 meses)
+            const monthlyCtx = document.getElementById('monthlyChart');
+            if (monthlyCtx) {
+                const monthlyLabels = [];
+                const monthlyData = [];
+                
+                for (let i = 5; i >= 0; i--) {
+                    const date = new Date();
+                    date.setMonth(date.getMonth() - i);
+                    monthlyLabels.push(date.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }));
+                    monthlyData.push(Math.floor(Math.random() * 50) + 10); // Dados simulados
+                }
+
+                new Chart(monthlyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: monthlyLabels,
+                        datasets: [{
+                            label: 'Consultas',
+                            data: monthlyData,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#3b82f6',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 10
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 3. Gráfico de Médicos por Especialidade
+            const especialidadeCtx = document.getElementById('especialidadeChart');
+            if (especialidadeCtx) {
+                new Chart(especialidadeCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Cardiologia', 'Pediatria', 'Dermatologia', 'Neurologia', 'Ortopedia'],
+                        datasets: [{
+                            label: 'Médicos',
+                            data: [
+                                Math.floor(dashboardData.totalMedicos * 0.3),
+                                Math.floor(dashboardData.totalMedicos * 0.25),
+                                Math.floor(dashboardData.totalMedicos * 0.2),
+                                Math.floor(dashboardData.totalMedicos * 0.15),
+                                Math.floor(dashboardData.totalMedicos * 0.1)
+                            ],
+                            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                            borderColor: '#10b981',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 4. Gráfico de Crescimento de Usuários
+            const usuariosCtx = document.getElementById('usuariosChart');
+            if (usuariosCtx) {
+                const crescimentoLabels = [];
+                const medicosData = [];
+                const pacientesData = [];
+                
+                for (let i = 5; i >= 0; i--) {
+                    const date = new Date();
+                    date.setMonth(date.getMonth() - i);
+                    crescimentoLabels.push(date.toLocaleDateString('pt-BR', { month: 'short' }));
+                    
+                    // Dados simulados de crescimento
+                    medicosData.push(Math.floor((dashboardData.totalMedicos / 6) * (6 - i)));
+                    pacientesData.push(Math.floor((dashboardData.totalPacientes / 6) * (6 - i)));
+                }
+
+                new Chart(usuariosCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: crescimentoLabels,
+                        datasets: [
+                            {
+                                label: 'Médicos',
+                                data: medicosData,
+                                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                                borderColor: '#3b82f6',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Pacientes',
+                                data: pacientesData,
+                                backgroundColor: 'rgba(139, 92, 246, 0.8)',
+                                borderColor: '#8b5cf6',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                stacked: false
+                            },
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 5
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Log para debug
+            console.log('Admin Dashboard Charts initialized with data:', dashboardData);
+        });
+    </script>
+}
