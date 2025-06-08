@@ -60,12 +60,44 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Domingos Daniel/Desktop/ProjectoWebConsultasMedicasOnline/ConsultasMedicasOnline/Views/Admin/Configuracoes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ29uZmlndXJhY29lcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Domingos Daniel/Desktop/ProjectoWebConsultasMedicasOnline/ConsultasMedicasOnline/Views/Admin/CriarMedico.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ3JpYXJNZWRpY28uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Domingos Daniel/Desktop/ProjectoWebConsultasMedicasOnline/ConsultasMedicasOnline/Views/Admin/Dashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRGFzaGJvYXJkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Domingos Daniel/Desktop/ProjectoWebConsultasMedicasOnline/ConsultasMedicasOnline/Views/Admin/Especialidades.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRXNwZWNpYWxpZGFkZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Domingos Daniel/Desktop/ProjectoWebConsultasMedicasOnline/ConsultasMedicasOnline/Views/Admin/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Domingos Daniel/Desktop/ProjectoWebConsultasMedicasOnline/ConsultasMedicasOnline/Views/Admin/Medicos.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTWVkaWNvcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Domingos Daniel/Desktop/ProjectoWebConsultasMedicasOnline/ConsultasMedicasOnline/Views/Admin/Pacientes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGFjaWVudGVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Domingos Daniel/Desktop/ProjectoWebConsultasMedicasOnline/ConsultasMedicasOnline/Views/Admin/Relatorios.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUmVsYXRvcmlvcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Domingos Daniel/Desktop/ProjectoWebConsultasMedicasOnline/ConsultasMedicasOnline/Views/Admin/TodasConsultas.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVG9kYXNDb25zdWx0YXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Domingos Daniel/Desktop/ProjectoWebConsultasMedicasOnline/ConsultasMedicasOnline/Views/Admin/Usuarios.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVXN1YXJpb3MuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Domingos Daniel/Desktop/ProjectoWebConsultasMedicasOnline/ConsultasMedicasOnline/Views/Admin/ValidarAgendamentos.cshtml]
