@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ConsultasMedicasOnline.Data;
 using ConsultasMedicasOnline.Models;
+using System.Linq;
 
 namespace ConsultasMedicasOnline.Controllers
 {
@@ -291,6 +292,43 @@ namespace ConsultasMedicasOnline.Controllers
 
             ViewBag.Especialidade = especialidade.Nome;
             return View("Index", medicos);
+        }
+
+        // GET: /Medicos/GetDetails/5
+        [HttpGet]
+        public IActionResult GetDetails(int id)
+        {
+            try
+            {
+                var medico = _context.Medicos
+                    .Include(m => m.Usuario)
+                    .Include(m => m.Especialidade)
+                    .FirstOrDefault(m => m.Id == id);
+
+                if (medico == null)
+                {
+                    return NotFound(new { erro = "Médico não encontrado" });
+                }
+
+                var resultado = new
+                {
+                    id = medico.Id,
+                    nome = $"Dr. {medico.Usuario.Nome} {medico.Usuario.Sobrenome}",
+                    especialidade = medico.Especialidade?.Nome ?? "Não informado",
+                    crm = medico.CRM ?? "Não informado",
+                    valorConsulta = medico.ValorConsulta?.ToString("C", new System.Globalization.CultureInfo("pt-AO")) ?? "A consultar",
+                    biografia = medico.Biografia ?? "Biografia não disponível",
+                    aceitaConvenio = medico.AceitaConvenio,
+                    aceitaParticular = medico.AceitaParticular,
+                    tempoConsulta = medico.TempoConsultaMinutos > 0 ? medico.TempoConsultaMinutos : 30
+                };
+
+                return Json(resultado);
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(500, new { erro = "Erro interno", detalhes = ex.Message });
+            }
         }
     }
 }

@@ -154,41 +154,82 @@
                     Data e Horário
                 </h2>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Data -->
-                    <div class="form-group">
-                        <label asp-for="DataHora" class="block text-sm font-semibold text-medical-700 mb-2">
-                            Data da Consulta *
-                        </label>
-                        <input asp-for="DataHora" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")"
-                            min="@DateTime.Now.ToString("yyyy-MM-dd")"
-                            class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                            required />
-                        <span asp-validation-for="DataHora" class="text-danger-600 text-sm mt-1 block"></span>
+                <div id="select-medico-warning" class="mb-6 bg-yellow-50 p-4 rounded-lg border border-yellow-200 text-yellow-800">
+                    <div class="flex">
+                        <i class="fas fa-exclamation-circle text-yellow-600 text-xl mr-3 mt-0.5"></i>
+                        <div>
+                            <p class="font-medium">Selecione um médico primeiro</p>
+                            <p class="text-sm">Para ver as datas disponíveis, você precisa selecionar um médico acima.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="disponibilidade-container" class="hidden space-y-6">
+                    <!-- Calendário -->
+                    <div class="bg-gray-50 rounded-xl border border-gray-200 p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <button type="button" id="prev-month" class="text-primary-600 hover:text-primary-800 p-2 rounded-lg hover:bg-primary-50">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <h3 id="calendar-month" class="text-lg font-semibold text-medical-800"></h3>
+                            <button type="button" id="next-month" class="text-primary-600 hover:text-primary-800 p-2 rounded-lg hover:bg-primary-50">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-7 gap-1 mb-2 text-center">
+                            <div class="text-xs text-medical-600 font-medium">Dom</div>
+                            <div class="text-xs text-medical-600 font-medium">Seg</div>
+                            <div class="text-xs text-medical-600 font-medium">Ter</div>
+                            <div class="text-xs text-medical-600 font-medium">Qua</div>
+                            <div class="text-xs text-medical-600 font-medium">Qui</div>
+                            <div class="text-xs text-medical-600 font-medium">Sex</div>
+                            <div class="text-xs text-medical-600 font-medium">Sáb</div>
+                        </div>
+                        
+                        <div id="calendar-days" class="grid grid-cols-7 gap-1 text-sm">
+                            <!-- Os dias serão inseridos aqui via JavaScript -->
+                            <div class="text-center py-8">
+                                <div class="text-medical-500">Selecione um médico para ver disponibilidade</div>
+                            </div>
+                        </div>
+
+                        <!-- Legenda do calendário -->
+                        <div class="flex flex-wrap justify-center gap-4 mt-4 text-xs">
+                            <div class="flex items-center">
+                                <div class="w-4 h-4 bg-green-400 rounded mr-2"></div>
+                                <span>Disponível</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-4 bg-blue-500 rounded mr-2"></div>
+                                <span>Selecionado</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-4 bg-gray-200 rounded mr-2"></div>
+                                <span>Indisponível</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Horário -->
-                    <div class="form-group">
-                        <label class="block text-sm font-semibold text-medical-700 mb-2">
-                            Horário *
-                        </label>
-                        <select id="horario" name="Horario"
-                            class="w-full px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200"
-                            required>
-                            <option value="">Selecione um horário...</option>
-                            @for (int hour = 8; hour <= 17; hour++)
-                            {
-                                for (int minute = 0; minute < 60; minute += 30)
-                                {
-                                    string timeStr = $"{hour:D2}:{minute:D2}";
-                                    <option value="@timeStr">@timeStr</option>
-                                }
-                            }
-                        </select>
+                    <!-- Horários disponíveis -->
+                    <div id="horarios-disponiveis" class="hidden">
+                        <h4 class="text-medical-800 font-semibold mb-2">
+                            Horários disponíveis para <span id="data-selecionada" class="text-primary-600"></span>
+                        </h4>
+                        <div id="horarios-grid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 mt-4">
+                            <!-- Horários serão inseridos aqui -->
+                        </div>
+                    </div>
+
+                    <!-- Campos do formulário original (ocultos visualmente mas mantidos para compatibilidade) -->
+                    <div class="hidden">
+                        <input asp-for="DataHora" type="hidden" id="DataHora" />
+                        <input type="hidden" id="data-consulta" />
+                        <select id="horario" name="Horario"></select>
                     </div>
 
                     <!-- Duração -->
-                    <div class="form-group">
+                    <div class="form-group mt-6">
                         <label asp-for="DuracaoMinutos" class="block text-sm font-semibold text-medical-700 mb-2">
                             Duração (minutos)
                         </label>
@@ -302,6 +343,10 @@
     </div>
 </div>
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/disponibilidade.css" />
+}
+
 <style>
     /* Estilos mais fortes para garantir que o botão esteja visível */
     #submit-btn {
@@ -356,210 +401,653 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
     <script>
-        $(document).ready(function () {
-            // Contadores de caracteres
-            updateCharCount('#MotivoConsulta', '#motivo-count', 500);
-            updateCharCount('#ObservacoesGerais', '#obs-count', 1000);
+    $(function() {
+        // Contadores de caracteres
+        updateCharCount('#MotivoConsulta', '#motivo-count', 500);
+        updateCharCount('#ObservacoesGerais', '#obs-count', 1000);
 
-            // Validação mais completa antes do submit
-            $('#consultaForm').on('submit', function (e) {
-                console.log("Formulário sendo enviado...");
-
-                const medicoId = $('#MedicoId').val();
-                const dataHora = $('#DataHora').val();
-                const horario = $('#horario').val();
-
-                if (!medicoId || !dataHora || !horario) {
-                    e.preventDefault();
-                    showErrorMessage("Por favor, preencha todos os campos obrigatórios.");
-                    return false;
-                }
-
-                // Tudo ok, permitir envio
-                $('#submit-btn').prop('disabled', true);
-                $('.loading-text').hide();
-                $('.loading-spinner').removeClass('hidden');
-
-                console.log("Formulário validado com sucesso, enviando...");
-                return true;
-            });
-
-            function showErrorMessage(message) {
-                $('#validation-summary').removeClass('hidden')
-                    .html(`<i class="fas fa-exclamation-circle mr-2"></i>${message}`);
-
-                $('html, body').animate({
-                    scrollTop: $('#validation-summary').offset().top - 20
-                }, 500);
-            }
-
-            // Seleção de horário
-            $('#horario').on('change', function () {
-                validateForm();
-            });
-
-            // Validação e submissão do formulário
-            $('#consultaForm').on('submit', function (e) {
-                if (!validateForm()) {
-                    e.preventDefault();
-                    alert("Por favor, preencha todos os campos obrigatórios.");
-                    return false;
-                }
-
-                // Desabilita o botão para evitar submissões duplicadas
-                $('#submit-btn').prop('disabled', true)
-                    .find('.loading-text').hide();
-                $('#submit-btn').find('.loading-spinner').removeClass('hidden');
-
-                // Permitir que o formulário seja enviado
-                return true;
-            });
-
-            // Visualização do resumo
-            $('#preview-btn').on('click', function () {
-                if (validateForm()) {
-                    updateResumo();
-                    $('#resumo-section').slideDown();
-                    $('html, body').animate({
-                        scrollTop: $('#resumo-section').offset().top - 100
-                    }, 500);
-                } else {
-                    alert("Por favor, preencha todos os campos obrigatórios antes de visualizar o resumo.");
-                }
-            });
-
-            function validateForm() {
-                const medicoId = $('#MedicoId').val();
-                const dataHora = $('#DataHora').val();
-                const horario = $('#horario').val();
-
-                console.log("MedicoId:", medicoId);
-                console.log("DataHora:", dataHora);
-                console.log("Horario:", horario);
-
-                const isValid = medicoId && dataHora && horario;
-                console.log("Formulário válido?", isValid);
-
-                return isValid;
-            }
-
-            function updateCharCount(fieldSelector, countSelector, maxLength) {
-                $(fieldSelector).on('input', function () {
-                    const length = $(this).val().length;
-                    $(countSelector).text(length);
-
-                    if (length > maxLength) {
-                        $(countSelector).addClass('text-red-500');
-                    } else {
-                        $(countSelector).removeClass('text-red-500');
-                    }
-                });
-
-                // Inicializar contagem
-                const initialLength = $(fieldSelector).val()?.length || 0;
-                $(countSelector).text(initialLength);
-            }
-
-            function updateResumo() {
-                const medico = $('#MedicoId option:selected').text();
-                const data = $('#DataHora').val();
-                let formattedDate = '';
-
-                if (data) {
-                    const dateObj = new Date(data);
-                    formattedDate = dateObj.toLocaleDateString('pt-BR');
-                }
-
-                const horario = $('#horario').val();
-                const tipo = $('input[name="Tipo"]:checked').next('label').text() || 'Presencial';
-                const motivo = $('#MotivoConsulta').val() || 'Não informado';
-
-                $('#resumo-content').html(`
-                        <div>
-                            <div class="font-semibold text-medical-800 mb-2">Dados da Consulta</div>
-                            <div class="space-y-2 text-sm">
-                                <div><strong>Médico:</strong> ${medico}</div>
-                                <div><strong>Data:</strong> ${formattedDate}</div>
-                                <div><strong>Horário:</strong> ${horario}</div>
-                                <div><strong>Tipo:</strong> ${tipo}</div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="font-semibold text-medical-800 mb-2">Motivo</div>
-                            <div class="text-sm">${motivo}</div>
-                        </div>
-                    `);
-            }
-
-            // Adicionar evento para mostrar informações do médico quando selecionado
-            $('#MedicoId').on('change', function () {
-                const medicoId = $(this).val();
-                if (medicoId) {
-                    showMedicoInfo(medicoId);
-                } else {
-                    $('#medico-info').addClass('hidden');
-                }
-            });
-
-            // Função para exibir informações do médico
-            function showMedicoInfo(medicoId) {
-                if (medicoId) {
-                    // Mostrar loader enquanto busca os dados
-                    $('#medico-details').html('<div class="text-center py-2"><i class="fas fa-spinner fa-spin"></i> Carregando informações...</div>');
-                    $('#medico-info').removeClass('hidden');
-                    
-                    // Fazer chamada AJAX para buscar detalhes do médico
-                    $.ajax({
-                        url: `/Medicos/GetDetails/${medicoId}`,
-                        method: 'GET',
-                        success: function(data) {
-                            if (data) {
-                                $('#medico-details').html(`
-                                    <div class="mb-2"><strong>Nome:</strong> ${data.nome}</div>
-                                    <div class="mb-2"><strong>Especialidade:</strong> ${data.especialidade}</div>
-                                    <div class="mb-2"><strong>CRM:</strong> ${data.crm || 'Não informado'}</div>
-                                    <div><strong>Valor da Consulta:</strong> ${data.valorConsulta || '15.000 AOA'}</div>
-                                `);
-                            } else {
-                                // Fallback para informações básicas
-                                const medicoNome = $('#MedicoId option:selected').text();
-                                const especialidade = medicoNome.includes('-') ? 
-                                    medicoNome.split('-')[1].trim() : 
-                                    "Especialidade não informada";
-                                    
-                                $('#medico-details').html(`
-                                    <div class="mb-2"><strong>Nome:</strong> ${medicoNome}</div>
-                                    <div class="mb-2"><strong>Especialidade:</strong> ${especialidade}</div>
-                                    <div><strong>Valor da Consulta:</strong> 15.000 AOA</div>
-                                `);
-                            }
-                        },
-                        error: function() {
-                            // Em caso de erro, mostrar informações básicas
-                            const medicoNome = $('#MedicoId option:selected').text();
-                            const especialidade = medicoNome.includes('-') ? 
-                                medicoNome.split('-')[1].trim() : 
-                                "Especialidade não informada";
-                                
-                            $('#medico-details').html(`
-                                <div class="mb-2"><strong>Nome:</strong> ${medicoNome}</div>
-                                <div class="mb-2"><strong>Especialidade:</strong> ${especialidade}</div>
-                                <div><strong>Valor da Consulta:</strong> 15.000 AOA</div>
-                            `);
-                        }
-                    });
-                } else {
-                    $('#medico-info').addClass('hidden');
-                }
-            }
-
-            // Inicializar - verificar se já tem médico selecionado ao carregar a página
-            const initialMedicoId = $('#MedicoId').val();
-            if (initialMedicoId) {
-                showMedicoInfo(initialMedicoId);
+        // Variáveis para gerenciar disponibilidade
+        let currentMonth = new Date();
+        let selectedMedico = null;
+        let availableDates = [];
+        let availableTimeSlots = {};
+        let selectedDate = null;
+        
+        // Atualizar quando médico é selecionado
+        $('#MedicoId').change(function() {
+            const medicoId = $(this).val();
+            
+            if (medicoId) {
+                selectedMedico = medicoId;
+                $('#select-medico-warning').hide();
+                $('#disponibilidade-container').removeClass('hidden');
+                
+                // Reset calendar state
+                currentMonth = new Date();
+                selectedDate = null;
+                
+                // Carregar informações do médico e disponibilidade
+                showMedicoInfo(medicoId);
+                loadMedicoDisponibilidade(medicoId);
+            } else {
+                selectedMedico = null;
+                $('#select-medico-warning').show();
+                $('#disponibilidade-container').addClass('hidden');
+                $('#horarios-disponiveis').addClass('hidden');
+                $('#medico-info').addClass('hidden');
             }
         });
+        
+        // Função para carregar disponibilidade do médico
+        function loadMedicoDisponibilidade(medicoId) {
+            $('#calendar-days').html('<div class="col-span-7 text-center py-12"><div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary-200 border-t-primary-600"></div><p class="mt-4 text-medical-600">Carregando disponibilidade...</p></div>');
+            
+            $.ajax({
+                url: `/api/Disponibilidade/Medico/${medicoId}`,
+                type: 'GET',
+                timeout: 10000,
+                success: function(response) {
+                    console.log("Resposta da API:", response);
+                    
+                    availableDates = [];
+                    availableTimeSlots = {};
+                    
+                    if (response && response.sucesso && response.disponibilidade) {
+                        response.disponibilidade.forEach(item => {
+                            availableDates.push(item.data);
+                            availableTimeSlots[item.data] = item.horariosDisponiveis;
+                        });
+                        
+                        updateCalendar();
+                    } else {
+                        showCalendarError("Nenhuma disponibilidade encontrada.");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Erro AJAX:", { xhr, status, error });
+                    
+                    let errorMsg = "Erro ao carregar disponibilidade.";
+                    if (status === 'timeout') {
+                        errorMsg = "Tempo limite excedido. Tente novamente.";
+                    } else if (xhr.status === 404) {
+                        errorMsg = "Serviço não encontrado.";
+                    }
+                    
+                    showCalendarError(errorMsg);
+                }
+            });
+        }
+        
+        function showCalendarError(message) {
+            $('#calendar-days').html(`
+                <div class="col-span-7 text-center py-12">
+                    <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-4"></i>
+                    <p class="text-medical-600">${message}</p>
+                    <button onclick="loadMedicoDisponibilidade(${selectedMedico})" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Tentar Novamente
+                    </button>
+                </div>
+            `);
+        }
+        
+        // Função para exibir informações do médico
+        function showMedicoInfo(medicoId) {
+            $('#medico-details').html('<div class="text-center py-2"><i class="fas fa-spinner fa-spin"></i> Carregando...</div>');
+            $('#medico-info').removeClass('hidden');
+            
+            $.ajax({
+                url: `/Medicos/GetDetails/${medicoId}`,
+                method: 'GET',
+                timeout: 5000,
+                success: function(data) {
+                    if (data && data.nome) {
+                        $('#medico-details').html(`
+                            <div class="mb-2"><strong>Nome:</strong> ${data.nome}</div>
+                            <div class="mb-2"><strong>Especialidade:</strong> ${data.especialidade}</div>
+                            <div class="mb-2"><strong>CRM:</strong> ${data.crm}</div>
+                            <div><strong>Valor:</strong> ${data.valorConsulta}</div>
+                        `);
+                    } else {
+                        showFallbackMedicoInfo();
+                    }
+                },
+                error: function() {
+                    showFallbackMedicoInfo();
+                }
+            });
+        }
+
+        function showFallbackMedicoInfo() {
+            const medicoText = $('#MedicoId option:selected').text();
+            const parts = medicoText.split(' - ');
+            $('#medico-details').html(`
+                <div class="mb-2"><strong>Médico:</strong> ${parts[0] || medicoText}</div>
+                <div><strong>Especialidade:</strong> ${parts[1] || 'Não informado'}</div>
+            `);
+        }
+        
+        // Função para atualizar o calendário
+        function updateCalendar() {
+            const month = currentMonth.getMonth();
+            const year = currentMonth.getFullYear();
+            
+            const monthName = new Date(year, month, 1).toLocaleString('pt-BR', { month: 'long' });
+            $('#calendar-month').text(`${monthName} ${year}`);
+            
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const firstDay = new Date(year, month, 1).getDay();
+            
+            let html = '';
+            
+            // Espaços em branco
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="h-12"></div>';
+            }
+            
+            // Dias do mês
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const dateStr = formatDate(date);
+                const isAvailable = availableDates.includes(dateStr);
+                const isSelected = selectedDate === dateStr;
+                const isPast = date < new Date().setHours(0, 0, 0, 0);
+                
+                let classes = 'h-12 flex items-center justify-center rounded-lg transition-all duration-300';
+                
+                if (isSelected) {
+                    classes += ' bg-blue-500 text-white font-bold scale-105';
+                } else if (isPast) {
+                    classes += ' bg-gray-100 text-gray-400 cursor-not-allowed';
+                } else if (isAvailable) {
+                    classes += ' bg-green-400 text-white hover:bg-green-500 cursor-pointer';
+                } else {
+                    classes += ' bg-gray-200 text-gray-500';
+                }
+                
+                const onclick = isAvailable && !isPast ? `onclick="selectDate('${dateStr}')"` : '';
+                html += `<div class="${classes}" ${onclick}>${day}</div>`;
+            }
+            
+            $('#calendar-days').html(html);
+        }
+        
+        // Função global para selecionar data
+        window.selectDate = function(dateStr) {
+            selectedDate = dateStr;
+            updateCalendar();
+            
+            $('#data-consulta').val(dateStr);
+            showAvailableTimeSlots(dateStr);
+            // update full DateHora hidden
+            $('#DataHora').val(`${dateStr}T${$('#horario').val() || '08:00'}:00`);
+        };
+        
+        window.selectTime = function(timeStr) {
+            $('#horario').val(timeStr);
+            // update full DateHora hidden
+            const datePart = $('#data-consulta').val();
+            $('#DataHora').val(`${datePart}T${timeStr}:00`);
+            // highlight selected slot
+            $('#horarios-grid button').removeClass('bg-primary-100 border-primary-500');
+            $(`#horarios-grid button:contains("${timeStr}")`).addClass('bg-primary-100 border-primary-500');
+        };
+
+        // simplify validateForm to check selected date and time
+        function validateForm() {
+            const medicoId = $('#MedicoId').val();
+            const dataPart = $('#data-consulta').val();
+            const horario = $('#horario').val();
+            return medicoId && dataPart && horario;
+        }
+
+        // wire up preview button with updated validateForm
+        $('#preview-btn').on('click', function () {
+            if (!validateForm()) {
+                showErrorMessage("Por favor, preencha todos os campos obrigatórios antes de visualizar o resumo.");
+                return;
+            }
+            updateResumo();
+            $('#resumo-section').slideDown();
+            $('html, body').animate({ scrollTop: $('#resumo-section').offset().top - 100 }, 500);
+        });
+
+        // remove duplicate submit handler, keep single
+        $('#consultaForm').on('submit', function (e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                showErrorMessage("Por favor, preencha todos os campos obrigatórios.");
+                return false;
+            }
+            $('#submit-btn').prop('disabled', true);
+            $('.loading-text').hide();
+            $('.loading-spinner').removeClass('hidden');
+            return true;
+        });
+
+        // Validação mais completa antes do submit
+        $('#consultaForm').on('submit', function (e) {
+            console.log("Formulário sendo enviado...");
+
+            const medicoId = $('#MedicoId').val();
+            const dataHora = $('#DataHora').val();
+            const horario = $('#horario').val();
+
+            if (!medicoId || !dataHora || !horario) {
+                e.preventDefault();
+                showErrorMessage("Por favor, preencha todos os campos obrigatórios.");
+                return false;
+            }
+
+            // Tudo ok, permitir envio
+            $('#submit-btn').prop('disabled', true);
+            $('.loading-text').hide();
+            $('.loading-spinner').removeClass('hidden');
+
+            console.log("Formulário validado com sucesso, enviando...");
+            return true;
+        });
+
+        function showErrorMessage(message) {
+            $('#validation-summary').removeClass('hidden')
+                .html(`<i class="fas fa-exclamation-circle mr-2"></i>${message}`);
+
+            $('html, body').animate({
+                scrollTop: $('#validation-summary').offset().top - 20
+            }, 500);
+        }
+
+        // Seleção de horário
+        $('#horario').on('change', function () {
+            validateForm();
+        });
+
+        // Visualização do resumo
+        $('#preview-btn').on('click', function () {
+            if (validateForm()) {
+                updateResumo();
+                $('#resumo-section').slideDown();
+                $('html, body').animate({
+                    scrollTop: $('#resumo-section').offset().top - 100
+                }, 500);
+            } else {
+                alert("Por favor, preencha todos os campos obrigatórios antes de visualizar o resumo.");
+            }
+        });
+
+        function validateForm() {
+            const medicoId = $('#MedicoId').val();
+            const dataHora = $('#DataHora').val();
+            const horario = $('#horario').val();
+
+            console.log("MedicoId:", medicoId);
+            console.log("DataHora:", dataHora);
+            console.log("Horario:", horario);
+
+            const isValid = medicoId && dataHora && horario;
+            console.log("Formulário válido?", isValid);
+
+            return isValid;
+        }
+
+        function updateCharCount(fieldSelector, countSelector, maxLength) {
+            $(fieldSelector).on('input', function () {
+                const length = $(this).val().length;
+                $(countSelector).text(length);
+
+                if (length > maxLength) {
+                    $(countSelector).addClass('text-red-500');
+                } else {
+                    $(countSelector).removeClass('text-red-500');
+                }
+            });
+
+            // Inicializar contagem
+            const initialLength = $(fieldSelector).val()?.length || 0;
+            $(countSelector).text(initialLength);
+        }
+
+        function updateResumo() {
+            const medico = $('#MedicoId option:selected').text();
+            const data = $('#DataHora').val();
+            let formattedDate = '';
+
+            if (data) {
+                const dateObj = new Date(data);
+                formattedDate = dateObj.toLocaleDateString('pt-BR');
+            }
+
+            const horario = $('#horario').val();
+            const tipo = $('input[name="Tipo"]:checked').next('label').text() || 'Presencial';
+            const motivo = $('#MotivoConsulta').val() || 'Não informado';
+
+            $('#resumo-content').html(`
+                    <div>
+                        <div class="font-semibold text-medical-800 mb-2">Dados da Consulta</div>
+                        <div class="space-y-2 text-sm">
+                            <div><strong>Médico:</strong> ${medico}</div>
+                            <div><strong>Data:</strong> ${formattedDate}</div>
+                            <div><strong>Horário:</strong> ${horario}</div>
+                            <div><strong>Tipo:</strong> ${tipo}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-medical-800 mb-2">Motivo</div>
+                        <div class="text-sm">${motivo}</div>
+                    </div>
+                `);
+        }
+
+        // Adicionar evento para mostrar informações do médico quando selecionado
+        $('#MedicoId').on('change', function () {
+            const medicoId = $(this).val();
+            if (medicoId) {
+                showMedicoInfo(medicoId);
+            } else {
+                $('#medico-info').addClass('hidden');
+            }
+        });
+
+        // Função para exibir informações do médico
+        function showMedicoInfo(medicoId) {
+            if (medicoId) {
+                // Mostrar loader enquanto busca os dados
+                $('#medico-details').html('<div class="text-center py-2"><i class="fas fa-spinner fa-spin"></i> Carregando informações...</div>');
+                $('#medico-info').removeClass('hidden');
+                
+                // Fazer chamada AJAX para buscar detalhes do médico
+                $.ajax({
+                    url: `/Medicos/GetDetails/${medicoId}`,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data && data.nome) {
+                            $('#medico-details').html(`
+                                <div class="mb-2"><strong>Nome:</strong> ${data.nome}</div>
+                                <div class="mb-2"><strong>Especialidade:</strong> ${data.especialidade}</div>
+                                <div class="mb-2"><strong>CRM:</strong> ${data.crm}</div>
+                                <div class="mb-2"><strong>Valor da Consulta:</strong> ${data.valorConsulta}</div>
+                                ${data.biografia !== 'Biografia não disponível' ? `<div class="mt-3 text-xs text-gray-600">${data.biografia}</div>` : ''}
+                            `);
+                        } else {
+                            showFallbackMedicoInfo();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Erro ao buscar detalhes do médico:", error);
+                        showFallbackMedicoInfo();
+                    }
+                });
+            } else {
+                $('#medico-info').addClass('hidden');
+            }
+        }
+
+        // Função para carregar disponibilidade do médico
+        function loadMedicoDisponibilidade(medicoId) {
+            // Mostrar indicador de carregamento
+            $('#calendar-days').html('<div class="col-span-7 text-center py-12"><div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary-200 border-t-primary-600"></div><p class="mt-4 text-medical-600">Carregando disponibilidade...</p></div>');
+            
+            // Fazer chamada AJAX para buscar disponibilidade
+            $.ajax({
+                url: `/api/Disponibilidade/Medico/${medicoId}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    console.log("Disponibilidade carregada:", response);
+                    
+                    // Limpar arrays anteriores
+                    availableDates = [];
+                    availableTimeSlots = {};
+                    
+                    if (response && response.sucesso && response.disponibilidade) {
+                        // Mapear datas e horários disponíveis
+                        response.disponibilidade.forEach(item => {
+                            availableDates.push(item.data);
+                            availableTimeSlots[item.data] = item.horariosDisponiveis;
+                        });
+                        
+                        updateCalendar();
+                        
+                        // Mostrar informações do médico
+                        if (response.nomeMedico) {
+                            console.log("Médico:", response.nomeMedico, "Especialidade:", response.especialidade);
+                        }
+                    } else {
+                        // Erro na resposta
+                        $('#calendar-days').html('<div class="col-span-7 text-center py-12"><i class="fas fa-exclamation-circle text-yellow-500 text-4xl"></i><p class="mt-4 text-medical-600">Nenhuma disponibilidade encontrada para este médico.</p></div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Erro ao carregar disponibilidade:", error);
+                    console.error("Status:", status);
+                    console.error("Response:", xhr.responseText);
+                    
+                    let errorMessage = "Erro ao carregar disponibilidade.";
+                    
+                    if (xhr.status === 404) {
+                        errorMessage = "Médico não encontrado.";
+                    } else if (xhr.status === 500) {
+                        try {
+                            const errorResponse = JSON.parse(xhr.responseText);
+                            errorMessage = errorResponse.erro || errorMessage;
+                        } catch (e) {
+                            // Manter mensagem padrão
+                        }
+                    }
+                    
+                    $('#calendar-days').html(`<div class="col-span-7 text-center py-12"><i class="fas fa-exclamation-triangle text-red-500 text-4xl"></i><p class="mt-4 text-medical-600">${errorMessage}<br>Por favor, tente novamente.</p></div>`);
+                }
+            });
+        }
+
+        // Função para atualizar o calendário
+        function updateCalendar() {
+            const month = currentMonth.getMonth();
+            const year = currentMonth.getFullYear();
+            
+            // Atualizar título do mês
+            const monthName = new Date(year, month, 1).toLocaleString('pt-BR', { month: 'long' });
+            $('#calendar-month').text(`${monthName} ${year}`);
+            
+            // Obter dias no mês
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // Obter dia da semana do primeiro dia do mês (0 = Domingo, 1 = Segunda, etc.)
+            const firstDay = new Date(year, month, 1).getDay();
+            
+            let html = '';
+            
+            // Adicionar espaços em branco para alinhar os dias corretamente
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="h-12"></div>';
+            }
+            
+            // Adicionar dias do mês
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const dateStr = formatDate(date);
+                const isAvailable = availableDates.includes(dateStr);
+                const isSelected = selectedDate === dateStr;
+                const isPast = date < new Date().setHours(0, 0, 0, 0);
+                const isToday = isSameDay(date, new Date());
+                
+                // Classes base para células do calendário
+                let classes = 'h-12 flex items-center justify-center rounded-lg transition-all duration-300 transform';
+                
+                // Aplicar estilos com base na disponibilidade
+                if (isSelected) {
+                    classes += ' bg-blue-500 text-white font-bold ring-4 ring-blue-300 scale-105 shadow-lg';
+                } else if (isPast) {
+                    classes += ' bg-gray-100 text-gray-400 cursor-not-allowed opacity-50';
+                } else if (isAvailable) {
+                    classes += ' bg-green-400 text-white hover:bg-green-500 hover:scale-105 hover:shadow-md cursor-pointer';
+                } else {
+                    classes += ' bg-gray-200 text-gray-500 cursor-not-allowed';
+                }
+                
+                // Destacar o dia de hoje
+                if (isToday && !isSelected) {
+                    classes += ' ring-2 ring-yellow-400';
+                }
+                
+                const onclick = isAvailable && !isPast ? `onclick="selectDate('${dateStr}')"` : '';
+                
+                html += `<div class="${classes}" data-date="${dateStr}" ${onclick}>${day}</div>`;
+            }
+            
+            $('#calendar-days').html(html);
+        }
+        
+        // Função global para selecionar data
+        window.selectDate = function(dateStr) {
+            selectedDate = dateStr;
+            updateCalendar();
+            
+            // Atualizar campo de data (para o formulário)
+            $('#data-consulta').val(dateStr);
+            
+            // Mostrar horários disponíveis com animação
+            showAvailableTimeSlots(dateStr);
+            
+            // Atualizar data formatada para exibição
+            const date = new Date(dateStr);
+            const formattedDate = date.toLocaleDateString('pt-BR', { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long'
+            });
+            
+            const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+            $('#data-selecionada').text(capitalizedDate);
+            
+            // Scroll suave até a seção de horários
+            setTimeout(() => {
+                $('#horarios-disponiveis')[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        };
+        
+        // Função para mostrar horários disponíveis
+        function showAvailableTimeSlots(dateStr) {
+            const timeSlots = availableTimeSlots[dateStr] || [];
+            
+            if (timeSlots.length > 0) {
+                // Ordenar horários
+                timeSlots.sort();
+                
+                // Dividir em períodos (manhã/tarde)
+                const manha = timeSlots.filter(t => {
+                    const hour = parseInt(t.split(':')[0]);
+                    return hour < 12;
+                });
+                
+                const tarde = timeSlots.filter(t => {
+                    const hour = parseInt(t.split(':')[0]);
+                    return hour >= 12;
+                });
+                
+                // Criar HTML para exibição dos horários
+                let html = '';
+                
+                if (manha.length > 0) {
+                    html += `<div class="col-span-full mb-4">
+                                <h5 class="text-sm text-medical-600 font-medium mb-2">
+                                    <i class="far fa-sun text-yellow-500 mr-2"></i> Manhã
+                                </h5>
+                                <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">`;
+                    
+                    manha.forEach(slot => {
+                        html += `<button type="button" class="py-2 px-3 border border-medical-200 rounded-lg hover:bg-primary-50 hover:border-primary-300 transition-all duration-200 transform hover:scale-105" onclick="selectTime('${slot}')">${slot}</button>`;
+                    });
+                    
+                    html += `</div></div>`;
+                }
+                
+                if (tarde.length > 0) {
+                    html += `<div class="col-span-full">
+                                <h5 class="text-sm text-medical-600 font-medium mb-2">
+                                    <i class="far fa-moon text-indigo-500 mr-2"></i> Tarde
+                                </h5>
+                                <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">`;
+                    
+                    tarde.forEach(slot => {
+                        html += `<button type="button" class="py-2 px-3 border border-medical-200 rounded-lg hover:bg-primary-50 hover:border-primary-300 transition-all duration-200 transform hover:scale-105" onclick="selectTime('${slot}')">${slot}</button>`;
+                    });
+                    
+                    html += `</div></div>`;
+                }
+                
+                // Atualizar grid de horários
+                $('#horarios-grid').html(html);
+                $('#horarios-disponiveis').removeClass('hidden').addClass('animate-fade-in');
+                
+                // Atualizar dropdown para compatibilidade com o formulário existente
+                $('#horario').empty();
+                
+                timeSlots.forEach(slot => {
+                    $('#horario').append(`<option value="${slot}">${slot}</option>`);
+                });
+            } else {
+                $('#horarios-grid').html(`
+                    <div class="col-span-full text-center py-6 bg-gray-50 rounded-lg border border-gray-200">
+                        <i class="far fa-clock text-gray-400 text-3xl mb-2"></i>
+                        <p class="text-medical-600">Nenhum horário disponível para esta data.</p>
+                        <p class="text-sm text-medical-500 mt-2">Por favor, selecione outra data no calendário.</p>
+                    </div>
+                `);
+                $('#horarios-disponiveis').removeClass('hidden').addClass('animate-fade-in');
+                $('#horario').empty();
+            }
+        }
+        
+        // Função global para selecionar horário
+        window.selectTime = function(timeStr) {
+            // Atualizar select de horário
+            $('#horario').val(timeStr);
+            
+            // Destacar o horário selecionado
+            $('#horarios-grid button').removeClass('bg-primary-100 border-primary-500 font-semibold scale-105');
+            $(`#horarios-grid button:contains("${timeStr}")`).addClass('bg-primary-100 border-primary-500 font-semibold scale-105');
+            
+            // Atualizar data/hora completa para o formulário
+            const datePart = $('#data-consulta').val();
+            const dateTime = new Date(`${datePart}T${timeStr}`);
+            
+            // Formatar para o formato esperado pelo ASP.NET
+            const formattedDateTime = formatDateForDotNet(dateTime);
+            $('#DataHora').val(formattedDateTime);
+            
+            // Validar formulário
+            validateForm();
+        };
+        
+        // Funções auxiliares
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function formatDateForDotNet(date) {
+            // Formato: yyyy-MM-ddTHH:mm:ss
+            return date.toISOString().slice(0, 19);
+        }
+        
+        function isSameDay(date1, date2) {
+            return date1.getFullYear() === date2.getFullYear() &&
+                   date1.getMonth() === date2.getMonth() &&
+                   date1.getDate() === date2.getDate();
+        }
+
+        // Inicializar - verificar se já tem médico selecionado ao carregar a página
+        const initialMedicoId = $('#MedicoId').val();
+        if (initialMedicoId) {
+            selectedMedico = initialMedicoId;
+            $('#select-medico-warning').hide();
+            $('#disponibilidade-container').removeClass('hidden');
+            loadMedicoDisponibilidade(initialMedicoId);
+        }
+    });
     </script>
 }

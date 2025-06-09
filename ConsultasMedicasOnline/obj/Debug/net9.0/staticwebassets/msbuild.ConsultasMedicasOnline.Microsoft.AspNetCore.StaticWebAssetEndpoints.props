@@ -24,6 +24,18 @@
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-55HAeMKV4GSKMVySIkXJgnfAGH3Hq99EAOOrE7msYr0="}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"3213"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u002255HAeMKV4GSKMVySIkXJgnfAGH3Hq99EAOOrE7msYr0=\u0022"},{"Name":"Last-Modified","Value":"Sun, 08 Jun 2025 10:30:23 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/ConsultasMedicasOnline/css/disponibilidade.css">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\disponibilidade.css'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-xxcI3HjUQo7y6a2w2fLAKqwJhLU3y0kxXdeF16i23\u002BM="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"3073"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022xxcI3HjUQo7y6a2w2fLAKqwJhLU3y0kxXdeF16i23\u002BM=\u0022"},{"Name":"Last-Modified","Value":"Sun, 08 Jun 2025 23:44:14 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/ConsultasMedicasOnline/css/disponibilidade.t336nr1z1p.css">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\disponibilidade.css'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"t336nr1z1p"},{"Name":"integrity","Value":"sha256-xxcI3HjUQo7y6a2w2fLAKqwJhLU3y0kxXdeF16i23\u002BM="},{"Name":"label","Value":"_content/ConsultasMedicasOnline/css/disponibilidade.css"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"3073"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022xxcI3HjUQo7y6a2w2fLAKqwJhLU3y0kxXdeF16i23\u002BM=\u0022"},{"Name":"Last-Modified","Value":"Sun, 08 Jun 2025 23:44:14 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/ConsultasMedicasOnline/css/site.b9sayid5wm.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\site.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
