@@ -25,17 +25,53 @@ namespace ConsultasMedicasOnline.Controllers
         }
 
         // GET: Pacientes
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador,Medico")]
         public async Task<IActionResult> Index()
         {
-            var pacientes = await _context.Pacientes
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            // If user is a doctor, only show patients they've seen or have appointments with
+            if (User.IsInRole("Medico"))
+            {
+                // Get the doctor's ID based on the user ID
+                var medico = await _context.Medicos
+                    .FirstOrDefaultAsync(m => m.UsuarioId == userId);
+                
+                if (medico == null)
+                {
+                    return NotFound("Perfil médico não encontrado.");
+                }
+
+                // Get patients associated with this doctor through consultations
+                var pacienteIds = await _context.Consultas
+                    .Where(c => c.MedicoId == medico.Id)
+                    .Select(c => c.PacienteId)
+                    .Distinct()
+                    .ToListAsync();
+
+                var pacientes = await _context.Pacientes
+                    .Include(p => p.Usuario)
+                    .Include(p => p.Endereco)
+                    .Where(p => pacienteIds.Contains(p.Id))
+                    .ToListAsync();
+
+                ViewData["IsMedico"] = true;
+                ViewData["MedicoId"] = medico.Id;
+                
+                return View("PacientesMedico", pacientes);
+            }
+            
+            // For admin, show all patients
+            var allPacientes = await _context.Pacientes
                 .Include(p => p.Usuario)
                 .Include(p => p.Endereco)
                 .ToListAsync();
-            return View(pacientes);
+                
+            return View(allPacientes);
         }
 
         // GET: Pacientes/Details/5
+        [Authorize(Roles = "Administrador,Medico,Paciente")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,31 +79,55 @@ namespace ConsultasMedicasOnline.Controllers
                 return NotFound();
             }
 
-            var currentUserId = _userManager.GetUserId(User);
-            var currentUser = await _userManager.GetUserAsync(User);
-            
             var paciente = await _context.Pacientes
                 .Include(p => p.Usuario)
                 .Include(p => p.Endereco)
-                .Include(p => p.Consultas)
-                    .ThenInclude(c => c.Medico)
-                    .ThenInclude(m => m.Usuario)
-                .Include(p => p.Consultas)
-                    .ThenInclude(c => c.Medico)
-                    .ThenInclude(m => m.Especialidade)
                 .FirstOrDefaultAsync(m => m.Id == id);
-
+                
             if (paciente == null)
             {
                 return NotFound();
             }
 
-            // Verificar se o usuário pode ver os detalhes
-            if (!User.IsInRole("Administrador") && 
-                !User.IsInRole("Medico") && 
-                paciente.UsuarioId != currentUserId)
+            // If user is a doctor, check if they have access to this patient
+            if (User.IsInRole("Medico"))
             {
-                return Forbid();
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var medico = await _context.Medicos.FirstOrDefaultAsync(m => m.UsuarioId == userId);
+                
+                if (medico == null)
+                {
+                    return NotFound("Perfil médico não encontrado.");
+                }
+                
+                bool hasTreatedPatient = await _context.Consultas
+                    .AnyAsync(c => c.MedicoId == medico.Id && c.PacienteId == id);
+                
+                if (!hasTreatedPatient)
+                {
+                    return Forbid(); // Doctor has not treated this patient, deny access
+                }
+                
+                // Load consultations for this patient with this doctor
+                var consultas = await _context.Consultas
+                    .Where(c => c.MedicoId == medico.Id && c.PacienteId == paciente.Id)
+                    .OrderByDescending(c => c.DataHora)
+                    .ToListAsync();
+                
+                ViewData["Consultas"] = consultas;
+                ViewData["IsMedico"] = true;
+            }
+            // If user is the patient themselves, allow access
+            else if (User.IsInRole("Paciente"))
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                
+                if (paciente.UsuarioId != userId)
+                {
+                    return Forbid(); // Not the patient's own profile, deny access
+                }
+                
+                ViewData["IsPaciente"] = true;
             }
 
             return View(paciente);

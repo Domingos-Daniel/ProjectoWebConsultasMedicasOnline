@@ -138,22 +138,25 @@
                         }
                         @if (User.IsInRole("Medico"))
                         {
-                            <a asp-controller="Medicos" asp-action="Index" 
-                               class="group relative px-4 py-2 text-sm font-medium text-slate-700 hover:text-blue-600 transition-all duration-300 rounded-xl hover:bg-blue-50">
-                                <span class="flex items-center">
-                                    <i class="fas fa-calendar mr-2 group-hover:scale-110 transition-transform duration-300"></i>
-                                    Agenda
-                                </span>
-                                <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300"></div>
-                            </a>
-                            <a asp-controller="Pacientes" asp-action="Index" 
-                               class="group relative px-4 py-2 text-sm font-medium text-slate-700 hover:text-blue-600 transition-all duration-300 rounded-xl hover:bg-blue-50">
-                                <span class="flex items-center">
-                                    <i class="fas fa-users mr-2 group-hover:scale-110 transition-transform duration-300"></i>
-                                    Pacientes
-                                </span>
-                                <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300"></div>
-                            </a>
+                            <!-- Menu for Médicos -->
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Medicos" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")" 
+                                   asp-area="" asp-controller="Medicos" asp-action="Index">
+                                    <i class="fas fa-user-md mr-2"></i>Meu Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Pacientes" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")" 
+                                   asp-area="" asp-controller="Pacientes" asp-action="Index">
+                                    <i class="fas fa-users mr-2"></i>Meus Pacientes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Consultas" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")" 
+                                   asp-area="" asp-controller="Consultas" asp-action="Index">
+                                    <i class="fas fa-calendar-alt mr-2"></i>Consultas
+                                </a>
+                            </li>
                         }
                         @if (User.IsInRole("Administrador"))
                         {
