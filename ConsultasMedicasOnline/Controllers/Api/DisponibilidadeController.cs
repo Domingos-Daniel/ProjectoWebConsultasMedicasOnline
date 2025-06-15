@@ -126,8 +126,8 @@ namespace ConsultasMedicasOnline.Controllers.API
                     })
                     .ToList();
 
-                // Gerar horários disponíveis para esta data específica
-                var horariosDisponiveis = new List<string>();
+                // Gerar todos os horários (disponíveis e ocupados)
+                var todosHorarios = new List<object>();
                 
                 // Manhã
                 for (int hour = 8; hour < 12; hour++)
@@ -135,10 +135,13 @@ namespace ConsultasMedicasOnline.Controllers.API
                     for (int minute = 0; minute < 60; minute += 30)
                     {
                         var horario = $"{hour:D2}:{minute:D2}";
-                        if (!consultasAgendadas.Any(c => c.Horario == horario))
-                        {
-                            horariosDisponiveis.Add(horario);
-                        }
+                        var ocupado = consultasAgendadas.Any(c => c.Horario == horario);
+                        
+                        todosHorarios.Add(new {
+                            horario = horario,
+                            disponivel = !ocupado,
+                            periodo = "manha"
+                        });
                     }
                 }
                 
@@ -150,19 +153,29 @@ namespace ConsultasMedicasOnline.Controllers.API
                         for (int minute = 0; minute < 60; minute += 30)
                         {
                             var horario = $"{hour:D2}:{minute:D2}";
-                            if (!consultasAgendadas.Any(c => c.Horario == horario))
-                            {
-                                horariosDisponiveis.Add(horario);
-                            }
+                            var ocupado = consultasAgendadas.Any(c => c.Horario == horario);
+                            
+                            todosHorarios.Add(new {
+                                horario = horario,
+                                disponivel = !ocupado,
+                                periodo = "tarde"
+                            });
                         }
                     }
                 }
+
+                // Extrair apenas os horários disponíveis para manter compatibilidade
+                var horariosDisponiveis = todosHorarios
+                    .Where(h => (bool)((dynamic)h).disponivel)
+                    .Select(h => ((dynamic)h).horario.ToString())
+                    .ToList();
 
                 return Ok(new { 
                     data = data,
                     diaSemana = dataConsulta.ToString("dddd", new System.Globalization.CultureInfo("pt-BR")),
                     horariosDisponiveis = horariosDisponiveis,
-                    totalHorarios = horariosDisponiveis.Count
+                    totalHorarios = horariosDisponiveis.Count,
+                    todosHorarios = todosHorarios // Incluir todos os horários, com flag de disponibilidade
                 });
             }
             catch (FormatException)

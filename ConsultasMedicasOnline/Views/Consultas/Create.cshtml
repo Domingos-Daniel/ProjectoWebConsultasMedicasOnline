@@ -928,98 +928,96 @@
         
         // Função para mostrar horários disponíveis
         function showAvailableTimeSlots(dateStr) {
-            const timeSlots = availableTimeSlots[dateStr] || [];
-            
-            if (timeSlots.length > 0) {
-                // Ordenar horários
-                timeSlots.sort();
-                
-                // Dividir em períodos (manhã/tarde)
-                const manha = timeSlots.filter(t => {
-                    const hour = parseInt(t.split(':')[0]);
-                    return hour < 12;
-                });
-                
-                const tarde = timeSlots.filter(t => {
-                    const hour = parseInt(t.split(':')[0]);
-                    return hour >= 12;
-                });
-                
-                // Criar HTML para exibição dos horários
-                let html = '';
-                
-                if (manha.length > 0) {
-                    html += `<div class="col-span-full mb-4">
-                                <h5 class="text-sm text-medical-600 font-medium mb-2">
-                                    <i class="far fa-sun text-yellow-500 mr-2"></i> Manhã
-                                </h5>
-                                <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">`;
+            // Fazer requisição específica para os horários desta data
+            $.ajax({
+                url: `/api/Disponibilidade/Medico/${selectedMedico}/Data/${dateStr}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    console.log("Resposta horários:", response);
                     
-                    manha.forEach(slot => {
-                        html += `<button type="button" class="py-2 px-3 border border-medical-200 rounded-lg hover:bg-primary-50 hover:border-primary-300 transition-all duration-200 transform hover:scale-105" onclick="selectTime('${slot}')">${slot}</button>`;
-                    });
-                    
-                    html += `</div></div>`;
+                    if (response && response.todosHorarios && response.todosHorarios.length > 0) {
+                        // Ordenar horários
+                        const todosHorarios = response.todosHorarios;
+                        
+                        // Dividir em períodos (manhã/tarde)
+                        const manha = todosHorarios.filter(t => t.periodo === "manha");
+                        const tarde = todosHorarios.filter(t => t.periodo === "tarde");
+                        
+                        // Criar HTML para exibição dos horários
+                        let html = '';
+                        
+                        if (manha.length > 0) {
+                            html += `<div class="col-span-full mb-4">
+                                        <h5 class="text-sm text-medical-600 font-medium mb-2">
+                                            <i class="far fa-sun text-yellow-500 mr-2"></i> Manhã
+                                        </h5>
+                                        <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">`;
+                            
+                            manha.forEach(slot => {
+                                if (slot.disponivel) {
+                                    html += `<button type="button" class="py-2 px-3 border border-medical-200 rounded-lg hover:bg-primary-50 hover:border-primary-300 transition-all duration-200 transform hover:scale-105" onclick="selectTime('${slot.horario}')">${slot.horario}</button>`;
+                                } else {
+                                    html += `<button type="button" class="py-2 px-3 border border-gray-200 bg-gray-200 text-gray-500 rounded-lg cursor-not-allowed" disabled title="Horário indisponível">${slot.horario}</button>`;
+                                }
+                            });
+                            
+                            html += `</div></div>`;
+                        }
+                        
+                        if (tarde.length > 0) {
+                            html += `<div class="col-span-full">
+                                        <h5 class="text-sm text-medical-600 font-medium mb-2">
+                                            <i class="far fa-moon text-indigo-500 mr-2"></i> Tarde
+                                        </h5>
+                                        <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">`;
+                            
+                            tarde.forEach(slot => {
+                                if (slot.disponivel) {
+                                    html += `<button type="button" class="py-2 px-3 border border-medical-200 rounded-lg hover:bg-primary-50 hover:border-primary-300 transition-all duration-200 transform hover:scale-105" onclick="selectTime('${slot.horario}')">${slot.horario}</button>`;
+                                } else {
+                                    html += `<button type="button" class="py-2 px-3 border border-gray-200 bg-gray-200 text-gray-500 rounded-lg cursor-not-allowed" disabled title="Horário indisponível">${slot.horario}</button>`;
+                                }
+                            });
+                            
+                            html += `</div></div>`;
+                        }
+                        
+                        // Atualizar grid de horários
+                        $('#horarios-grid').html(html);
+                        $('#horarios-disponiveis').removeClass('hidden').addClass('animate-fade-in');
+                        
+                        // Atualizar dropdown para compatibilidade com o formulário existente
+                        $('#horario').empty();
+                        
+                        response.horariosDisponiveis.forEach(slot => {
+                            $('#horario').append(`<option value="${slot}">${slot}</option>`);
+                        });
+                    } else {
+                        $('#horarios-grid').html(`
+                            <div class="col-span-full text-center py-6 bg-gray-50 rounded-lg border border-gray-200">
+                                <i class="far fa-clock text-gray-400 text-3xl mb-2"></i>
+                                <p class="text-medical-600">Nenhum horário disponível para esta data.</p>
+                                <p class="text-sm text-medical-500 mt-2">Por favor, selecione outra data no calendário.</p>
+                            </div>
+                        `);
+                        $('#horarios-disponiveis').removeClass('hidden').addClass('animate-fade-in');
+                        $('#horario').empty();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Erro ao carregar horários:", error);
+                    $('#horarios-grid').html(`
+                        <div class="col-span-full text-center py-6 bg-red-50 rounded-lg border border-red-200">
+                            <i class="fas fa-exclamation-triangle text-red-500 text-2xl mb-2"></i>
+                            <p class="text-red-700">Erro ao carregar os horários disponíveis.</p>
+                            <p class="text-sm text-red-600 mt-2">Por favor, tente novamente mais tarde.</p>
+                        </div>
+                    `);
                 }
-                
-                if (tarde.length > 0) {
-                    html += `<div class="col-span-full">
-                                <h5 class="text-sm text-medical-600 font-medium mb-2">
-                                    <i class="far fa-moon text-indigo-500 mr-2"></i> Tarde
-                                </h5>
-                                <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">`;
-                    
-                    tarde.forEach(slot => {
-                        html += `<button type="button" class="py-2 px-3 border border-medical-200 rounded-lg hover:bg-primary-50 hover:border-primary-300 transition-all duration-200 transform hover:scale-105" onclick="selectTime('${slot}')">${slot}</button>`;
-                    });
-                    
-                    html += `</div></div>`;
-                }
-                
-                // Atualizar grid de horários
-                $('#horarios-grid').html(html);
-                $('#horarios-disponiveis').removeClass('hidden').addClass('animate-fade-in');
-                
-                // Atualizar dropdown para compatibilidade com o formulário existente
-                $('#horario').empty();
-                
-                timeSlots.forEach(slot => {
-                    $('#horario').append(`<option value="${slot}">${slot}</option>`);
-                });
-            } else {
-                $('#horarios-grid').html(`
-                    <div class="col-span-full text-center py-6 bg-gray-50 rounded-lg border border-gray-200">
-                        <i class="far fa-clock text-gray-400 text-3xl mb-2"></i>
-                        <p class="text-medical-600">Nenhum horário disponível para esta data.</p>
-                        <p class="text-sm text-medical-500 mt-2">Por favor, selecione outra data no calendário.</p>
-                    </div>
-                `);
-                $('#horarios-disponiveis').removeClass('hidden').addClass('animate-fade-in');
-                $('#horario').empty();
-            }
+            });
         }
-        
-        // Função global para selecionar horário
-        window.selectTime = function(timeStr) {
-            // Atualizar select de horário
-            $('#horario').val(timeStr);
-            
-            // Destacar o horário selecionado
-            $('#horarios-grid button').removeClass('bg-primary-100 border-primary-500 font-semibold scale-105');
-            $(`#horarios-grid button:contains("${timeStr}")`).addClass('bg-primary-100 border-primary-500 font-semibold scale-105');
-            
-            // Atualizar data/hora completa para o formulário
-            const datePart = $('#data-consulta').val();
-            const dateTime = new Date(`${datePart}T${timeStr}`);
-            
-            // Formatar para o formato esperado pelo ASP.NET
-            const formattedDateTime = formatDateForDotNet(dateTime);
-            $('#DataHora').val(formattedDateTime);
-            
-            // Validar formulário
-            validateForm();
-        };
-        
+
         // Funções auxiliares
         function formatDate(date) {
             const year = date.getFullYear();
