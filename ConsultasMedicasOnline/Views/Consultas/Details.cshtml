@@ -294,10 +294,11 @@
                                     <p class="text-medical-600">Prontuário ainda não foi preenchido</p>
                                     @if (User.IsInRole("Medico"))
                                     {
-                                        <button class="mt-4 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
+                                        <a href="@Url.Action("Create", "Prontuarios", new { consultaId = Model.Id })" 
+                                           class="mt-4 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
                                             <i class="fas fa-plus mr-2"></i>
                                             Criar Prontuário
-                                        </button>
+                                        </a>
                                     }
                                 </div>
                             }
