@@ -120,41 +120,102 @@ namespace ConsultasMedicasOnline.Controllers
         [Authorize(Roles = "Medico,Administrador")]
         public async Task<IActionResult> Create(Prontuario prontuario)
         {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Add(prontuario);
-                    await _context.SaveChangesAsync();
-                    
-                    // Update consulta status if not already done
-                    var consulta = await _context.Consultas.FindAsync(prontuario.ConsultaId);
-                    if (consulta != null && consulta.Status != StatusConsulta.Concluida)
-                    {
-                        consulta.Status = StatusConsulta.Concluida;
-                        _context.Update(consulta);
-                        await _context.SaveChangesAsync();
-                    }
-                    
-                    TempData["Success"] = "Prontuário criado com sucesso.";
-                    return RedirectToAction("Details", "Consultas", new { id = prontuario.ConsultaId });
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Ocorreu um erro ao salvar o prontuário: " + ex.Message);
-                }
-            }
+            // Debug para verificar os valores recebidos
+            Console.WriteLine($"ConsultaId: {prontuario.ConsultaId}, PacienteId: {prontuario.PacienteId}, MedicoId: {prontuario.MedicoId}");
             
-            // If we get this far, something failed, redisplay form
-            var consultaInfo = await _context.Consultas
-                .Include(c => c.Medico)
-                    .ThenInclude(m => m.Usuario)
-                .Include(c => c.Paciente)
-                    .ThenInclude(p => p.Usuario)
-                .FirstOrDefaultAsync(c => c.Id == prontuario.ConsultaId);
+            // Garantir que a data de criação seja definida
+            prontuario.DataCriacao = DateTime.Now;
+            
+            try
+            {
+                // Verificar se diagnóstico está preenchido (validação manual)
+                if (string.IsNullOrWhiteSpace(prontuario.Diagnostico))
+                {
+                    ModelState.AddModelError("Diagnostico", "O diagnóstico é obrigatório");
+                    throw new Exception("O campo diagnóstico é obrigatório.");
+                }
                 
-            ViewData["Consulta"] = consultaInfo;
-            return View(prontuario);
+                // Importante: Carregar explicitamente as entidades relacionadas antes de adicionar o prontuário
+                // Isso garante que as propriedades de navegação estejam preenchidas
+                var consulta = await _context.Consultas.FindAsync(prontuario.ConsultaId);
+                var paciente = await _context.Pacientes.FindAsync(prontuario.PacienteId);
+                var medico = await _context.Medicos.FindAsync(prontuario.MedicoId);
+                
+                if (consulta == null || paciente == null || medico == null)
+                {
+                    if (consulta == null) ModelState.AddModelError("ConsultaId", "Consulta não encontrada");
+                    if (paciente == null) ModelState.AddModelError("PacienteId", "Paciente não encontrado");
+                    if (medico == null) ModelState.AddModelError("MedicoId", "Médico não encontrado");
+                    throw new Exception("Uma ou mais entidades relacionadas não foram encontradas.");
+                }
+                
+                // Importante: Use uma abordagem diferente com Entry/State para evitar problemas de tracking
+                // Crie um novo prontuário com todos os valores e entidades relacionadas
+                var novoProntuario = new Prontuario
+                {
+                    ConsultaId = prontuario.ConsultaId,
+                    PacienteId = prontuario.PacienteId,
+                    MedicoId = prontuario.MedicoId,
+                    DataCriacao = prontuario.DataCriacao,
+                    Diagnostico = prontuario.Diagnostico,
+                    ExameFisico = prontuario.ExameFisico,
+                    ExamesSolicitados = prontuario.ExamesSolicitados,
+                    Hipoteses = prontuario.Hipoteses,
+                    HistoriaClinica = prontuario.HistoriaClinica,
+                    OrientacoesGerais = prontuario.OrientacoesGerais,
+                    Prescricoes = prontuario.Prescricoes,
+                    ProximaConsulta = prontuario.ProximaConsulta,
+                    Tratamento = prontuario.Tratamento,
+                    // Definir as propriedades de navegação
+                    Consulta = consulta,
+                    Paciente = paciente,
+                    Medico = medico
+                };
+                
+                // Adicionar o novo prontuário
+                _context.Prontuarios.Add(novoProntuario);
+                await _context.SaveChangesAsync();
+                
+                // Atualizar o status da consulta
+                if (consulta.Status != StatusConsulta.Concluida)
+                {
+                    consulta.Status = StatusConsulta.Concluida;
+                    _context.Update(consulta);
+                    await _context.SaveChangesAsync();
+                }
+                
+                TempData["Success"] = "Prontuário criado com sucesso.";
+                return RedirectToAction("Details", "Consultas", new { id = prontuario.ConsultaId });
+            }
+            catch (Exception ex)
+            {
+                // Log detalhado do erro
+                Console.WriteLine($"Erro ao criar prontuário: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                
+                ModelState.AddModelError("", "Ocorreu um erro ao salvar o prontuário: " + ex.Message);
+                
+                // Log dos erros de validação
+                foreach (var modelState in ViewData.ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        Console.WriteLine($"Erro de validação: {error.ErrorMessage}");
+                    }
+                }
+                
+                // Recarregar a consulta para a view
+                var consultaInfo = await _context.Consultas
+                    .Include(c => c.Medico)
+                        .ThenInclude(m => m.Usuario)
+                    .Include(c => c.Paciente)
+                        .ThenInclude(p => p.Usuario)
+                    .FirstOrDefaultAsync(c => c.Id == prontuario.ConsultaId);
+                    
+                ViewData["Consulta"] = consultaInfo;
+                TempData["Error"] = "Houve um problema ao salvar o prontuário. Por favor, verifique os campos preenchidos.";
+                return View(prontuario);
+            }
         }
 
         // GET: Prontuarios/Edit/5
@@ -234,4 +295,3 @@ namespace ConsultasMedicasOnline.Controllers
         }
     }
 }
-           

@@ -6,6 +6,32 @@
 
 <div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Adicionado notificações de mensagens de erro/sucesso -->
+        @if (TempData["Error"] != null)
+        {
+            <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded mb-4 flex justify-between items-center">
+                <div>
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    @TempData["Error"]
+                </div>
+                <button type="button" class="text-red-600 hover:text-red-800" onclick="this.parentElement.remove();">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        }
+        @if (TempData["Success"] != null)
+        {
+            <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded mb-4 flex justify-between items-center">
+                <div>
+                    <i class="fas fa-check-circle mr-2"></i>
+                    @TempData["Success"]
+                </div>
+                <button type="button" class="text-green-600 hover:text-green-800" onclick="this.parentElement.remove();">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        }
+
         <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between">
             <div>
                 <h1 class="text-3xl font-bold text-medical-800">Criar Prontuário</h1>
@@ -64,11 +90,13 @@
             </div>
 
             <div class="p-6">
-                <form asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
-                    <input type="hidden" asp-for="ConsultaId" />
-                    <input type="hidden" asp-for="PacienteId" />
-                    <input type="hidden" asp-for="MedicoId" />
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="All" class="text-danger mb-4"></div>
+                    <!-- Campos ocultos com valores explícitos para garantir que sejam enviados -->
+                    <input type="hidden" asp-for="ConsultaId" value="@Model.ConsultaId" />
+                    <input type="hidden" asp-for="PacienteId" value="@Model.PacienteId" />
+                    <input type="hidden" asp-for="MedicoId" value="@Model.MedicoId" />
+                    <input type="hidden" asp-for="DataCriacao" value="@DateTime.Now" />
 
                     <div class="space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -157,4 +185,18 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Script para mostrar visualmente campos obrigatórios
+        document.addEventListener('DOMContentLoaded', function() {
+            // Adicionar asterisco vermelho aos campos obrigatórios
+            const requiredFields = document.querySelectorAll('[required]');
+            requiredFields.forEach(field => {
+                const label = document.querySelector(`label[for="${field.id}"]`);
+                if (label && !label.innerHTML.includes('*')) {
+                    label.innerHTML += ' <span class="text-danger">*</span>';
+                }
+            });
+        });
+    </script>
 }
