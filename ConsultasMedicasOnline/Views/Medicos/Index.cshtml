@@ -2,6 +2,18 @@
 
 @{
     ViewData["Title"] = "Nossos Médicos";
+    
+    // Determine if the user is a médico and if so, filter to only show their profile
+    bool isMedico = User.IsInRole("Medico");
+    bool isAdmin = User.IsInRole("Administrador");
+    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    
+    // Filter the model if user is a médico (not admin)
+    var medicosToDisplay = Model;
+    if (isMedico && !isAdmin && !string.IsNullOrEmpty(currentUserId))
+    {
+        medicosToDisplay = Model.Where(m => m.UsuarioId == currentUserId).ToList();
+    }
 }
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-white py-8">
@@ -11,98 +23,115 @@
             <div class="text-center">
                 <h1 class="text-4xl font-bold text-medical-800 mb-4">
                     <i class="fas fa-user-md text-primary-600 mr-3"></i>
-                    Nossos Médicos Especialistas
+                    @if (isMedico && !isAdmin)
+                    {
+                        <span>Meu Perfil Médico</span>
+                    }
+                    else
+                    {
+                        <span>Nossos Médicos Especialistas</span>
+                    }
                 </h1>
                 <p class="text-lg text-medical-600 max-w-2xl mx-auto">
-                    Conheça nossa equipe de profissionais qualificados e agende sua consulta com o especialista ideal
+                    @if (isMedico && !isAdmin)
+                    {
+                        <span>Visualize e gerencie seu perfil profissional</span>
+                    }
+                    else
+                    {
+                        <span>Conheça nossa equipe de profissionais qualificados e agende sua consulta com o especialista ideal</span>
+                    }
                 </p>
             </div>
         </div>
 
-        <!-- Search and Filter -->
-        <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6 mb-8">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-                <div class="flex-1 md:mr-6">
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-search text-medical-400"></i>
+        <!-- Search and Filter - Only show for admin/non-medicos -->
+        @if (!isMedico || isAdmin)
+        {
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6 mb-8">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                    <div class="flex-1 md:mr-6">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-medical-400"></i>
+                            </div>
+                            <input type="text" id="searchMedicos" placeholder="Buscar por nome, especialidade ou CRM..." 
+                                   class="block w-full pl-10 pr-3 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                         </div>
-                        <input type="text" id="searchMedicos" placeholder="Buscar por nome, especialidade ou CRM..." 
-                               class="block w-full pl-10 pr-3 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                     </div>
-                </div>
-                <div class="flex space-x-4">
-                    <select id="especialidadeFilter" class="px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                        <option value="">Todas as Especialidades</option>
-                        @foreach (var especialidade in Model.Select(m => m.Especialidade).Distinct().OrderBy(e => e.Nome))
+                    <div class="flex space-x-4">
+                        <select id="especialidadeFilter" class="px-4 py-3 border border-medical-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                            <option value="">Todas as Especialidades</option>
+                            @foreach (var especialidade in Model.Select(m => m.Especialidade).Distinct().OrderBy(e => e.Nome))
+                            {
+                                <option value="@especialidade.Nome">@especialidade.Nome</option>
+                            }
+                        </select>
+                        @if (User.IsInRole("Administrador"))
                         {
-                            <option value="@especialidade.Nome">@especialidade.Nome</option>
+                            <a asp-action="Create" class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
+                                <i class="fas fa-plus mr-2"></i>
+                                Cadastrar Médico
+                            </a>
                         }
-                    </select>
-                    @if (User.IsInRole("Administrador"))
-                    {
-                        <a asp-action="Create" class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
-                            <i class="fas fa-plus mr-2"></i>
-                            Cadastrar Médico
-                        </a>
-                    }
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
-                <div class="flex items-center">
-                    <div class="p-3 bg-primary-100 rounded-lg">
-                        <i class="fas fa-user-md text-primary-600 text-xl"></i>
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-primary-100 rounded-lg">
+                            <i class="fas fa-user-md text-primary-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-medical-600">Total de Médicos</p>
+                            <p class="text-2xl font-bold text-medical-800">@Model.Count()</p>
+                        </div>
                     </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-medical-600">Total de Médicos</p>
-                        <p class="text-2xl font-bold text-medical-800">@Model.Count()</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-success-100 rounded-lg">
+                            <i class="fas fa-stethoscope text-success-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-medical-600">Especialidades</p>
+                            <p class="text-2xl font-bold text-medical-800">@Model.Select(m => m.EspecialidadeId).Distinct().Count()</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-warning-100 rounded-lg">
+                            <i class="fas fa-calendar-check text-warning-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-medical-600">Consultas Hoje</p>
+                            <p class="text-2xl font-bold text-medical-800">@Model.Sum(m => m.Consultas.Count(c => c.DataHora.Date == DateTime.Today))</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-info-100 rounded-lg">
+                            <i class="fas fa-clock text-info-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-medical-600">Disponíveis Agora</p>
+                            <p class="text-2xl font-bold text-medical-800">@Model.Count(m => m.HorariosDisponiveis.Any())</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
-                <div class="flex items-center">
-                    <div class="p-3 bg-success-100 rounded-lg">
-                        <i class="fas fa-stethoscope text-success-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-medical-600">Especialidades</p>
-                        <p class="text-2xl font-bold text-medical-800">@Model.Select(m => m.EspecialidadeId).Distinct().Count()</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
-                <div class="flex items-center">
-                    <div class="p-3 bg-warning-100 rounded-lg">
-                        <i class="fas fa-calendar-check text-warning-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-medical-600">Consultas Hoje</p>
-                        <p class="text-2xl font-bold text-medical-800">@Model.Sum(m => m.Consultas.Count(c => c.DataHora.Date == DateTime.Today))</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
-                <div class="flex items-center">
-                    <div class="p-3 bg-info-100 rounded-lg">
-                        <i class="fas fa-clock text-info-600 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-medical-600">Disponíveis Agora</p>
-                        <p class="text-2xl font-bold text-medical-800">@Model.Count(m => m.HorariosDisponiveis.Any())</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        }
 
         <!-- Doctors Grid -->
-        @if (Model.Any())
+        @if (medicosToDisplay.Any())
         {
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="medicosGrid">
-                @foreach (var medico in Model)
+            <div class="grid grid-cols-1 @(isMedico && !isAdmin ? "" : "md:grid-cols-2 lg:grid-cols-3") gap-8" id="medicosGrid">
+                @foreach (var medico in medicosToDisplay)
                 {
                     <div class="medico-card bg-white rounded-xl shadow-sm border border-medical-200 overflow-hidden hover:shadow-md transition-shadow duration-300" 
                          data-especialidade="@medico.Especialidade.Nome" 
@@ -244,8 +273,26 @@
                 <div class="h-24 w-24 mx-auto bg-medical-100 rounded-full flex items-center justify-center mb-4">
                     <i class="fas fa-user-md text-medical-400 text-3xl"></i>
                 </div>
-                <h3 class="text-lg font-medium text-medical-900 mb-2">Nenhum médico encontrado</h3>
-                <p class="text-medical-500 mb-6">Não há médicos cadastrados no sistema ainda.</p>
+                <h3 class="text-lg font-medium text-medical-900 mb-2">
+                    @if (isMedico && !isAdmin)
+                    {
+                        <span>Perfil não encontrado</span>
+                    }
+                    else
+                    {
+                        <span>Nenhum médico encontrado</span>
+                    }
+                </h3>
+                <p class="text-medical-500 mb-6">
+                    @if (isMedico && !isAdmin)
+                    {
+                        <span>Seu perfil médico não foi encontrado. Entre em contato com o administrador.</span>
+                    }
+                    else
+                    {
+                        <span>Não há médicos cadastrados no sistema ainda.</span>
+                    }
+                </p>
                 @if (User.IsInRole("Administrador"))
                 {
                     <a asp-action="Create" class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
@@ -259,65 +306,68 @@
 </div>
 
 @section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchMedicos');
-            const especialidadeFilter = document.getElementById('especialidadeFilter');
-            const medicosGrid = document.getElementById('medicosGrid');
-            const medicoCards = document.querySelectorAll('.medico-card');
+    @if (!isMedico || isAdmin)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const searchInput = document.getElementById('searchMedicos');
+                const especialidadeFilter = document.getElementById('especialidadeFilter');
+                const medicosGrid = document.getElementById('medicosGrid');
+                const medicoCards = document.querySelectorAll('.medico-card');
 
-            function filterMedicos() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const selectedEspecialidade = especialidadeFilter.value.toLowerCase();
+                function filterMedicos() {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    const selectedEspecialidade = especialidadeFilter.value.toLowerCase();
 
-                medicoCards.forEach(card => {
-                    const nome = card.dataset.nome.toLowerCase();
-                    const especialidade = card.dataset.especialidade.toLowerCase();
-                    const crm = card.dataset.crm.toLowerCase();
+                    medicoCards.forEach(card => {
+                        const nome = card.dataset.nome.toLowerCase();
+                        const especialidade = card.dataset.especialidade.toLowerCase();
+                        const crm = card.dataset.crm.toLowerCase();
 
-                    const matchesSearch = nome.includes(searchTerm) || 
-                                        especialidade.includes(searchTerm) || 
-                                        crm.includes(searchTerm);
+                        const matchesSearch = nome.includes(searchTerm) || 
+                                            especialidade.includes(searchTerm) || 
+                                            crm.includes(searchTerm);
+                        
+                        const matchesEspecialidade = selectedEspecialidade === '' || 
+                                                   especialidade === selectedEspecialidade;
+
+                        if (matchesSearch && matchesEspecialidade) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+
+                    // Check if any cards are visible
+                    const visibleCards = Array.from(medicoCards).filter(card => card.style.display !== 'none');
                     
-                    const matchesEspecialidade = selectedEspecialidade === '' || 
-                                               especialidade === selectedEspecialidade;
-
-                    if (matchesSearch && matchesEspecialidade) {
-                        card.style.display = 'block';
+                    if (visibleCards.length === 0) {
+                        if (!document.getElementById('no-results')) {
+                            const noResults = document.createElement('div');
+                            noResults.id = 'no-results';
+                            noResults.className = 'col-span-full text-center py-12';
+                            noResults.innerHTML = `
+                                <div class="h-16 w-16 mx-auto bg-medical-100 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-search text-medical-400 text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-medium text-medical-900 mb-2">Nenhum médico encontrado</h3>
+                                <p class="text-medical-500">Tente ajustar os filtros ou termos de busca.</p>
+                            `;
+                            medicosGrid.appendChild(noResults);
+                        }
                     } else {
-                        card.style.display = 'none';
-                    }
-                });
-
-                // Check if any cards are visible
-                const visibleCards = Array.from(medicoCards).filter(card => card.style.display !== 'none');
-                
-                if (visibleCards.length === 0) {
-                    if (!document.getElementById('no-results')) {
-                        const noResults = document.createElement('div');
-                        noResults.id = 'no-results';
-                        noResults.className = 'col-span-full text-center py-12';
-                        noResults.innerHTML = `
-                            <div class="h-16 w-16 mx-auto bg-medical-100 rounded-full flex items-center justify-center mb-4">
-                                <i class="fas fa-search text-medical-400 text-2xl"></i>
-                            </div>
-                            <h3 class="text-lg font-medium text-medical-900 mb-2">Nenhum médico encontrado</h3>
-                            <p class="text-medical-500">Tente ajustar os filtros ou termos de busca.</p>
-                        `;
-                        medicosGrid.appendChild(noResults);
-                    }
-                } else {
-                    const noResults = document.getElementById('no-results');
-                    if (noResults) {
-                        noResults.remove();
+                        const noResults = document.getElementById('no-results');
+                        if (noResults) {
+                            noResults.remove();
+                        }
                     }
                 }
-            }
 
-            searchInput.addEventListener('input', filterMedicos);
-            especialidadeFilter.addEventListener('change', filterMedicos);
-        });
-    </script>
+                searchInput.addEventListener('input', filterMedicos);
+                especialidadeFilter.addEventListener('change', filterMedicos);
+            });
+        </script>
+    }
 
     <style>
         .line-clamp-3 {
