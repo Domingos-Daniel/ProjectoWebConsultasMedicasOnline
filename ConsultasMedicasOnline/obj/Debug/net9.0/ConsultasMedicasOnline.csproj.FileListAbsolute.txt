@@ -881,3 +881,4 @@ C:\Users\Domingos Daniel\Desktop\ProjectoWebConsultasMedicasOnline\ConsultasMedi
 C:\Users\Domingos Daniel\Desktop\ProjectoWebConsultasMedicasOnline\ConsultasMedicasOnline\obj\Debug\net9.0\ConsultasMedicasOnline.genruntimeconfig.cache
 C:\Users\Domingos Daniel\Desktop\ProjectoWebConsultasMedicasOnline\ConsultasMedicasOnline\obj\Debug\net9.0\ref\ConsultasMedicasOnline.dll
 C:\Users\Domingos Daniel\Desktop\ProjectoWebConsultasMedicasOnline\ConsultasMedicasOnline\obj\Debug\net9.0\compressed\1pfxijzlwa-t336nr1z1p.gz
+C:\Users\Domingos Daniel\Desktop\ProjectoWebConsultasMedicasOnline\ConsultasMedicasOnline\bin\Debug\net9.0\DinkToPdf.dll

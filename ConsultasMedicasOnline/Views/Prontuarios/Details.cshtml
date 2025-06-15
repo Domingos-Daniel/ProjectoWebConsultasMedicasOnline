@@ -259,5 +259,142 @@
                 }
             </div>
         </div>
+
+        <!-- Download Button -->
+        <div class="flex justify-end">
+            <button onclick="downloadProntuarioPDF()" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
+                <i class="fas fa-file-pdf mr-2"></i>
+                Download Prontuário
+            </button>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script>
+        function downloadProntuarioPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Adiciona o título
+            doc.setFontSize(22);
+            doc.text("Prontuário Médico", 14, 22);
+
+            // Adiciona informações do paciente
+            doc.setFontSize(16);
+            doc.text("Dados do Paciente", 14, 40);
+            doc.setFontSize(14);
+            doc.text("Nome: @Model.Paciente.Usuario.Nome @Model.Paciente.Usuario.Sobrenome", 14, 50);
+            @if (Model.Paciente.DataNascimento.HasValue)
+            {
+                <text>
+                doc.text("Data de Nascimento: @Model.Paciente.DataNascimento.Value.ToString("dd/MM/yyyy")", 14, 60);
+                doc.text("Idade: @(DateTime.Now.Year - Model.Paciente.DataNascimento.Value.Year) anos", 14, 70);
+                </text>
+            }
+            @if (!string.IsNullOrEmpty(Model.Paciente.TipoSanguineo))
+            {
+                <text>doc.text("Tipo Sanguíneo: @Model.Paciente.TipoSanguineo", 14, 80);</text>
+            }
+            @if (!string.IsNullOrEmpty(Model.Paciente.Alergias))
+            {
+                <text>doc.text("Alergias: @Model.Paciente.Alergias", 14, 90);</text>
+            }
+
+            // Adiciona informações do médico
+            doc.setFontSize(16);
+            doc.text("Médico Responsável", 14, 110);
+            doc.setFontSize(14);
+            doc.text("Nome: Dr. @Model.Medico.Usuario.Nome @Model.Medico.Usuario.Sobrenome", 14, 120);
+            doc.text("Especialidade: @Model.Medico.Especialidade.Nome", 14, 130);
+            doc.text("CRM: @Model.Medico.CRM/@Model.Medico.EstadoCRM", 14, 140);
+
+            // Adiciona informações da consulta
+            doc.setFontSize(16);
+            doc.text("Detalhes da Consulta", 14, 160);
+            doc.setFontSize(14);
+            doc.text("Data e Hora: @Model.Consulta.DataHora.ToString("dd/MM/yyyy 'às' HH:mm")", 14, 170);
+
+            // Adiciona anamnese e exame físico
+            @if (!string.IsNullOrEmpty(Model.HistoriaClinica))
+            {
+                <text>
+                doc.setFontSize(16);
+                doc.text("História Clínica", 14, 190);
+                doc.setFontSize(14);
+                doc.text("@Html.Raw(Model.HistoriaClinica.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 200);
+                </text>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.ExameFisico))
+            {
+                <text>
+                doc.setFontSize(16);
+                doc.text("Exame Físico", 14, 220);
+                doc.setFontSize(14);
+                doc.text("@Html.Raw(Model.ExameFisico.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 230);
+                </text>
+            }
+
+            // Adiciona diagnóstico e plano
+            doc.setFontSize(16);
+            doc.text("Diagnóstico Principal", 14, 250);
+            doc.setFontSize(14);
+            doc.text("@Html.Raw(Model.Diagnostico.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 260);
+
+            @if (!string.IsNullOrEmpty(Model.Tratamento))
+            {
+                <text>
+                doc.setFontSize(16);
+                doc.text("Plano de Tratamento", 14, 280);
+                doc.setFontSize(14);
+                doc.text("@Html.Raw(Model.Tratamento.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 290);
+                </text>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Prescricoes))
+            {
+                <text>
+                doc.setFontSize(16);
+                doc.text("Prescrições Médicas", 14, 310);
+                doc.setFontSize(14);
+                doc.text("@Html.Raw(Model.Prescricoes.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 320);
+                </text>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.ExamesSolicitados))
+            {
+                <text>
+                doc.setFontSize(16);
+                doc.text("Exames Solicitados", 14, 340);
+                doc.setFontSize(14);
+                doc.text("@Html.Raw(Model.ExamesSolicitados.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 350);
+                </text>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.OrientacoesGerais))
+            {
+                <text>
+                doc.setFontSize(16);
+                doc.text("Orientações Gerais", 14, 370);
+                doc.setFontSize(14);
+                doc.text("@Html.Raw(Model.OrientacoesGerais.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 380);
+                </text>
+            }
+
+            @if (Model.ProximaConsulta.HasValue)
+            {
+                <text>
+                doc.setFontSize(16);
+                doc.text("Retorno Agendado", 14, 400);
+                doc.setFontSize(14);
+                doc.text("Data: @Model.ProximaConsulta.Value.ToString("dd/MM/yyyy")", 14, 410);
+                </text>
+            }
+
+            // Salva o PDF
+            doc.save("prontuario_medico_@(Model.Paciente.Usuario.Nome.Replace(" ", "_"))_@(Model.Paciente.Usuario.Sobrenome.Replace(" ", "_")).pdf");
+        }
+    </script>
+}
