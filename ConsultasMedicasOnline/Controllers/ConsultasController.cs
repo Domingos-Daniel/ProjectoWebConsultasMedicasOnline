@@ -587,22 +587,23 @@ namespace ConsultasMedicasOnline.Controllers
                 _context.Update(consulta);
                 await _context.SaveChangesAsync();
 
-                // Send cancellation notification email if we have an email address
+                // Send notification email
                 if (consulta.Paciente?.Usuario?.Email != null)
                 {
                     try
                     {
-                        await SendCancellationEmailAsync(
+                        await _emailService.SendStatusChangeNotificationAsync(
                             consulta.Paciente.Usuario.Email,
                             $"{consulta.Paciente.Usuario.Nome} {consulta.Paciente.Usuario.Sobrenome}",
                             $"{consulta.Medico.Usuario.Nome} {consulta.Medico.Usuario.Sobrenome}",
-                            consulta.DataHora
+                            consulta.DataHora,
+                            StatusConsulta.Cancelada
                         );
                     }
                     catch (Exception ex)
                     {
                         // Log the error but don't fail the cancellation process
-                        Console.WriteLine($"Erro ao enviar e-mail de cancelamento: {ex.Message}");
+                        Console.WriteLine($"Erro ao enviar e-mail: {ex.Message}");
                     }
                 }
 
@@ -615,38 +616,85 @@ namespace ConsultasMedicasOnline.Controllers
                 return RedirectToAction(nameof(Details), new { id = consulta.Id });
             }
         }
-
-        private async Task SendCancellationEmailAsync(string email, string pacienteName, string doctorName, DateTime appointmentDate)
+        
+        // POST: Consultas/ChangeStatus/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeStatus(int id, StatusConsulta newStatus)
         {
-            string subject = "Confirmação de Cancelamento de Consulta";
-            
-            string body = $@"
-                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;'>
-                    <div style='text-align: center; padding: 10px; background-color: #fef2f2; border-radius: 5px;'>
-                        <h2 style='color: #991b1b;'>Consulta Cancelada</h2>
-                    </div>
-                    
-                    <div style='padding: 20px;'>
-                        <p>Olá, <strong>{pacienteName}</strong>!</p>
-                        
-                        <p>Sua consulta com <strong>Dr. {doctorName}</strong> foi cancelada conforme solicitado.</p>
-                        
-                        <div style='background-color: #f8fafc; padding: 15px; border-radius: 5px; margin: 20px 0;'>
-                            <p><strong>Data/Hora:</strong> {appointmentDate.ToString("dd/MM/yyyy HH:mm")}</p>
-                        </div>
-                        
-                        <p>Para agendar uma nova consulta, acesse nosso sistema a qualquer momento.</p>
-                    </div>
-                    
-                    <div style='text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;'>
-                        <p style='color: #64748b; font-size: 14px;'>Este é um e-mail automático. Por favor, não responda diretamente.</p>
-                        <p style='color: #64748b; font-size: 14px;'>© {DateTime.Now.Year} Consultas Médicas Online - Todos os direitos reservados.</p>
-                    </div>
-                </div>
-            ";
+            var consulta = await _context.Consultas
+                .Include(c => c.Paciente)
+                    .ThenInclude(p => p.Usuario)
+                .Include(c => c.Medico)
+                    .ThenInclude(m => m.Usuario)
+                .FirstOrDefaultAsync(m => m.Id == id);
+                
+            if (consulta == null)
+            {
+                return NotFound();
+            }
 
-            // Use the email service to send the cancellation email
-            await _emailService.SendEmailAsync(email, subject, body);
+            try
+            {
+                consulta.Status = newStatus;
+                
+                _context.Update(consulta);
+                await _context.SaveChangesAsync();
+
+                // Send status change notification email
+                if (consulta.Paciente?.Usuario?.Email != null)
+                {
+                    try
+                    {
+                        await _emailService.SendStatusChangeNotificationAsync(
+                            consulta.Paciente.Usuario.Email,
+                            $"{consulta.Paciente.Usuario.Nome} {consulta.Paciente.Usuario.Sobrenome}",
+                            $"{consulta.Medico.Usuario.Nome} {consulta.Medico.Usuario.Sobrenome}",
+                            consulta.DataHora,
+                            newStatus
+                        );
+                        
+                        // Also notify doctor if confirming or canceling
+                        if ((newStatus == StatusConsulta.Confirmada || newStatus == StatusConsulta.Cancelada) && 
+                            consulta.Medico?.Usuario?.Email != null)
+                        {
+                            await _emailService.SendEmailAsync(
+                                consulta.Medico.Usuario.Email,
+                                $"Consulta {(newStatus == StatusConsulta.Confirmada ? "confirmada" : "cancelada")}",
+                                $@"
+                                    <div style='font-family: Arial, sans-serif;'>
+                                        <p>Olá Dr. {consulta.Medico.Usuario.Nome},</p>
+                                        <p>Uma consulta foi {(newStatus == StatusConsulta.Confirmada ? "confirmada" : "cancelada")}:</p>
+                                        <p>Paciente: {consulta.Paciente.Usuario.Nome} {consulta.Paciente.Usuario.Sobrenome}<br>
+                                        Data/Hora: {consulta.DataHora.ToString("dd/MM/yyyy HH:mm")}</p>
+                                        <p>Por favor, verifique o sistema para mais detalhes.</p>
+                                    </div>
+                                "
+                            );
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao enviar e-mail: {ex.Message}");
+                    }
+                }
+                
+                string statusText = newStatus switch
+                {
+                    StatusConsulta.Confirmada => "confirmada",
+                    StatusConsulta.Cancelada => "cancelada",
+                    StatusConsulta.Concluida => "marcada como concluída",
+                    _ => "atualizada"
+                };
+
+                TempData["Success"] = $"Consulta {statusText} com sucesso.";
+                return RedirectToAction(nameof(Details), new { id = consulta.Id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Erro ao atualizar status da consulta: {ex.Message}";
+                return RedirectToAction(nameof(Details), new { id = consulta.Id });
+            }
         }
     }
 }
