@@ -569,33 +569,125 @@ namespace ConsultasMedicasOnline.Controllers
         }
 
         // Gestão de Consultas
+        // GET: Admin/TodasConsultas
         public async Task<IActionResult> TodasConsultas()
         {
             var consultas = await _context.Consultas
-                .Include(c => c.Paciente).ThenInclude(p => p.Usuario)
-                .Include(c => c.Medico).ThenInclude(m => m.Usuario)
-                .Include(c => c.Medico).ThenInclude(m => m.Especialidade)
+                .Include(c => c.Paciente)
+                    .ThenInclude(p => p.Usuario)
+                .Include(c => c.Medico)
+                    .ThenInclude(m => m.Usuario)
+                .Include(c => c.Medico)
+                    .ThenInclude(m => m.Especialidade)
                 .OrderByDescending(c => c.DataHora)
                 .ToListAsync();
-
+                
             return View(consultas);
         }
 
+        // POST: Admin/RejeitarConsulta
         [HttpPost]
-        public async Task<IActionResult> CancelarConsultaAdmin(int id, string motivo)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejeitarConsulta(int id, string motivo, string returnUrl = null)
         {
-            var consulta = await _context.Consultas.FindAsync(id);
-            if (consulta != null)
+            var consulta = await _context.Consultas
+                .Include(c => c.Paciente)
+                    .ThenInclude(p => p.Usuario)
+                .Include(c => c.Medico)
+                    .ThenInclude(m => m.Usuario)
+                .FirstOrDefaultAsync(c => c.Id == id);
+                
+            if (consulta == null)
             {
-                consulta.Status = StatusConsulta.Cancelada;
-                consulta.MotivoCancelamento = motivo;
-                consulta.DataCancelamento = DateTime.Now;
-
-                await _context.SaveChangesAsync();
-                TempData["Success"] = "Consulta cancelada com sucesso!";
+                TempData["Error"] = "Consulta não encontrada.";
+                return RedirectToAction(returnUrl ?? nameof(ValidarAgendamentos));
             }
+            
+            try
+            {
+                // Atualizar status da consulta
+                consulta.Status = StatusConsulta.Cancelada;
+                consulta.ObservacoesGerais = $"Consulta rejeitada pelo administrador. Motivo: {motivo}\n\n" + 
+                                            (consulta.ObservacoesGerais ?? "");
+                _context.Update(consulta);
+                await _context.SaveChangesAsync();
+                
+                // Enviar email ao paciente
+                if (consulta.Paciente?.Usuario?.Email != null)
+                {
+                    try
+                    {
+                        await _emailService.SendEmailAsync(
+                            consulta.Paciente.Usuario.Email,
+                            "Consulta não aprovada",
+                            $@"
+                                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;'>
+                                    <div style='text-align: center; padding: 10px; background-color: #fef2f2; border-radius: 5px;'>
+                                        <h2 style='color: #b91c1c;'>Consulta Não Aprovada</h2>
+                                    </div>
 
-            return RedirectToAction(nameof(TodasConsultas));
+                                    <div style='padding: 20px;'>
+                                        <p>Olá, <strong>{consulta.Paciente.Usuario.Nome}</strong>!</p>
+
+                                        <p>Infelizmente, sua consulta com <strong>Dr. {consulta.Medico.Usuario.Nome}</strong> não pôde ser aprovada.</p>
+
+                                        <div style='background-color: #f8fafc; padding: 15px; border-radius: 5px; margin: 20px 0;'>
+                                            <p><strong>Data/Hora solicitada:</strong> {consulta.DataHora:dd/MM/yyyy HH:mm}</p>
+                                            <p><strong>Motivo:</strong> {motivo}</p>
+                                        </div>
+
+                                        <p>Por favor, tente agendar uma nova consulta em um horário diferente ou entre em contato com nosso atendimento.</p>
+                                    </div>
+
+                                    <div style='text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;'>
+                                        <p style='color: #64748b; font-size: 14px;'>Este é um e-mail automático. Por favor, não responda diretamente.</p>
+                                    </div>
+                                </div>
+                            "
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao enviar e-mail: {ex.Message}");
+                    }
+                }
+                
+                // Enviar email ao médico (opcional)
+                if (consulta.Medico?.Usuario?.Email != null)
+                {
+                    try
+                    {
+                        await _emailService.SendEmailAsync(
+                            consulta.Medico.Usuario.Email,
+                            "Consulta rejeitada",
+                            $@"
+                                <div style='font-family: Arial, sans-serif;'>
+                                    <h2>Consulta rejeitada</h2>
+                                    <p>Olá Dr. {consulta.Medico.Usuario.Nome},</p>
+                                    <p>Uma solicitação de consulta foi rejeitada:</p>
+                                    <p>
+                                        <strong>Paciente:</strong> {consulta.Paciente.Usuario.Nome} {consulta.Paciente.Usuario.Sobrenome}<br>
+                                        <strong>Data/Hora:</strong> {consulta.DataHora:dd/MM/yyyy HH:mm}<br>
+                                        <strong>Motivo:</strong> {motivo}
+                                    </p>
+                                </div>
+                            "
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao enviar e-mail para o médico: {ex.Message}");
+                    }
+                }
+                
+                TempData["Success"] = $"Consulta rejeitada com sucesso. E-mails de notificação enviados.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Erro ao rejeitar consulta: {ex.Message}";
+            }
+            
+            return RedirectToAction(returnUrl ?? nameof(ValidarAgendamentos));
         }
 
         // Configurações do Sistema
