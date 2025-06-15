@@ -83,7 +83,7 @@
         </div>
 
         <!-- Form -->
-        <form asp-action="Create" id="consultaForm" class="space-y-8">
+        <form asp-action="Create" asp-controller="Consultas" method="post" id="consultaForm" class="space-y-8">
             <div asp-validation-summary="ModelOnly" class="text-danger-600"></div>
 
             <!-- Step 1: Médico e Especialidade -->
@@ -332,7 +332,6 @@
                                 Agendando...
                             </span>
                         </button>
-
                     </div>
                 </div>
             </div>
@@ -1048,6 +1047,61 @@
             $('#disponibilidade-container').removeClass('hidden');
             loadMedicoDisponibilidade(initialMedicoId);
         }
+
+        // Ensure form submission is not hijacked by JavaScript
+        const consultaForm = $('#consultaForm');
+        
+        consultaForm.off('submit').on('submit', function(e) {
+            console.log("Formulário sendo enviado...");
+            
+            // Get current values
+            const medicoId = $('#MedicoId').val();
+            const dataPart = $('#data-consulta').val();
+            const horarioPart = $('#horario').val();
+            
+            console.log("Validação:", {
+                medicoId: medicoId,
+                dataPart: dataPart,
+                horarioPart: horarioPart
+            });
+            
+            // Set the DataHora value properly if we have both date and time
+            if (medicoId && dataPart && horarioPart) {
+                const fullDateTime = `${dataPart}T${horarioPart}:00`;
+                $('#DataHora').val(fullDateTime);
+                console.log("DataHora set to:", fullDateTime);
+                
+                // Form is valid, allow submission
+                $('#submit-btn').prop('disabled', true);
+                $('.loading-text').hide();
+                $('.loading-spinner').removeClass('hidden');
+                
+                // Let the form submit normally - do NOT prevent default
+                return true;
+            } else {
+                // Show validation error
+                e.preventDefault(); // Prevent form submission only if validation fails
+                
+                const missingItems = [];
+                if (!medicoId) missingItems.push("médico");
+                if (!dataPart) missingItems.push("data");
+                if (!horarioPart) missingItems.push("horário");
+                
+                const errorMsg = `Por favor, selecione ${missingItems.join(", ")}.`;
+                
+                // Make sure validation summary exists and is visible
+                const validationSummary = $('#validation-summary');
+                validationSummary.removeClass('hidden')
+                    .html(`<i class="fas fa-exclamation-circle mr-2"></i>${errorMsg}`);
+                
+                // Safely scroll to it
+                $([document.documentElement, document.body]).animate({
+                    scrollTop: validationSummary.offset()?.top || 0
+                }, 500);
+                
+                return false;
+            }
+        });
     });
     </script>
 }

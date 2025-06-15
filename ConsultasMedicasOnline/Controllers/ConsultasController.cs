@@ -305,21 +305,39 @@ namespace ConsultasMedicasOnline.Controllers
                         TempData["Success"] = "Consulta agendada com sucesso! Não foi possível enviar o e-mail de confirmação.";
                     }
 
-                    // Redirect to Details view instead of Index
-                    return RedirectToAction(nameof(Details), new { id = consulta.Id });
+                    // Make sure we have a valid ID before redirecting
+                    if (consulta.Id > 0)
+                    {
+                        // Explicitly redirect to the Details action with the ID
+                        return RedirectToAction("Details", new { id = consulta.Id });
+                    }
+                    else
+                    {
+                        // If for some reason we don't have an ID, log and redirect to index
+                        Console.WriteLine("Warning: Consulta ID not set after SaveChanges");
+                        return RedirectToAction("Index");
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Erro ao salvar consulta: {ex.Message}");
-                    ModelState.AddModelError("", $"Erro ao salvar: {ex.Message}");
+                    // Log the exception
+                    Console.WriteLine($"Error in Create action: {ex.Message}");
+                    Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                    
+                    ModelState.AddModelError("", $"Erro ao agendar consulta: {ex.Message}");
+                    TempData["ErrorMessage"] = $"Erro ao agendar consulta: {ex.Message}";
+                    TempData["DebugInfo"] = ex.ToString();
                 }
             }
             else
             {
-                Console.WriteLine("ModelState inválido:");
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                // Debug model state errors
+                foreach (var modelState in ModelState.Values)
                 {
-                    Console.WriteLine($"- {error.ErrorMessage}");
+                    foreach (var error in modelState.Errors)
+                    {
+                        Console.WriteLine($"Validation error: {error.ErrorMessage}");
+                    }
                 }
             }
 
