@@ -271,415 +271,130 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script>
         function downloadProntuarioPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            
-            // Configuração do documento
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
-            let yPosition = 20;
-            
-            // Cores do tema médico
-            const primaryBlue = [41, 128, 185];
-            const darkBlue = [44, 62, 80];
-            const lightGray = [236, 240, 241];
-            const darkGray = [127, 140, 141];
-            const accentGreen = [39, 174, 96];
-            
-            // Cabeçalho com logo e informações da clínica
-            doc.setFillColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-            doc.rect(0, 0, pageWidth, 35, 'F');
-            
-            // Logo MedConsulta (simulado com texto estilizado)
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(24);
-            doc.setFont(undefined, 'bold');
-            doc.text('MED', 15, 20);
-            doc.setTextColor(lightGray[0], lightGray[1], lightGray[2]);
-            doc.text('CONSULTA', 42, 20);
-            
-            // Subtítulo do cabeçalho
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            doc.setTextColor(255, 255, 255);
-            doc.text('Sistema de Consultas Médicas Online', 15, 28);
-            
-            // Informações da clínica no canto direito
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(8);
-            doc.text('Tel: +244 923 456 789', pageWidth - 60, 18);
-            doc.text('Email: contato@medconsulta.ao', pageWidth - 60, 24);
-            doc.text('www.medconsulta.ao', pageWidth - 60, 30);
-            
-            yPosition = 50;
-            
-            // Título do documento
-            doc.setTextColor(darkBlue[0], darkBlue[1], darkBlue[2]);
+
+            // Adiciona o título
             doc.setFontSize(22);
-            doc.setFont(undefined, 'bold');
-            doc.text('PRONTUÁRIO MÉDICO', pageWidth / 2, yPosition, { align: 'center' });
-            yPosition += 10;
-            
-            // Data de emissão
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
-            doc.text('Emitido em: ' + new Date().toLocaleDateString('pt-BR'), pageWidth / 2, yPosition, { align: 'center' });
-            yPosition += 15;
-            
-            // Função para criar seções com fundo colorido
-            function criarSecao(titulo, yPos) {
-                doc.setFillColor(lightGray[0], lightGray[1], lightGray[2]);
-                doc.rect(10, yPos - 8, pageWidth - 20, 12, 'F');
-                doc.setTextColor(darkBlue[0], darkBlue[1], darkBlue[2]);
-                doc.setFontSize(12);
-                doc.setFont(undefined, 'bold');
-                doc.text(titulo, 15, yPos);
-                return yPos + 10;
-            }
-            
-            // Função para adicionar linha decorativa
-            function adicionarLinha(yPos) {
-                doc.setDrawColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-                doc.setLineWidth(0.5);
-                doc.line(15, yPos, pageWidth - 15, yPos);
-                return yPos + 5;
-            }
-            
-            // Seção de informações da consulta
-            yPosition = criarSecao('🏥 INFORMAÇÕES DA CONSULTA', yPosition);
-            
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            
-            // Grid de informações da consulta
-            const consultaY = yPosition;
-            doc.text('Data e Hora:', 15, consultaY);
-            doc.setFont(undefined, 'bold');
-            doc.text('@Model.Consulta.DataHora.ToString("dd/MM/yyyy HH:mm")', 50, consultaY);
-            
-            doc.setFont(undefined, 'normal');
-            doc.text('Tipo:', 120, consultaY);
-            doc.setFont(undefined, 'bold');
-            doc.text('@(Model.Consulta.Tipo == ConsultasMedicasOnline.Models.TipoConsulta.Presencial ? "Presencial" : "Online")', 140, consultaY);
-            
-            doc.setFont(undefined, 'normal');
-            doc.text('Consulta Nº:', 15, consultaY + 8);
-            doc.setFont(undefined, 'bold');
-            doc.text('@Model.ConsultaId', 50, consultaY + 8);
-            
-            yPosition = consultaY + 20;
-            yPosition = adicionarLinha(yPosition);
-            
-            // Seção do paciente
-            yPosition = criarSecao('👤 DADOS DO PACIENTE', yPosition);
-            
-            doc.setFont(undefined, 'normal');
-            doc.setTextColor(0, 0, 0);
-            
-            const pacienteY = yPosition;
-            doc.text('Nome Completo:', 15, pacienteY);
-            doc.setFont(undefined, 'bold');
-            doc.text('@Model.Paciente.Usuario.Nome @Model.Paciente.Usuario.Sobrenome', 55, pacienteY);
-            
+            doc.text("Prontuário Médico", 14, 22);
+
+            // Adiciona informações do paciente
+            doc.setFontSize(16);
+            doc.text("Dados do Paciente", 14, 40);
+            doc.setFontSize(14);
+            doc.text("Nome: @Model.Paciente.Usuario.Nome @Model.Paciente.Usuario.Sobrenome", 14, 50);
             @if (Model.Paciente.DataNascimento.HasValue)
             {
                 <text>
-                doc.setFont(undefined, 'normal');
-                doc.text('Data de Nascimento:', 15, pacienteY + 8);
-                doc.setFont(undefined, 'bold');
-                doc.text('@Model.Paciente.DataNascimento.Value.ToString("dd/MM/yyyy")', 70, pacienteY + 8);
-                
-                doc.setFont(undefined, 'normal');
-                doc.text('Idade:', 130, pacienteY + 8);
-                doc.setFont(undefined, 'bold');
-                doc.text('@(DateTime.Now.Year - Model.Paciente.DataNascimento.Value.Year) anos', 150, pacienteY + 8);
-                
-                yPosition = pacienteY + 16;
+                doc.text("Data de Nascimento: @Model.Paciente.DataNascimento.Value.ToString("dd/MM/yyyy")", 14, 60);
+                doc.text("Idade: @(DateTime.Now.Year - Model.Paciente.DataNascimento.Value.Year) anos", 14, 70);
                 </text>
             }
-            else
-            {
-                <text>yPosition = pacienteY + 8;</text>
-            }
-            
             @if (!string.IsNullOrEmpty(Model.Paciente.TipoSanguineo))
             {
-                <text>
-                doc.setFont(undefined, 'normal');
-                doc.text('Tipo Sanguíneo:', 15, yPosition);
-                doc.setFont(undefined, 'bold');
-                doc.setTextColor(accentGreen[0], accentGreen[1], accentGreen[2]);
-                doc.text('@Model.Paciente.TipoSanguineo', 65, yPosition);
-                doc.setTextColor(0, 0, 0);
-                yPosition += 8;
-                </text>
+                <text>doc.text("Tipo Sanguíneo: @Model.Paciente.TipoSanguineo", 14, 80);</text>
             }
-            
             @if (!string.IsNullOrEmpty(Model.Paciente.Alergias))
             {
-                <text>
-                doc.setFont(undefined, 'normal');
-                doc.text('Alergias:', 15, yPosition);
-                doc.setFont(undefined, 'bold');
-                doc.setTextColor(220, 53, 69);
-                doc.text('@Model.Paciente.Alergias', 45, yPosition);
-                doc.setTextColor(0, 0, 0);
-                yPosition += 8;
-                </text>
+                <text>doc.text("Alergias: @Model.Paciente.Alergias", 14, 90);</text>
             }
-            
-            yPosition += 5;
-            yPosition = adicionarLinha(yPosition);
-            
-            // Seção do médico
-            yPosition = criarSecao('👨‍⚕️ MÉDICO RESPONSÁVEL', yPosition);
-            
-            const medicoY = yPosition;
-            doc.setFont(undefined, 'normal');
-            doc.text('Nome:', 15, medicoY);
-            doc.setFont(undefined, 'bold');
-            doc.text('Dr. @Model.Medico.Usuario.Nome @Model.Medico.Usuario.Sobrenome', 40, medicoY);
-            
-            doc.setFont(undefined, 'normal');
-            doc.text('Especialidade:', 15, medicoY + 8);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-            doc.text('@Model.Medico.Especialidade.Nome', 60, medicoY + 8);
-            doc.setTextColor(0, 0, 0);
-            
-            doc.setFont(undefined, 'normal');
-            doc.text('CRM:', 15, medicoY + 16);
-            doc.setFont(undefined, 'bold');
-            doc.text('@Model.Medico.CRM/@Model.Medico.EstadoCRM', 35, medicoY + 16);
-            
-            yPosition = medicoY + 25;
-            yPosition = adicionarLinha(yPosition);
-            
-            // Verificar se precisa de nova página
-            if (yPosition > pageHeight - 80) {
-                doc.addPage();
-                yPosition = 20;
-            }
-            
-            // Seções clínicas
+
+            // Adiciona informações do médico
+            doc.setFontSize(16);
+            doc.text("Médico Responsável", 14, 110);
+            doc.setFontSize(14);
+            doc.text("Nome: Dr. @Model.Medico.Usuario.Nome @Model.Medico.Usuario.Sobrenome", 14, 120);
+            doc.text("Especialidade: @Model.Medico.Especialidade.Nome", 14, 130);
+            doc.text("CRM: @Model.Medico.CRM/@Model.Medico.EstadoCRM", 14, 140);
+
+            // Adiciona informações da consulta
+            doc.setFontSize(16);
+            doc.text("Detalhes da Consulta", 14, 160);
+            doc.setFontSize(14);
+            doc.text("Data e Hora: @Model.Consulta.DataHora.ToString("dd/MM/yyyy 'às' HH:mm")", 14, 170);
+
+            // Adiciona anamnese e exame físico
             @if (!string.IsNullOrEmpty(Model.HistoriaClinica))
             {
                 <text>
-                yPosition = criarSecao('📋 HISTÓRIA CLÍNICA', yPosition);
-                
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                doc.setTextColor(0, 0, 0);
-                const historiaLines = doc.splitTextToSize('@Html.Raw(Model.HistoriaClinica.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))', pageWidth - 30);
-                doc.text(historiaLines, 15, yPosition);
-                yPosition += historiaLines.length * 5 + 10;
-                yPosition = adicionarLinha(yPosition);
+                doc.setFontSize(16);
+                doc.text("História Clínica", 14, 190);
+                doc.setFontSize(14);
+                doc.text("@Html.Raw(Model.HistoriaClinica.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 200);
                 </text>
             }
-            
+
             @if (!string.IsNullOrEmpty(Model.ExameFisico))
             {
                 <text>
-                if (yPosition > pageHeight - 60) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                yPosition = criarSecao('🔍 EXAME FÍSICO', yPosition);
-                
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                doc.setTextColor(0, 0, 0);
-                const exameLines = doc.splitTextToSize('@Html.Raw(Model.ExameFisico.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))', pageWidth - 30);
-                doc.text(exameLines, 15, yPosition);
-                yPosition += exameLines.length * 5 + 10;
-                yPosition = adicionarLinha(yPosition);
+                doc.setFontSize(16);
+                doc.text("Exame Físico", 14, 220);
+                doc.setFontSize(14);
+                doc.text("@Html.Raw(Model.ExameFisico.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 230);
                 </text>
             }
-            
-            @if (!string.IsNullOrEmpty(Model.Hipoteses))
-            {
-                <text>
-                if (yPosition > pageHeight - 60) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                yPosition = criarSecao('🤔 HIPÓTESES DIAGNÓSTICAS', yPosition);
-                
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                doc.setTextColor(0, 0, 0);
-                const hipotesesLines = doc.splitTextToSize('@Html.Raw(Model.Hipoteses.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))', pageWidth - 30);
-                doc.text(hipotesesLines, 15, yPosition);
-                yPosition += hipotesesLines.length * 5 + 10;
-                yPosition = adicionarLinha(yPosition);
-                </text>
-            }
-            
-            // Diagnóstico principal (destacado)
-            if (yPosition > pageHeight - 60) {
-                doc.addPage();
-                yPosition = 20;
-            }
-            
-            doc.setFillColor(accentGreen[0], accentGreen[1], accentGreen[2]);
-            doc.rect(10, yPosition - 8, pageWidth - 20, 12, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(12);
-            doc.setFont(undefined, 'bold');
-            doc.text('✅ DIAGNÓSTICO PRINCIPAL', 15, yPosition);
-            yPosition += 10;
-            
-            doc.setFontSize(11);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(0, 0, 0);
-            const diagnosticoLines = doc.splitTextToSize('@Html.Raw(Model.Diagnostico.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))', pageWidth - 30);
-            doc.text(diagnosticoLines, 15, yPosition);
-            yPosition += diagnosticoLines.length * 6 + 10;
-            yPosition = adicionarLinha(yPosition);
-            
+
+            // Adiciona diagnóstico e plano
+            doc.setFontSize(16);
+            doc.text("Diagnóstico Principal", 14, 250);
+            doc.setFontSize(14);
+            doc.text("@Html.Raw(Model.Diagnostico.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 260);
+
             @if (!string.IsNullOrEmpty(Model.Tratamento))
             {
                 <text>
-                if (yPosition > pageHeight - 60) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                yPosition = criarSecao('💊 PLANO DE TRATAMENTO', yPosition);
-                
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                doc.setTextColor(0, 0, 0);
-                const tratamentoLines = doc.splitTextToSize('@Html.Raw(Model.Tratamento.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))', pageWidth - 30);
-                doc.text(tratamentoLines, 15, yPosition);
-                yPosition += tratamentoLines.length * 5 + 10;
-                yPosition = adicionarLinha(yPosition);
+                doc.setFontSize(16);
+                doc.text("Plano de Tratamento", 14, 280);
+                doc.setFontSize(14);
+                doc.text("@Html.Raw(Model.Tratamento.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 290);
                 </text>
             }
-            
+
             @if (!string.IsNullOrEmpty(Model.Prescricoes))
             {
                 <text>
-                if (yPosition > pageHeight - 60) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                yPosition = criarSecao('💉 PRESCRIÇÕES MÉDICAS', yPosition);
-                
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                doc.setTextColor(0, 0, 0);
-                const prescricoesLines = doc.splitTextToSize('@Html.Raw(Model.Prescricoes.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))', pageWidth - 30);
-                doc.text(prescricoesLines, 15, yPosition);
-                yPosition += prescricoesLines.length * 5 + 10;
-                yPosition = adicionarLinha(yPosition);
+                doc.setFontSize(16);
+                doc.text("Prescrições Médicas", 14, 310);
+                doc.setFontSize(14);
+                doc.text("@Html.Raw(Model.Prescricoes.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 320);
                 </text>
             }
-            
+
             @if (!string.IsNullOrEmpty(Model.ExamesSolicitados))
             {
                 <text>
-                if (yPosition > pageHeight - 60) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                yPosition = criarSecao('🧪 EXAMES SOLICITADOS', yPosition);
-                
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                doc.setTextColor(0, 0, 0);
-                const examesLines = doc.splitTextToSize('@Html.Raw(Model.ExamesSolicitados.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))', pageWidth - 30);
-                doc.text(examesLines, 15, yPosition);
-                yPosition += examesLines.length * 5 + 10;
-                yPosition = adicionarLinha(yPosition);
+                doc.setFontSize(16);
+                doc.text("Exames Solicitados", 14, 340);
+                doc.setFontSize(14);
+                doc.text("@Html.Raw(Model.ExamesSolicitados.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 350);
                 </text>
             }
-            
+
             @if (!string.IsNullOrEmpty(Model.OrientacoesGerais))
             {
                 <text>
-                if (yPosition > pageHeight - 60) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                yPosition = criarSecao('📝 ORIENTAÇÕES GERAIS', yPosition);
-                
-                doc.setFontSize(10);
-                doc.setFont(undefined, 'normal');
-                doc.setTextColor(0, 0, 0);
-                const orientacoesLines = doc.splitTextToSize('@Html.Raw(Model.OrientacoesGerais.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))', pageWidth - 30);
-                doc.text(orientacoesLines, 15, yPosition);
-                yPosition += orientacoesLines.length * 5 + 10;
-                yPosition = adicionarLinha(yPosition);
+                doc.setFontSize(16);
+                doc.text("Orientações Gerais", 14, 370);
+                doc.setFontSize(14);
+                doc.text("@Html.Raw(Model.OrientacoesGerais.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 380);
                 </text>
             }
-            
+
             @if (Model.ProximaConsulta.HasValue)
             {
                 <text>
-                if (yPosition > pageHeight - 40) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                // Próxima consulta destacada
-                doc.setFillColor(255, 193, 7);
-                doc.rect(10, yPosition - 8, pageWidth - 20, 20, 'F');
-                doc.setTextColor(52, 58, 64);
-                doc.setFontSize(12);
-                doc.setFont(undefined, 'bold');
-                doc.text('📅 RETORNO AGENDADO', 15, yPosition);
-                
+                doc.setFontSize(16);
+                doc.text("Retorno Agendado", 14, 400);
                 doc.setFontSize(14);
-                doc.setFont(undefined, 'bold');
-                doc.text('@Model.ProximaConsulta.Value.ToString("dd/MM/yyyy")', 15, yPosition + 10);
-                yPosition += 25;
+                doc.text("Data: @Model.ProximaConsulta.Value.ToString("dd/MM/yyyy")", 14, 410);
                 </text>
             }
-            
-            // Rodapé em todas as páginas
-            const totalPages = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= totalPages; i++) {
-                doc.setPage(i);
-                
-                // Linha do rodapé
-                doc.setDrawColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-                doc.setLineWidth(1);
-                doc.line(15, pageHeight - 25, pageWidth - 15, pageHeight - 25);
-                
-                // Informações do rodapé
-                doc.setFontSize(8);
-                doc.setFont(undefined, 'normal');
-                doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
-                doc.text('Prontuário gerado em: ' + new Date().toLocaleString('pt-BR'), 15, pageHeight - 18);
-                doc.text('Data de criação: @Model.DataCriacao.ToString("dd/MM/yyyy HH:mm")', 15, pageHeight - 12);
-                
-                // Assinatura digital
-                doc.setTextColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-                doc.setFont(undefined, 'bold');
-                doc.text('MedConsulta - Sistema Médico Digital', pageWidth - 80, pageHeight - 18);
-                doc.setFont(undefined, 'normal');
-                doc.text(`Página ${i} de ${totalPages}`, pageWidth - 30, pageHeight - 12);
-                
-                // Código de verificação
-                doc.setFontSize(6);
-                doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
-                doc.text('Código de verificação: MED-@Model.Id-@Model.DataCriacao.ToString("yyyyMMdd")', 15, pageHeight - 6);
-            }
-            
-            // Salvar o PDF com nome personalizado
-            const fileName = `Prontuario_@(Model.Paciente.Usuario.Nome.Replace(" ", "_"))_@(Model.Consulta.DataHora.ToString("yyyyMMdd")).pdf`;
-            doc.save(fileName);
+
+            // Salva o PDF
+            doc.save("prontuario_medico_@(Model.Paciente.Usuario.Nome.Replace(" ", "_"))_@(Model.Paciente.Usuario.Sobrenome.Replace(" ", "_")).pdf");
         }
     </script>
 }
