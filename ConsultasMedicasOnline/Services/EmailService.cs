@@ -115,6 +115,8 @@ namespace ConsultasMedicasOnline.Services
                 StatusConsulta.Confirmada => "Sua consulta foi confirmada!",
                 StatusConsulta.Cancelada => "Sua consulta foi cancelada",
                 StatusConsulta.Concluida => "Sua consulta foi concluída - Feedback",
+                StatusConsulta.EmAndamento => "Sua consulta está em andamento",
+                StatusConsulta.NaoCompareceu => "Registro de falta em sua consulta",
                 _ => "Atualização sobre sua consulta médica"
             };
         }
@@ -126,7 +128,9 @@ namespace ConsultasMedicasOnline.Services
                 StatusConsulta.Confirmada => "confirmada",
                 StatusConsulta.Cancelada => "cancelada",
                 StatusConsulta.Concluida => "concluída",
+                StatusConsulta.EmAndamento => "em andamento",
                 StatusConsulta.Agendada => "agendada",
+                StatusConsulta.NaoCompareceu => "marcada como falta",
                 _ => status.ToString().ToLower()
             };
 
@@ -135,7 +139,9 @@ namespace ConsultasMedicasOnline.Services
                 StatusConsulta.Confirmada => "#15803d",  // green-700
                 StatusConsulta.Cancelada => "#b91c1c",   // red-700
                 StatusConsulta.Concluida => "#1d4ed8",   // blue-700
+                StatusConsulta.EmAndamento => "#0891b2", // cyan-700
                 StatusConsulta.Agendada => "#a16207",    // yellow-700
+                StatusConsulta.NaoCompareceu => "#be123c", // rose-700
                 _ => "#525252"                           // gray-600
             };
 
@@ -144,7 +150,9 @@ namespace ConsultasMedicasOnline.Services
                 StatusConsulta.Confirmada => "#f0fdf4",  // green-50
                 StatusConsulta.Cancelada => "#fef2f2",   // red-50
                 StatusConsulta.Concluida => "#eff6ff",   // blue-50
+                StatusConsulta.EmAndamento => "#ecfeff", // cyan-50
                 StatusConsulta.Agendada => "#fefce8",    // yellow-50
+                StatusConsulta.NaoCompareceu => "#fff1f2", // rose-50
                 _ => "#f8fafc"                           // gray-50
             };
 
@@ -153,7 +161,9 @@ namespace ConsultasMedicasOnline.Services
                 StatusConsulta.Confirmada => "<p>Por favor, chegue com 15 minutos de antecedência. Traga seus documentos e exames anteriores, se houver.</p>",
                 StatusConsulta.Cancelada => "<p>Se desejar reagendar, acesse nosso sistema ou entre em contato conosco.</p>",
                 StatusConsulta.Concluida => "<p>Agradecemos sua visita! Se necessário, não esqueça de agendar sua consulta de retorno.</p>",
+                StatusConsulta.EmAndamento => "<p>O médico já está lhe aguardando. Se sua consulta for online, acesse o link da videochamada.</p>",
                 StatusConsulta.Agendada => "<p>Aguardando confirmação do médico. Você receberá uma notificação quando houver atualização.</p>",
+                StatusConsulta.NaoCompareceu => "<p>Foi registrada sua ausência na consulta. Se precisar reagendar, entre em contato conosco.</p>",
                 _ => ""
             };
 

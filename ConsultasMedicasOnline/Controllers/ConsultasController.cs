@@ -534,6 +534,202 @@ namespace ConsultasMedicasOnline.Controllers
             return RedirectToAction(nameof(Details), new { id = consulta.Id });
         }
 
+        // POST: Consultas/IniciarConsulta/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Medico,Administrador")]
+        public async Task<IActionResult> IniciarConsulta(int id, string returnUrl = null)
+        {
+            var consulta = await _context.Consultas
+                .Include(c => c.Paciente)
+                    .ThenInclude(p => p.Usuario)
+                .Include(c => c.Medico)
+                    .ThenInclude(m => m.Usuario)
+                .FirstOrDefaultAsync(c => c.Id == id);
+                
+            if (consulta == null)
+            {
+                TempData["Error"] = "Consulta não encontrada.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Verify status is valid for this transition
+            if (consulta.Status != StatusConsulta.Confirmada)
+            {
+                TempData["Error"] = "Apenas consultas confirmadas podem ser iniciadas.";
+                if (!string.IsNullOrEmpty(returnUrl))
+                    return RedirectToAction(returnUrl);
+                return RedirectToAction(nameof(Details), new { id = consulta.Id });
+            }
+
+            try
+            {
+                consulta.Status = StatusConsulta.EmAndamento;
+                _context.Update(consulta);
+                await _context.SaveChangesAsync();
+
+                // Send email to patient
+                if (consulta.Paciente?.Usuario?.Email != null)
+                {
+                    await _emailService.SendStatusChangeNotificationAsync(
+                        consulta.Paciente.Usuario.Email,
+                        $"{consulta.Paciente.Usuario.Nome} {consulta.Paciente.Usuario.Sobrenome}",
+                        $"{consulta.Medico.Usuario.Nome} {consulta.Medico.Usuario.Sobrenome}",
+                        consulta.DataHora,
+                        StatusConsulta.EmAndamento
+                    );
+                }
+
+                TempData["Success"] = "Consulta iniciada com sucesso.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Erro ao iniciar consulta: {ex.Message}";
+            }
+
+            if (!string.IsNullOrEmpty(returnUrl))
+                return RedirectToAction(returnUrl);
+            return RedirectToAction(nameof(Details), new { id = consulta.Id });
+        }
+
+        // POST: Consultas/MarcarComoConcluida/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Medico,Administrador")]
+        public async Task<IActionResult> MarcarComoConcluida(int id, string returnUrl = null)
+        {
+            var consulta = await _context.Consultas
+                .Include(c => c.Paciente)
+                    .ThenInclude(p => p.Usuario)
+                .Include(c => c.Medico)
+                    .ThenInclude(m => m.Usuario)
+                .FirstOrDefaultAsync(c => c.Id == id);
+                
+            if (consulta == null)
+            {
+                TempData["Error"] = "Consulta não encontrada.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Verify status is valid for this transition
+            if (consulta.Status != StatusConsulta.EmAndamento)
+            {
+                TempData["Error"] = "Apenas consultas em andamento podem ser concluídas.";
+                if (!string.IsNullOrEmpty(returnUrl))
+                    return RedirectToAction(returnUrl);
+                return RedirectToAction(nameof(Details), new { id = consulta.Id });
+            }
+
+            try
+            {
+                consulta.Status = StatusConsulta.Concluida;
+                _context.Update(consulta);
+                await _context.SaveChangesAsync();
+
+                // Send email to patient
+                if (consulta.Paciente?.Usuario?.Email != null)
+                {
+                    await _emailService.SendStatusChangeNotificationAsync(
+                        consulta.Paciente.Usuario.Email,
+                        $"{consulta.Paciente.Usuario.Nome} {consulta.Paciente.Usuario.Sobrenome}",
+                        $"{consulta.Medico.Usuario.Nome} {consulta.Medico.Usuario.Sobrenome}",
+                        consulta.DataHora,
+                        StatusConsulta.Concluida
+                    );
+                }
+
+                TempData["Success"] = "Consulta concluída com sucesso.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Erro ao concluir consulta: {ex.Message}";
+            }
+
+            if (!string.IsNullOrEmpty(returnUrl))
+                return RedirectToAction(returnUrl);
+            return RedirectToAction(nameof(Details), new { id = consulta.Id });
+        }
+
+        // POST: Consultas/MarcarFalta/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Medico,Administrador")]
+        public async Task<IActionResult> MarcarFalta(int id, string returnUrl = null)
+        {
+            var consulta = await _context.Consultas
+                .Include(c => c.Paciente)
+                    .ThenInclude(p => p.Usuario)
+                .Include(c => c.Medico)
+                    .ThenInclude(m => m.Usuario)
+                .FirstOrDefaultAsync(c => c.Id == id);
+                
+            if (consulta == null)
+            {
+                TempData["Error"] = "Consulta não encontrada.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Verify status is valid for this transition
+            if (consulta.Status != StatusConsulta.Confirmada)
+            {
+                TempData["Error"] = "Apenas consultas confirmadas podem ser marcadas como falta.";
+                if (!string.IsNullOrEmpty(returnUrl))
+                    return RedirectToAction(returnUrl);
+                return RedirectToAction(nameof(Details), new { id = consulta.Id });
+            }
+
+            try
+            {
+                consulta.Status = StatusConsulta.NaoCompareceu;
+                _context.Update(consulta);
+                await _context.SaveChangesAsync();
+
+                // Send email to patient
+                if (consulta.Paciente?.Usuario?.Email != null)
+                {
+                    await _emailService.SendEmailAsync(
+                        consulta.Paciente.Usuario.Email,
+                        "Registro de falta na consulta",
+                        $@"
+                            <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;'>
+                                <div style='text-align: center; padding: 10px; background-color: #fff1f2; border-radius: 5px;'>
+                                    <h2 style='color: #be123c;'>Falta Registrada</h2>
+                                </div>
+                                
+                                <div style='padding: 20px;'>
+                                    <p>Olá, <strong>{consulta.Paciente.Usuario.Nome}</strong>!</p>
+                                    
+                                    <p>Sua ausência foi registrada na consulta com <strong>Dr. {consulta.Medico.Usuario.Nome}</strong>.</p>
+                                    
+                                    <div style='background-color: #f8fafc; padding: 15px; border-radius: 5px; margin: 20px 0;'>
+                                        <p><strong>Data/Hora:</strong> {consulta.DataHora.ToString("dd/MM/yyyy HH:mm")}</p>
+                                    </div>
+                                    
+                                    <p>Se você precisar reagendar sua consulta, entre em contato conosco o mais breve possível.</p>
+                                    <p>Note que ausências não justificadas podem estar sujeitas a cobranças conforme nossa política.</p>
+                                </div>
+                                
+                                <div style='text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;'>
+                                    <p style='color: #64748b; font-size: 14px;'>Este é um e-mail automático. Por favor, não responda diretamente.</p>
+                                    <p style='color: #64748b; font-size: 14px;'>© {DateTime.Now.Year} Consultas Médicas Online - Todos os direitos reservados.</p>
+                                </div>
+                            </div>
+                        "
+                    );
+                }
+
+                TempData["Success"] = "Falta do paciente registrada com sucesso.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Erro ao registrar falta: {ex.Message}";
+            }
+
+            if (!string.IsNullOrEmpty(returnUrl))
+                return RedirectToAction(returnUrl);
+            return RedirectToAction(nameof(Details), new { id = consulta.Id });
+        }
+
         private bool ConsultaExists(int id)
         {
             return _context.Consultas.Any(e => e.Id == id);
