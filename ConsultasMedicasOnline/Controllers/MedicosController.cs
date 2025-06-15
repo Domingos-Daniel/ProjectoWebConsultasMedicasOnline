@@ -26,7 +26,13 @@ namespace ConsultasMedicasOnline.Controllers
             var medicos = await _context.Medicos
                 .Include(m => m.Usuario)
                 .Include(m => m.Especialidade)
+                .Include(m => m.HorariosDisponiveis)
+                // Make sure to load the consultations and their related entities
+                .Include(m => m.Consultas)
+                    .ThenInclude(c => c.Paciente)
+                        .ThenInclude(p => p.Usuario)
                 .ToListAsync();
+
             return View(medicos);
         }
 
