@@ -84,8 +84,9 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     @{
-                                        var consultasCount = paciente.Consultas.Count(c => c.MedicoId == medicoId);
-                                        var consultasConcluidas = paciente.Consultas.Count(c => c.MedicoId == medicoId && c.Status == StatusConsulta.Concluida);
+                                        // Count directly from the navigation property - filtered consultas are already loaded
+                                        var consultasCount = paciente.Consultas.Count();
+                                        var consultasConcluidas = paciente.Consultas.Count(c => c.Status == StatusConsulta.Concluida);
                                     }
                                     <div class="text-sm">
                                         <span class="font-semibold text-primary-600">@consultasCount</span> total

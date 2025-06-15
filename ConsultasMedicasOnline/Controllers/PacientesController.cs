@@ -49,9 +49,11 @@ namespace ConsultasMedicasOnline.Controllers
                     .Distinct()
                     .ToListAsync();
 
+                // Load patients with their consultations
                 var pacientes = await _context.Pacientes
                     .Include(p => p.Usuario)
                     .Include(p => p.Endereco)
+                    .Include(p => p.Consultas.Where(c => c.MedicoId == medico.Id)) // Only include consultations with this doctor
                     .Where(p => pacienteIds.Contains(p.Id))
                     .ToListAsync();
 
