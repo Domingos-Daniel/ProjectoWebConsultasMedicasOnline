@@ -588,7 +588,7 @@ namespace ConsultasMedicasOnline.Controllers
         // POST: Admin/RejeitarConsulta
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RejeitarConsulta(int id, string motivo, string returnUrl = null)
+        public async Task<IActionResult> RejeitarConsulta2(int id, string motivo, string returnUrl = null)
         {
             var consulta = await _context.Consultas
                 .Include(c => c.Paciente)
