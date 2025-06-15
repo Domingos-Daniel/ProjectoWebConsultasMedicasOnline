@@ -124,32 +124,6 @@ public class ApplicationDbContext : IdentityDbContext<Usuario>
         if (!await roleManager.RoleExistsAsync("Paciente"))
             await roleManager.CreateAsync(new IdentityRole("Paciente"));
         
-        // Criar usuário administrador padrão
-        var adminEmail = "admin@medconsulta.ao";
-        var adminUser = await userManager.FindByEmailAsync(adminEmail);
-        
-        if (adminUser == null)
-        {
-            adminUser = new Usuario
-            {
-                UserName = adminEmail,
-                Email = adminEmail,
-                Nome = "Administrador",
-                Sobrenome = "Sistema",
-                EmailConfirmed = true,
-                PhoneNumber = "+244900000000",
-                PhoneNumberConfirmed = true,
-                DataCriacao = DateTime.Now,
-                Ativo = true
-            };
-
-            var result = await userManager.CreateAsync(adminUser, "Admin@123456");
-            if (result.Succeeded)
-            {
-                await userManager.AddToRoleAsync(adminUser, "Administrador");
-            }
-        }
-        
         // Semear médicos
         await Seeders.MedicoSeeder.SeedMedicos(context, userManager);
     }

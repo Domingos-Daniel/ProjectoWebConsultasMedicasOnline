@@ -1,0 +1,261 @@
+@model ConsultasMedicasOnline.Models.Prontuario
+
+@{
+    ViewData["Title"] = "Detalhes do Prontuário";
+    bool isMedico = User.IsInRole("Medico");
+    bool isAdmin = User.IsInRole("Administrador");
+}
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-white py-8">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-medical-800">
+                    <i class="fas fa-file-medical text-primary-600 mr-3"></i>
+                    Prontuário Médico
+                </h1>
+                <p class="text-lg text-medical-600 mt-2">
+                    Consulta de @Model.Consulta.DataHora.ToString("dd/MM/yyyy 'às' HH:mm")
+                </p>
+            </div>
+            
+            <div class="flex space-x-3">
+                <a href="@Url.Action("Print", new { id = Model.Id })" target="_blank" class="bg-info-100 text-info-700 px-4 py-2 rounded-lg hover:bg-info-200 transition-colors duration-200">
+                    <i class="fas fa-print mr-2"></i>
+                    Imprimir
+                </a>
+                
+                <a href="@Url.Action("Details", "Consultas", new { id = Model.ConsultaId })" class="bg-medical-100 text-medical-700 px-4 py-2 rounded-lg hover:bg-medical-200 transition-colors duration-200">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Voltar para Consulta
+                </a>
+                
+                @if ((isMedico && Model.Medico.UsuarioId == User.FindFirstValue(ClaimTypes.NameIdentifier)) || isAdmin)
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="bg-warning-100 text-warning-700 px-4 py-2 rounded-lg hover:bg-warning-200 transition-colors duration-200">
+                        <i class="fas fa-edit mr-2"></i>
+                        Editar
+                    </a>
+                }
+            </div>
+        </div>
+
+        <!-- Patient and Doctor Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <h2 class="text-xl font-semibold text-medical-800 mb-4 flex items-center">
+                    <i class="fas fa-user text-primary-600 mr-2"></i>
+                    Dados do Paciente
+                </h2>
+                
+                <div class="flex items-center mb-4">
+                    <div class="h-14 w-14 bg-purple-100 rounded-full flex items-center justify-center">
+                        <span class="text-purple-600 text-lg font-bold">
+                            @Model.Paciente.Usuario.Nome.First()@Model.Paciente.Usuario.Sobrenome.First()
+                        </span>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="font-semibold text-lg text-medical-800">
+                            @Model.Paciente.Usuario.Nome @Model.Paciente.Usuario.Sobrenome
+                        </h3>
+                        <p class="text-medical-600">
+                            @if (Model.Paciente.DataNascimento.HasValue)
+                            {
+                                <span>@Model.Paciente.DataNascimento.Value.ToString("dd/MM/yyyy")</span>
+                                <span class="text-xs ml-2">(@(DateTime.Now.Year - Model.Paciente.DataNascimento.Value.Year) anos)</span>
+                            }
+                            else
+                            {
+                                <span class="text-medical-500">Data de nascimento não informada</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm text-medical-600">Tipo Sanguíneo</p>
+                        <p class="font-semibold text-medical-800">
+                            @if (!string.IsNullOrEmpty(Model.Paciente.TipoSanguineo))
+                            {
+                                @Model.Paciente.TipoSanguineo
+                            }
+                            else
+                            {
+                                <span class="text-medical-500">Não informado</span>
+                            }
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <p class="text-sm text-medical-600">Alergias</p>
+                        <p class="font-semibold text-medical-800">
+                            @if (!string.IsNullOrEmpty(Model.Paciente.Alergias))
+                            {
+                                @Model.Paciente.Alergias
+                            }
+                            else
+                            {
+                                <span class="text-medical-500">Nenhuma alergia registrada</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <h2 class="text-xl font-semibold text-medical-800 mb-4 flex items-center">
+                    <i class="fas fa-user-md text-primary-600 mr-2"></i>
+                    Médico Responsável
+                </h2>
+                
+                <div class="flex items-center mb-4">
+                    <div class="h-14 w-14 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span class="text-blue-600 text-lg font-bold">
+                            @Model.Medico.Usuario.Nome.First()@Model.Medico.Usuario.Sobrenome.First()
+                        </span>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="font-semibold text-lg text-medical-800">
+                            Dr. @Model.Medico.Usuario.Nome @Model.Medico.Usuario.Sobrenome
+                        </h3>
+                        <p class="text-medical-600">
+                            @Model.Medico.Especialidade.Nome - CRM @Model.Medico.CRM/@Model.Medico.EstadoCRM
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="text-sm text-medical-700 mt-4">
+                    <p>
+                        <i class="fas fa-calendar-check text-success-600 mr-2"></i>
+                        Prontuário criado em @Model.DataCriacao.ToString("dd/MM/yyyy 'às' HH:mm")
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical Record Content -->
+        <div class="space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <h2 class="text-xl font-semibold text-medical-800 mb-4">
+                    <i class="fas fa-clipboard-list text-primary-600 mr-2"></i>
+                    Anamnese e Exame Físico
+                </h2>
+                
+                @if (!string.IsNullOrEmpty(Model.HistoriaClinica))
+                {
+                    <div class="mb-6">
+                        <h3 class="text-lg text-primary-800 mb-2">História Clínica</h3>
+                        <div class="bg-blue-50 p-4 rounded-lg text-medical-800">
+                            <p>@Model.HistoriaClinica</p>
+                        </div>
+                    </div>
+                }
+                
+                @if (!string.IsNullOrEmpty(Model.ExameFisico))
+                {
+                    <div>
+                        <h3 class="text-lg text-primary-800 mb-2">Exame Físico</h3>
+                        <div class="bg-blue-50 p-4 rounded-lg text-medical-800">
+                            <p>@Model.ExameFisico</p>
+                        </div>
+                    </div>
+                }
+                
+                @if (string.IsNullOrEmpty(Model.HistoriaClinica) && string.IsNullOrEmpty(Model.ExameFisico))
+                {
+                    <p class="text-medical-500 italic">Nenhuma informação de anamnese ou exame físico registrada.</p>
+                }
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <h2 class="text-xl font-semibold text-medical-800 mb-4">
+                    <i class="fas fa-stethoscope text-primary-600 mr-2"></i>
+                    Diagnóstico e Plano
+                </h2>
+                
+                @if (!string.IsNullOrEmpty(Model.Hipoteses))
+                {
+                    <div class="mb-6">
+                        <h3 class="text-lg text-primary-800 mb-2">Hipóteses Diagnósticas</h3>
+                        <div class="bg-info-50 p-4 rounded-lg text-medical-800">
+                            <p>@Model.Hipoteses</p>
+                        </div>
+                    </div>
+                }
+                
+                <div class="mb-6">
+                    <h3 class="text-lg text-primary-800 mb-2">Diagnóstico Principal</h3>
+                    <div class="bg-success-50 p-4 rounded-lg text-medical-800 border-l-4 border-success-500">
+                        <p class="font-medium">@Model.Diagnostico</p>
+                    </div>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.Tratamento))
+                {
+                    <div>
+                        <h3 class="text-lg text-primary-800 mb-2">Plano de Tratamento</h3>
+                        <div class="bg-info-50 p-4 rounded-lg text-medical-800">
+                            <p>@Model.Tratamento</p>
+                        </div>
+                    </div>
+                }
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                <h2 class="text-xl font-semibold text-medical-800 mb-4">
+                    <i class="fas fa-prescription text-primary-600 mr-2"></i>
+                    Prescrições e Orientações
+                </h2>
+                
+                @if (!string.IsNullOrEmpty(Model.Prescricoes))
+                {
+                    <div class="mb-6">
+                        <h3 class="text-lg text-primary-800 mb-2">Medicamentos Prescritos</h3>
+                        <div class="bg-warning-50 p-4 rounded-lg text-medical-800">
+                            <p>@Model.Prescricoes</p>
+                        </div>
+                    </div>
+                }
+                
+                @if (!string.IsNullOrEmpty(Model.ExamesSolicitados))
+                {
+                    <div class="mb-6">
+                        <h3 class="text-lg text-primary-800 mb-2">Exames Solicitados</h3>
+                        <div class="bg-indigo-50 p-4 rounded-lg text-medical-800">
+                            <p>@Model.ExamesSolicitados</p>
+                        </div>
+                    </div>
+                }
+                
+                @if (!string.IsNullOrEmpty(Model.OrientacoesGerais))
+                {
+                    <div class="mb-6">
+                        <h3 class="text-lg text-primary-800 mb-2">Orientações Gerais</h3>
+                        <div class="bg-blue-50 p-4 rounded-lg text-medical-800">
+                            <p>@Model.OrientacoesGerais</p>
+                        </div>
+                    </div>
+                }
+                
+                @if (Model.ProximaConsulta.HasValue)
+                {
+                    <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                        <h3 class="text-lg text-green-800 mb-2">Retorno Agendado</h3>
+                        <p class="text-green-700 font-medium">
+                            <i class="fas fa-calendar-alt mr-2"></i>
+                            @Model.ProximaConsulta.Value.ToString("dd/MM/yyyy")
+                        </p>
+                    </div>
+                }
+                
+                @if (string.IsNullOrEmpty(Model.Prescricoes) && string.IsNullOrEmpty(Model.ExamesSolicitados) && 
+                    string.IsNullOrEmpty(Model.OrientacoesGerais) && !Model.ProximaConsulta.HasValue)
+                {
+                    <p class="text-medical-500 italic">Nenhuma prescrição ou orientação registrada.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
