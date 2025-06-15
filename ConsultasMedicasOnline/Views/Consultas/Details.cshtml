@@ -331,7 +331,7 @@
                                         Dr. @Model.Medico.Usuario?.Nome @Model.Medico.Usuario?.Sobrenome
                                     </h4>
                                     <p class="text-sm text-medical-600">@Model.Medico.Especialidade?.Nome</p>
-                                    <p class="text-xs text-medical-500">CRM @Model.Medico.CRM/@Model.Medico.EstadoCRM</p>
+                                    <p class="text-xs text-medical-500">Cod. Carteira @Model.Medico.CRM/@Model.Medico.EstadoCRM</p>
                                 </div>
                             </div>
                             
@@ -548,7 +548,7 @@
             yPosition += 7;
             doc.text('Especialidade: @Model.Medico.Especialidade.Nome', 20, yPosition);
             yPosition += 7;
-            doc.text('CRM: @Model.Medico.CRM/@Model.Medico.EstadoCRM', 20, yPosition);
+            doc.text('Cod. Carteira: @Model.Medico.CRM/@Model.Medico.EstadoCRM', 20, yPosition);
             yPosition += 15;
             
             // Verificar se precisa de nova página
@@ -676,141 +676,4 @@
         }
     </script>
 }
-                    doc.setFont(undefined, 'normal');
-                    const prescricoesLines = doc.splitTextToSize('@Html.Raw(Model.Prontuario.Prescricoes.Replace("\n", " ").Replace("\r", " "))', pageWidth - 40);
-                    doc.text(prescricoesLines, 20, yPosition);
-                    yPosition += prescricoesLines.length * 7 + 8;
-                    </text>
-                }
-                
-                // Exames Solicitados
-                @if (!string.IsNullOrEmpty(Model.Prontuario.ExamesSolicitados))
-                {
-                    <text>
-                    if (yPosition > pageHeight - 40) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    
-                    doc.setFontSize(14);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('EXAMES SOLICITADOS', 20, yPosition);
-                    yPosition += 10;
-                    
-                    doc.setFontSize(11);
-                    doc.setFont(undefined, 'normal');
-                    const examesLines = doc.splitTextToSize('@Html.Raw(Model.Prontuario.ExamesSolicitados.Replace("\n", " ").Replace("\r", " "))', pageWidth - 40);
-                    doc.text(examesLines, 20, yPosition);
-                    yPosition += examesLines.length * 7 + 8;
-                    </text>
-                }
-                
-                // Orientações Gerais
-                @if (!string.IsNullOrEmpty(Model.Prontuario.OrientacoesGerais))
-                {
-                    <text>
-                    if (yPosition > pageHeight - 40) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    
-                    doc.setFontSize(14);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('ORIENTAÇÕES GERAIS', 20, yPosition);
-                    yPosition += 10;
-                    
-                    doc.setFontSize(11);
-                    doc.setFont(undefined, 'normal');
-                    const orientacoesLines = doc.splitTextToSize('@Html.Raw(Model.Prontuario.OrientacoesGerais.Replace("\n", " ").Replace("\r", " "))', pageWidth - 40);
-                    doc.text(orientacoesLines, 20, yPosition);
-                    yPosition += orientacoesLines.length * 7 + 8;
-                    </text>
-                }
-                
-                // Próxima Consulta
-                @if (Model.Prontuario.ProximaConsulta.HasValue)
-                {
-                    <text>
-                    if (yPosition > pageHeight - 30) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    
-                    doc.setFontSize(14);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('RETORNO AGENDADO', 20, yPosition);
-                    yPosition += 10;
-                    
-                    doc.setFontSize(11);
-                    doc.setFont(undefined, 'normal');
-                    doc.text('Data: @Model.Prontuario.ProximaConsulta.Value.ToString("dd/MM/yyyy")', 20, yPosition);
-                    yPosition += 15;
-                    </text>
-                }
-                
-                // Rodapé com logo em todas as páginas
-                const totalPages = doc.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(8);
-                    doc.setFont(undefined, 'italic');
-                    doc.setTextColor(100, 100, 100);
-                    doc.text('MedConsulta - Sistema de Consultas Médicas Online', 20, pageHeight - 15);
-                    doc.text('Documento gerado em: ' + new Date().toLocaleString('pt-BR'), 20, pageHeight - 10);
-                    doc.text('Página ' + i + ' de ' + totalPages, pageWidth - 40, pageHeight - 10);
-                }
-            }
-            else
-            {
-                <text>
-                // Se não há prontuário, apenas adicionar informação
-                doc.setFontSize(14);
-                doc.setFont(undefined, 'bold');
-                doc.text('PRONTUÁRIO NÃO DISPONÍVEL', 20, yPosition);
-                yPosition += 10;
-                
-                doc.setFontSize(11);
-                doc.setFont(undefined, 'normal');
-                doc.text('O prontuário ainda não foi preenchido pelo médico.', 20, yPosition);
-                
-                // Rodapé
-                doc.setFontSize(8);
-                doc.setFont(undefined, 'italic');
-                doc.text('Documento gerado em: ' + new Date().toLocaleString('pt-BR'), 20, pageHeight - 20);
-                </text>
-            }
-            
-            // Salvar o PDF
-            const fileName = `Consulta_@(Model.Paciente.Usuario.Nome.Replace(" ", "_"))_@(Model.DataHora.ToString("yyyyMMdd")).pdf`;
-            doc.save(fileName);
-        }
-        
-        function cancelarConsulta(consultaId) {
-            const motivo = prompt('Informe o motivo do cancelamento:');
-            if (motivo && motivo.trim()) {
-                if (confirm('Tem certeza de que deseja cancelar esta consulta?')) {
-                    $.post('@Url.Action("Cancelar")', {
-                        id: consultaId,
-                        motivo: motivo.trim()
-                    }, function() {
-                        location.reload();
-                    }).fail(function() {
-                        alert('Erro ao cancelar a consulta. Tente novamente.');
-                    });
-                }
-            }
-        }
-        
-        function iniciarConsulta(consultaId) {
-            if (confirm('Deseja iniciar esta consulta agora?')) {
-                $.post('@Url.Action("IniciarConsulta")', {
-                    id: consultaId
-                }, function() {
-                    location.reload();
-                }).fail(function() {
-                    alert('Erro ao iniciar a consulta. Tente novamente.');
-                });
-            }
-        }
-    </script>
-}
+                   
