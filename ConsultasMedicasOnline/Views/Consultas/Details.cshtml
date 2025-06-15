@@ -213,7 +213,7 @@
                                     </button>
                                 </form>
                             }
-                            else
+                            else if(Model.Status == ConsultasMedicasOnline.Models.StatusConsulta.Agendada && (User.IsInRole("Medico") || User.IsInRole("Administrador")))
                             {
                                 <form asp-action="ChangeStatus" method="post">
                                     @Html.AntiForgeryToken()
