@@ -138,8 +138,12 @@ namespace ConsultasMedicasOnline.Controllers
                 // Importante: Carregar explicitamente as entidades relacionadas antes de adicionar o prontuário
                 // Isso garante que as propriedades de navegação estejam preenchidas
                 var consulta = await _context.Consultas.FindAsync(prontuario.ConsultaId);
-                var paciente = await _context.Pacientes.FindAsync(prontuario.PacienteId);
-                var medico = await _context.Medicos.FindAsync(prontuario.MedicoId);
+                var paciente = await _context.Pacientes
+                    .Include(p => p.Usuario)
+                    .FirstOrDefaultAsync(p => p.Id == prontuario.PacienteId);
+                var medico = await _context.Medicos
+                    .Include(m => m.Usuario)
+                    .FirstOrDefaultAsync(m => m.Id == prontuario.MedicoId);
                 
                 if (consulta == null || paciente == null || medico == null)
                 {
@@ -182,6 +186,31 @@ namespace ConsultasMedicasOnline.Controllers
                     consulta.Status = StatusConsulta.Concluida;
                     _context.Update(consulta);
                     await _context.SaveChangesAsync();
+                }
+                
+                // Enviar email ao paciente sobre o novo prontuário
+                try
+                {
+                    var pacienteEmail = paciente.Usuario?.Email;
+                    var pacienteNome = $"{paciente.Usuario?.Nome} {paciente.Usuario?.Sobrenome}";
+                    var medicoNome = $"Dr. {medico.Usuario?.Nome} {medico.Usuario?.Sobrenome}";
+                    
+                    if (!string.IsNullOrEmpty(pacienteEmail))
+                    {
+                        await _emailService.SendProntuarioCreatedNotificationAsync(
+                            pacienteEmail,
+                            pacienteNome,
+                            medicoNome,
+                            novoProntuario.Id,
+                            consulta.DataHora);
+                        
+                        Console.WriteLine($"Email de prontuário enviado para {pacienteEmail}");
+                    }
+                }
+                catch (Exception emailEx)
+                {
+                    // Log do erro de envio de email, mas não interrompemos o fluxo principal
+                    Console.WriteLine($"Erro ao enviar email do prontuário: {emailEx.Message}");
                 }
                 
                 TempData["Success"] = "Prontuário criado com sucesso.";
