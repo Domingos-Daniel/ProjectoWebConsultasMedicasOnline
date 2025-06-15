@@ -561,5 +561,93 @@ namespace ConsultasMedicasOnline.Controllers
             
             return PartialView("_MedicosDisponiveis", medicos);
         }
+
+        // POST: Consultas/Cancel/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Cancel(int id)
+        {
+            var consulta = await _context.Consultas
+                .Include(c => c.Paciente)
+                    .ThenInclude(p => p.Usuario)
+                .Include(c => c.Medico)
+                    .ThenInclude(m => m.Usuario)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            
+            if (consulta == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                // Update the status to canceled
+                consulta.Status = StatusConsulta.Cancelada;
+                
+                _context.Update(consulta);
+                await _context.SaveChangesAsync();
+
+                // Send cancellation notification email if we have an email address
+                if (consulta.Paciente?.Usuario?.Email != null)
+                {
+                    try
+                    {
+                        await SendCancellationEmailAsync(
+                            consulta.Paciente.Usuario.Email,
+                            $"{consulta.Paciente.Usuario.Nome} {consulta.Paciente.Usuario.Sobrenome}",
+                            $"{consulta.Medico.Usuario.Nome} {consulta.Medico.Usuario.Sobrenome}",
+                            consulta.DataHora
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log the error but don't fail the cancellation process
+                        Console.WriteLine($"Erro ao enviar e-mail de cancelamento: {ex.Message}");
+                    }
+                }
+
+                TempData["Success"] = "Consulta cancelada com sucesso.";
+                return RedirectToAction(nameof(Details), new { id = consulta.Id });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Erro ao cancelar consulta: {ex.Message}";
+                return RedirectToAction(nameof(Details), new { id = consulta.Id });
+            }
+        }
+
+        private async Task SendCancellationEmailAsync(string email, string pacienteName, string doctorName, DateTime appointmentDate)
+        {
+            string subject = "Confirmação de Cancelamento de Consulta";
+            
+            string body = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;'>
+                    <div style='text-align: center; padding: 10px; background-color: #fef2f2; border-radius: 5px;'>
+                        <h2 style='color: #991b1b;'>Consulta Cancelada</h2>
+                    </div>
+                    
+                    <div style='padding: 20px;'>
+                        <p>Olá, <strong>{pacienteName}</strong>!</p>
+                        
+                        <p>Sua consulta com <strong>Dr. {doctorName}</strong> foi cancelada conforme solicitado.</p>
+                        
+                        <div style='background-color: #f8fafc; padding: 15px; border-radius: 5px; margin: 20px 0;'>
+                            <p><strong>Data/Hora:</strong> {appointmentDate.ToString("dd/MM/yyyy HH:mm")}</p>
+                        </div>
+                        
+                        <p>Para agendar uma nova consulta, acesse nosso sistema a qualquer momento.</p>
+                    </div>
+                    
+                    <div style='text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;'>
+                        <p style='color: #64748b; font-size: 14px;'>Este é um e-mail automático. Por favor, não responda diretamente.</p>
+                        <p style='color: #64748b; font-size: 14px;'>© {DateTime.Now.Year} Consultas Médicas Online - Todos os direitos reservados.</p>
+                    </div>
+                </div>
+            ";
+
+            // Use the email service to send the cancellation email
+            await _emailService.SendEmailAsync(email, subject, body);
+        }
     }
 }
+
