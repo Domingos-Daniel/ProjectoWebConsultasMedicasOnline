@@ -16,9 +16,9 @@ namespace ConsultasMedicasOnline.Controllers
     public class ProntuariosController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IEmailService _emailService;
+        private readonly EmailService _emailService;  // Alterado para usar EmailService diretamente
 
-        public ProntuariosController(ApplicationDbContext context, IEmailService emailService)
+        public ProntuariosController(ApplicationDbContext context, EmailService emailService) // Alterado para injetar EmailService
         {
             _context = context;
             _emailService = emailService;
@@ -197,12 +197,41 @@ namespace ConsultasMedicasOnline.Controllers
                     
                     if (!string.IsNullOrEmpty(pacienteEmail))
                     {
-                        await _emailService.SendProntuarioCreatedNotificationAsync(
-                            pacienteEmail,
-                            pacienteNome,
-                            medicoNome,
-                            novoProntuario.Id,
-                            consulta.DataHora);
+                        // Agora podemos enviar o email sem erros porque estamos usando diretamente o EmailService
+                        await _emailService.SendEmailAsync(
+                            pacienteEmail, 
+                            "Seu prontuário médico foi criado",
+                            $@"
+                            <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;'>
+                                <div style='text-align: center; padding: 15px; background-color: #f0f9ff; border-radius: 5px;'>
+                                    <h1 style='color: #1e40af; margin: 0;'>MedConsulta</h1>
+                                    <p style='color: #64748b; margin: 5px 0 0;'>Sistema de Consultas Médicas Online</p>
+                                </div>
+                                
+                                <div style='padding: 20px;'>
+                                    <p>Olá, <strong>{pacienteNome}</strong>!</p>
+                                    
+                                    <p>O <strong>{medicoNome}</strong> concluiu o seu prontuário médico da consulta realizada em <strong>{consulta.DataHora.ToString("dd/MM/yyyy")}</strong>.</p>
+                                    
+                                    <p>Você pode acessar seu prontuário completo através do link abaixo:</p>
+                                    
+                                    <div style='text-align: center; margin: 25px 0;'>
+                                        <a href='{Request.Scheme}://{Request.Host}/Prontuarios/Details/{novoProntuario.Id}' 
+                                           style='background-color: #1e40af; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>
+                                            Visualizar Prontuário
+                                        </a>
+                                    </div>
+                                    
+                                    <div style='margin-top: 30px; padding: 15px; background-color: #f0f9ff; border-radius: 5px;'>
+                                        <p style='margin: 0; color: #1e40af;'><strong>Importante:</strong> O prontuário contém informações importantes sobre seu diagnóstico, tratamentos prescritos e orientações médicas.</p>
+                                    </div>
+                                </div>
+                                
+                                <div style='text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;'>
+                                    <p style='color: #64748b; font-size: 14px;'>© {DateTime.Now.Year} MedConsulta - Sistema de Consultas Médicas Online</p>
+                                </div>
+                            </div>
+                            ");
                         
                         Console.WriteLine($"Email de prontuário enviado para {pacienteEmail}");
                     }

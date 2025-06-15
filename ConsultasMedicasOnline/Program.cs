@@ -28,8 +28,9 @@ builder.Services.AddDefaultIdentity<Usuario>(options => {
 
 // Registrar serviço de email
 builder.Services.AddTransient<IEmailSender, EmailSender>();
-// Add Email Service
+// Modificar o registro do EmailService
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<EmailService>();  // Adicionar o serviço concreto também
 
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
