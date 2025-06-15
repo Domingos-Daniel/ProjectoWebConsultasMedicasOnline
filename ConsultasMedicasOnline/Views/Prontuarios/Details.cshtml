@@ -277,120 +277,223 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            // Adiciona o título
-            doc.setFontSize(22);
-            doc.text("Prontuário Médico", 14, 22);
+            // Adiciona o logo/cabeçalho da empresa
+            doc.setFontSize(24);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(41, 128, 185); // Cor azul médica
+            doc.text("MedConsulta", 14, 20);
+            
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(100, 100, 100); // Cor cinza
+            doc.text("Sistema de Consultas Médicas Online", 14, 28);
+            
+            // Linha separadora
+            doc.setDrawColor(41, 128, 185);
+            doc.setLineWidth(0.5);
+            doc.line(14, 32, 196, 32);
+
+            // Adiciona o título do documento
+            doc.setFontSize(20);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(0, 0, 0); // Volta para preto
+            doc.text("PRONTUÁRIO MÉDICO", 14, 45);
 
             // Adiciona informações do paciente
-            doc.setFontSize(16);
-            doc.text("Dados do Paciente", 14, 40);
             doc.setFontSize(14);
-            doc.text("Nome: @Model.Paciente.Usuario.Nome @Model.Paciente.Usuario.Sobrenome", 14, 50);
+            doc.setFont(undefined, 'bold');
+            doc.text("DADOS DO PACIENTE", 14, 60);
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'normal');
+            doc.text("Nome: @Model.Paciente.Usuario.Nome @Model.Paciente.Usuario.Sobrenome", 14, 68);
             @if (Model.Paciente.DataNascimento.HasValue)
             {
                 <text>
-                doc.text("Data de Nascimento: @Model.Paciente.DataNascimento.Value.ToString("dd/MM/yyyy")", 14, 60);
-                doc.text("Idade: @(DateTime.Now.Year - Model.Paciente.DataNascimento.Value.Year) anos", 14, 70);
+                doc.text("Data de Nascimento: @Model.Paciente.DataNascimento.Value.ToString("dd/MM/yyyy")", 14, 75);
+                doc.text("Idade: @(DateTime.Now.Year - Model.Paciente.DataNascimento.Value.Year) anos", 14, 82);
                 </text>
             }
             @if (!string.IsNullOrEmpty(Model.Paciente.TipoSanguineo))
             {
-                <text>doc.text("Tipo Sanguíneo: @Model.Paciente.TipoSanguineo", 14, 80);</text>
+                <text>doc.text("Tipo Sanguíneo: @Model.Paciente.TipoSanguineo", 14, 89);</text>
             }
             @if (!string.IsNullOrEmpty(Model.Paciente.Alergias))
             {
-                <text>doc.text("Alergias: @Model.Paciente.Alergias", 14, 90);</text>
+                <text>doc.text("Alergias: @Model.Paciente.Alergias", 14, 96);</text>
             }
 
             // Adiciona informações do médico
-            doc.setFontSize(16);
-            doc.text("Médico Responsável", 14, 110);
             doc.setFontSize(14);
-            doc.text("Nome: Dr. @Model.Medico.Usuario.Nome @Model.Medico.Usuario.Sobrenome", 14, 120);
-            doc.text("Especialidade: @Model.Medico.Especialidade.Nome", 14, 130);
-            doc.text("CRM: @Model.Medico.CRM/@Model.Medico.EstadoCRM", 14, 140);
+            doc.setFont(undefined, 'bold');
+            doc.text("MÉDICO RESPONSÁVEL", 14, 110);
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'normal');
+            doc.text("Nome: Dr. @Model.Medico.Usuario.Nome @Model.Medico.Usuario.Sobrenome", 14, 118);
+            doc.text("Especialidade: @Model.Medico.Especialidade.Nome", 14, 125);
+            doc.text("CRM: @Model.Medico.CRM/@Model.Medico.EstadoCRM", 14, 132);
 
             // Adiciona informações da consulta
-            doc.setFontSize(16);
-            doc.text("Detalhes da Consulta", 14, 160);
             doc.setFontSize(14);
-            doc.text("Data e Hora: @Model.Consulta.DataHora.ToString("dd/MM/yyyy 'às' HH:mm")", 14, 170);
+            doc.setFont(undefined, 'bold');
+            doc.text("DETALHES DA CONSULTA", 14, 146);
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'normal');
+            doc.text("Data e Hora: @Model.Consulta.DataHora.ToString("dd/MM/yyyy 'às' HH:mm")", 14, 154);
+
+            let yPosition = 168;
 
             // Adiciona anamnese e exame físico
             @if (!string.IsNullOrEmpty(Model.HistoriaClinica))
             {
                 <text>
-                doc.setFontSize(16);
-                doc.text("História Clínica", 14, 190);
                 doc.setFontSize(14);
-                doc.text("@Html.Raw(Model.HistoriaClinica.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 200);
+                doc.setFont(undefined, 'bold');
+                doc.text("HISTÓRIA CLÍNICA", 14, yPosition);
+                yPosition += 8;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                const historiaLines = doc.splitTextToSize("@Html.Raw(Model.HistoriaClinica.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 180);
+                doc.text(historiaLines, 14, yPosition);
+                yPosition += historiaLines.length * 5 + 8;
                 </text>
             }
 
             @if (!string.IsNullOrEmpty(Model.ExameFisico))
             {
                 <text>
-                doc.setFontSize(16);
-                doc.text("Exame Físico", 14, 220);
+                if (yPosition > 250) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
                 doc.setFontSize(14);
-                doc.text("@Html.Raw(Model.ExameFisico.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 230);
+                doc.setFont(undefined, 'bold');
+                doc.text("EXAME FÍSICO", 14, yPosition);
+                yPosition += 8;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                const exameLines = doc.splitTextToSize("@Html.Raw(Model.ExameFisico.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 180);
+                doc.text(exameLines, 14, yPosition);
+                yPosition += exameLines.length * 5 + 8;
                 </text>
             }
 
             // Adiciona diagnóstico e plano
-            doc.setFontSize(16);
-            doc.text("Diagnóstico Principal", 14, 250);
+            if (yPosition > 250) {
+                doc.addPage();
+                yPosition = 20;
+            }
             doc.setFontSize(14);
-            doc.text("@Html.Raw(Model.Diagnostico.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 260);
+            doc.setFont(undefined, 'bold');
+            doc.text("DIAGNÓSTICO PRINCIPAL", 14, yPosition);
+            yPosition += 8;
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            const diagnosticoLines = doc.splitTextToSize("@Html.Raw(Model.Diagnostico.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 180);
+            doc.text(diagnosticoLines, 14, yPosition);
+            yPosition += diagnosticoLines.length * 5 + 8;
 
             @if (!string.IsNullOrEmpty(Model.Tratamento))
             {
                 <text>
-                doc.setFontSize(16);
-                doc.text("Plano de Tratamento", 14, 280);
+                if (yPosition > 250) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
                 doc.setFontSize(14);
-                doc.text("@Html.Raw(Model.Tratamento.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 290);
+                doc.setFont(undefined, 'bold');
+                doc.text("PLANO DE TRATAMENTO", 14, yPosition);
+                yPosition += 8;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                const tratamentoLines = doc.splitTextToSize("@Html.Raw(Model.Tratamento.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 180);
+                doc.text(tratamentoLines, 14, yPosition);
+                yPosition += tratamentoLines.length * 5 + 8;
                 </text>
             }
 
             @if (!string.IsNullOrEmpty(Model.Prescricoes))
             {
                 <text>
-                doc.setFontSize(16);
-                doc.text("Prescrições Médicas", 14, 310);
+                if (yPosition > 250) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
                 doc.setFontSize(14);
-                doc.text("@Html.Raw(Model.Prescricoes.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 320);
+                doc.setFont(undefined, 'bold');
+                doc.text("PRESCRIÇÕES MÉDICAS", 14, yPosition);
+                yPosition += 8;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                const prescricoesLines = doc.splitTextToSize("@Html.Raw(Model.Prescricoes.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 180);
+                doc.text(prescricoesLines, 14, yPosition);
+                yPosition += prescricoesLines.length * 5 + 8;
                 </text>
             }
 
             @if (!string.IsNullOrEmpty(Model.ExamesSolicitados))
             {
                 <text>
-                doc.setFontSize(16);
-                doc.text("Exames Solicitados", 14, 340);
+                if (yPosition > 250) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
                 doc.setFontSize(14);
-                doc.text("@Html.Raw(Model.ExamesSolicitados.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 350);
+                doc.setFont(undefined, 'bold');
+                doc.text("EXAMES SOLICITADOS", 14, yPosition);
+                yPosition += 8;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                const examesLines = doc.splitTextToSize("@Html.Raw(Model.ExamesSolicitados.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 180);
+                doc.text(examesLines, 14, yPosition);
+                yPosition += examesLines.length * 5 + 8;
                 </text>
             }
 
             @if (!string.IsNullOrEmpty(Model.OrientacoesGerais))
             {
                 <text>
-                doc.setFontSize(16);
-                doc.text("Orientações Gerais", 14, 370);
+                if (yPosition > 250) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
                 doc.setFontSize(14);
-                doc.text("@Html.Raw(Model.OrientacoesGerais.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 14, 380);
+                doc.setFont(undefined, 'bold');
+                doc.text("ORIENTAÇÕES GERAIS", 14, yPosition);
+                yPosition += 8;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                const orientacoesLines = doc.splitTextToSize("@Html.Raw(Model.OrientacoesGerais.Replace("\"", "\\\"").Replace("\n", " ").Replace("\r", " "))", 180);
+                doc.text(orientacoesLines, 14, yPosition);
+                yPosition += orientacoesLines.length * 5 + 8;
                 </text>
             }
 
             @if (Model.ProximaConsulta.HasValue)
             {
                 <text>
-                doc.setFontSize(16);
-                doc.text("Retorno Agendado", 14, 400);
+                if (yPosition > 260) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
                 doc.setFontSize(14);
-                doc.text("Data: @Model.ProximaConsulta.Value.ToString("dd/MM/yyyy")", 14, 410);
+                doc.setFont(undefined, 'bold');
+                doc.text("RETORNO AGENDADO", 14, yPosition);
+                yPosition += 8;
+                doc.setFontSize(11);
+                doc.setFont(undefined, 'normal');
+                doc.text("Data: @Model.ProximaConsulta.Value.ToString("dd/MM/yyyy")", 14, yPosition);
                 </text>
+            }
+
+            // Rodapé com logo
+            const totalPages = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setFont(undefined, 'italic');
+                doc.setTextColor(100, 100, 100);
+                doc.text('MedConsulta - Sistema de Consultas Médicas Online', 14, 285);
+                doc.text('Prontuário gerado em: ' + new Date().toLocaleString('pt-BR'), 14, 290);
             }
 
             // Salva o PDF

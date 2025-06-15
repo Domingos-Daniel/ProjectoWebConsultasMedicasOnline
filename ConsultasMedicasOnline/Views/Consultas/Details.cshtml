@@ -462,15 +462,30 @@
             const pageHeight = doc.internal.pageSize.getHeight();
             let yPosition = 20;
             
+            // Adiciona o logo/cabeçalho da empresa
+            doc.setFontSize(24);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(41, 128, 185); // Cor azul médica
+            doc.text("MedConsulta", 20, yPosition);
+            yPosition += 8;
+            
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(100, 100, 100); // Cor cinza
+            doc.text("Sistema de Consultas Médicas Online", 20, yPosition);
+            yPosition += 8;
+            
+            // Linha separadora
+            doc.setDrawColor(41, 128, 185);
+            doc.setLineWidth(0.5);
+            doc.line(20, yPosition, pageWidth - 20, yPosition);
+            yPosition += 10;
+            
             // Cabeçalho
             doc.setFontSize(20);
             doc.setFont(undefined, 'bold');
+            doc.setTextColor(0, 0, 0); // Volta para preto
             doc.text('PRONTUÁRIO MÉDICO', pageWidth / 2, yPosition, { align: 'center' });
-            yPosition += 15;
-            
-            // Linha separadora
-            doc.setLineWidth(0.5);
-            doc.line(20, yPosition, pageWidth - 20, yPosition);
             yPosition += 15;
             
             // Informações da consulta
@@ -548,64 +563,24 @@
                 @if (!string.IsNullOrEmpty(Model.Prontuario.HistoriaClinica))
                 {
                     <text>
+                    if (yPosition > pageHeight - 60) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
                     doc.setFontSize(14);
                     doc.setFont(undefined, 'bold');
                     doc.text('HISTÓRIA CLÍNICA', 20, yPosition);
                     yPosition += 10;
                     
-                    doc.setFontSize(11);
+                    doc.setFontSize(10);
                     doc.setFont(undefined, 'normal');
                     const historiaLines = doc.splitTextToSize('@Html.Raw(Model.Prontuario.HistoriaClinica.Replace("\n", " ").Replace("\r", " "))', pageWidth - 40);
                     doc.text(historiaLines, 20, yPosition);
-                    yPosition += historiaLines.length * 7 + 8;
+                    yPosition += historiaLines.length * 5 + 8;
                     </text>
                 }
                 
-                // Exame Físico
-                @if (!string.IsNullOrEmpty(Model.Prontuario.ExameFisico))
-                {
-                    <text>
-                    if (yPosition > pageHeight - 40) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    
-                    doc.setFontSize(14);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('EXAME FÍSICO', 20, yPosition);
-                    yPosition += 10;
-                    
-                    doc.setFontSize(11);
-                    doc.setFont(undefined, 'normal');
-                    const exameLines = doc.splitTextToSize('@Html.Raw(Model.Prontuario.ExameFisico.Replace("\n", " ").Replace("\r", " "))', pageWidth - 40);
-                    doc.text(exameLines, 20, yPosition);
-                    yPosition += exameLines.length * 7 + 8;
-                    </text>
-                }
-                
-                // Hipóteses
-                @if (!string.IsNullOrEmpty(Model.Prontuario.Hipoteses))
-                {
-                    <text>
-                    if (yPosition > pageHeight - 40) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    
-                    doc.setFontSize(14);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('HIPÓTESES DIAGNÓSTICAS', 20, yPosition);
-                    yPosition += 10;
-                    
-                    doc.setFontSize(11);
-                    doc.setFont(undefined, 'normal');
-                    const hipotesesLines = doc.splitTextToSize('@Html.Raw(Model.Prontuario.Hipoteses.Replace("\n", " ").Replace("\r", " "))', pageWidth - 40);
-                    doc.text(hipotesesLines, 20, yPosition);
-                    yPosition += hipotesesLines.length * 7 + 8;
-                    </text>
-                }
-                
-                // Diagnóstico
+                // Diagnóstico Principal
                 <text>
                 if (yPosition > pageHeight - 40) {
                     doc.addPage();
@@ -617,34 +592,12 @@
                 doc.text('DIAGNÓSTICO PRINCIPAL', 20, yPosition);
                 yPosition += 10;
                 
-                doc.setFontSize(11);
+                doc.setFontSize(10);
                 doc.setFont(undefined, 'normal');
                 const diagnosticoLines = doc.splitTextToSize('@Html.Raw(Model.Prontuario.Diagnostico.Replace("\n", " ").Replace("\r", " "))', pageWidth - 40);
                 doc.text(diagnosticoLines, 20, yPosition);
-                yPosition += diagnosticoLines.length * 7 + 8;
+                yPosition += diagnosticoLines.length * 5 + 8;
                 </text>
-                
-                // Tratamento
-                @if (!string.IsNullOrEmpty(Model.Prontuario.Tratamento))
-                {
-                    <text>
-                    if (yPosition > pageHeight - 40) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    
-                    doc.setFontSize(14);
-                    doc.setFont(undefined, 'bold');
-                    doc.text('PLANO DE TRATAMENTO', 20, yPosition);
-                    yPosition += 10;
-                    
-                    doc.setFontSize(11);
-                    doc.setFont(undefined, 'normal');
-                    const tratamentoLines = doc.splitTextToSize('@Html.Raw(Model.Prontuario.Tratamento.Replace("\n", " ").Replace("\r", " "))', pageWidth - 40);
-                    doc.text(tratamentoLines, 20, yPosition);
-                    yPosition += tratamentoLines.length * 7 + 8;
-                    </text>
-                }
                 
                 // Prescrições
                 @if (!string.IsNullOrEmpty(Model.Prontuario.Prescricoes))
@@ -660,7 +613,69 @@
                     doc.text('PRESCRIÇÕES MÉDICAS', 20, yPosition);
                     yPosition += 10;
                     
-                    doc.setFontSize(11);
+                    doc.setFontSize(10);
+                    doc.setFont(undefined, 'normal');
+                    const prescricoesLines = doc.splitTextToSize('@Html.Raw(Model.Prontuario.Prescricoes.Replace("\n", " ").Replace("\r", " "))', pageWidth - 40);
+                    doc.text(prescricoesLines, 20, yPosition);
+                    yPosition += prescricoesLines.length * 5 + 8;
+                    </text>
+                }
+            }
+            else
+            {
+                <text>
+                doc.setFontSize(14);
+                doc.setFont(undefined, 'bold');
+                doc.text('PRONTUÁRIO NÃO DISPONÍVEL', 20, yPosition);
+                yPosition += 10;
+                
+                doc.setFontSize(11);
+                doc.setFont(undefined, 'normal');
+                doc.text('O prontuário ainda não foi preenchido pelo médico.', 20, yPosition);
+                </text>
+            }
+            
+            // Rodapé simples
+            doc.setFontSize(8);
+            doc.setFont(undefined, 'italic');
+            doc.setTextColor(100, 100, 100);
+            doc.text('MedConsulta - Sistema de Consultas Médicas Online', 20, pageHeight - 15);
+            doc.text('Documento gerado em: ' + new Date().toLocaleString('pt-BR'), 20, pageHeight - 10);
+            
+            // Salvar o PDF
+            const fileName = `Consulta_@(Model.Paciente.Usuario.Nome.Replace(" ", "_"))_@(Model.DataHora.ToString("yyyyMMdd")).pdf`;
+            doc.save(fileName);
+        }
+        
+        function cancelarConsulta(consultaId) {
+            const motivo = prompt('Informe o motivo do cancelamento:');
+            if (motivo && motivo.trim()) {
+                if (confirm('Tem certeza de que deseja cancelar esta consulta?')) {
+                    $.post('@Url.Action("Cancelar")', {
+                        id: consultaId,
+                        motivo: motivo.trim()
+                    }, function() {
+                        location.reload();
+                    }).fail(function() {
+                        alert('Erro ao cancelar a consulta. Tente novamente.');
+                    });
+                }
+            }
+        }
+        
+        function iniciarConsulta(consultaId) {
+            if (confirm('Deseja iniciar esta consulta agora?')) {
+                $.post('@Url.Action("IniciarConsulta")', {
+                    id: consultaId
+                }, function() {
+                    location.reload();
+                }).fail(function() {
+                    alert('Erro ao iniciar a consulta. Tente novamente.');
+                });
+            }
+        }
+    </script>
+}
                     doc.setFont(undefined, 'normal');
                     const prescricoesLines = doc.splitTextToSize('@Html.Raw(Model.Prontuario.Prescricoes.Replace("\n", " ").Replace("\r", " "))', pageWidth - 40);
                     doc.text(prescricoesLines, 20, yPosition);
@@ -733,13 +748,17 @@
                     </text>
                 }
                 
-                // Rodapé
-                <text>
-                doc.setFontSize(8);
-                doc.setFont(undefined, 'italic');
-                doc.text('Prontuário gerado em: ' + new Date().toLocaleString('pt-BR'), 20, pageHeight - 20);
-                doc.text('Data de criação do prontuário: @Model.Prontuario.DataCriacao.ToString("dd/MM/yyyy HH:mm")', 20, pageHeight - 12);
-                </text>
+                // Rodapé com logo em todas as páginas
+                const totalPages = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setFont(undefined, 'italic');
+                    doc.setTextColor(100, 100, 100);
+                    doc.text('MedConsulta - Sistema de Consultas Médicas Online', 20, pageHeight - 15);
+                    doc.text('Documento gerado em: ' + new Date().toLocaleString('pt-BR'), 20, pageHeight - 10);
+                    doc.text('Página ' + i + ' de ' + totalPages, pageWidth - 40, pageHeight - 10);
+                }
             }
             else
             {
