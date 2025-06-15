@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using ConsultasMedicasOnline.Data;
 using ConsultasMedicasOnline.Models;
+using ConsultasMedicasOnline.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ConsultasMedicasOnline.Controllers
 {
@@ -13,11 +14,16 @@ namespace ConsultasMedicasOnline.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Usuario> _userManager;
+        private readonly IEmailService _emailService;
 
-        public ConsultasController(ApplicationDbContext context, UserManager<Usuario> userManager)
+        public ConsultasController(
+            ApplicationDbContext context,
+            UserManager<Usuario> userManager,
+            IEmailService emailService)
         {
             _context = context;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         // GET: Consultas
@@ -265,7 +271,33 @@ namespace ConsultasMedicasOnline.Controllers
                     await _context.SaveChangesAsync();
                     
                     Console.WriteLine($"Consulta criada com sucesso, ID: {consulta.Id}");
-                    return RedirectToAction(nameof(Details), new { id = consulta.Id });
+                    
+                    // Get patient and doctor information for the email
+                    var paciente = await _context.Pacientes
+                        .Include(p => p.Usuario)
+                        .FirstOrDefaultAsync(p => p.Id == consulta.PacienteId);
+                    
+                    var medico = await _context.Medicos
+                        .Include(m => m.Usuario)
+                        .FirstOrDefaultAsync(m => m.Id == consulta.MedicoId);
+                    
+                    if (paciente?.Usuario?.Email != null && medico != null)
+                    {
+                        // Extract time part from DateTime
+                        string appointmentTime = consulta.DataHora.ToString("HH:mm");
+                        
+                        // Send confirmation email
+                        await _emailService.SendAppointmentConfirmationAsync(
+                            paciente.Usuario.Email,
+                            $"{paciente.Usuario.Nome} {paciente.Usuario.Sobrenome}",
+                            $"{medico.Usuario.Nome} {medico.Usuario.Sobrenome}",
+                            consulta.DataHora,
+                            appointmentTime
+                        );
+                    }
+
+                    TempData["Success"] = "Consulta agendada com sucesso! Um e-mail de confirmação foi enviado.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
