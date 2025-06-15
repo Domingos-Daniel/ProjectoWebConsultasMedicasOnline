@@ -176,7 +176,7 @@
                     </h2>
                     
                     <div class="space-y-3">
-                        @if(Model.Status == ConsultasMedicasOnline.Models.StatusConsulta.Agendada)
+                        @if(Model.Status == ConsultasMedicasOnline.Models.StatusConsulta.Agendada && User.IsInRole("Medico") )
                         {
                             <form asp-action="ChangeStatus" method="post">
                                 @Html.AntiForgeryToken()
