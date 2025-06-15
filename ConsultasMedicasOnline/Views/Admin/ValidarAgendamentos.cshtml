@@ -5,6 +5,35 @@
 
 <div class="min-h-screen bg-gray-50 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Success and Error messages -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p>@TempData["Success"]</p>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p>@TempData["Error"]</p>
+                    </div>
+                </div>
+            </div>
+        }
+
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900">Validar Agendamentos</h1>
             <p class="text-gray-600 mt-2">Consultas pendentes de aprovação</p>
@@ -43,10 +72,11 @@
                                     @consulta.DataHora.ToString("dd/MM/yyyy HH:mm")
                                 </td>
                                 <td class="px-6 py-4 text-sm">
-                                    @consulta.Tipo
+                                    @(consulta.Tipo == ConsultasMedicasOnline.Models.TipoConsulta.Presencial ? "Presencial" : "Online")
                                 </td>
                                 <td class="px-6 py-4 text-right space-x-2">
                                     <form asp-action="AprovarConsulta" method="post" class="inline">
+                                        @Html.AntiForgeryToken()
                                         <input type="hidden" name="id" value="@consulta.Id" />
                                         <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">
                                             Aprovar
@@ -82,6 +112,12 @@
                 form.method = 'POST';
                 form.action = '@Url.Action("RejeitarConsulta")';
                 
+                // Add anti-forgery token
+                const tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = '__RequestVerificationToken';
+                tokenInput.value = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                
                 const idInput = document.createElement('input');
                 idInput.type = 'hidden';
                 idInput.name = 'id';
@@ -92,10 +128,13 @@
                 motivoInput.name = 'motivo';
                 motivoInput.value = motivo.trim();
                 
+                form.appendChild(tokenInput);
                 form.appendChild(idInput);
                 form.appendChild(motivoInput);
                 document.body.appendChild(form);
                 form.submit();
+            } else if (motivo !== null) { // User clicked OK but didn't provide a reason
+                alert('Você precisa informar um motivo para rejeitar a consulta.');
             }
         }
     </script>

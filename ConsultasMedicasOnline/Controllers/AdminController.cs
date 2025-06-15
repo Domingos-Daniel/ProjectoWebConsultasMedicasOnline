@@ -1,10 +1,13 @@
 using ConsultasMedicasOnline.Data;
 using ConsultasMedicasOnline.Models;
 using ConsultasMedicasOnline.Models.ViewModels;
+using ConsultasMedicasOnline.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ConsultasMedicasOnline.Controllers
@@ -15,15 +18,18 @@ namespace ConsultasMedicasOnline.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Usuario> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IEmailService _emailService;
 
         public AdminController(
             ApplicationDbContext context,
             UserManager<Usuario> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IEmailService emailService)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -179,12 +185,78 @@ namespace ConsultasMedicasOnline.Controllers
         [HttpPost]
         public async Task<IActionResult> AprovarConsulta(int id)
         {
-            var consulta = await _context.Consultas.FindAsync(id);
-            if (consulta != null)
+            var consulta = await _context.Consultas
+                .Include(c => c.Paciente).ThenInclude(p => p.Usuario)
+                .Include(c => c.Medico).ThenInclude(m => m.Usuario)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (consulta == null)
             {
+                TempData["Error"] = "Consulta não encontrada.";
+                return RedirectToAction(nameof(ValidarAgendamentos));
+            }
+
+            try
+            {
+                // Atualizar status da consulta
                 consulta.Status = StatusConsulta.Confirmada;
+                _context.Update(consulta);
                 await _context.SaveChangesAsync();
-                TempData["Success"] = "Consulta aprovada com sucesso!";
+
+                // Enviar email ao paciente
+                if (consulta.Paciente?.Usuario?.Email != null)
+                {
+                    try
+                    {
+                        await _emailService.SendStatusChangeNotificationAsync(
+                            consulta.Paciente.Usuario.Email,
+                            $"{consulta.Paciente.Usuario.Nome} {consulta.Paciente.Usuario.Sobrenome}",
+                            $"{consulta.Medico.Usuario.Nome} {consulta.Medico.Usuario.Sobrenome}",
+                            consulta.DataHora,
+                            StatusConsulta.Confirmada
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        // Registrar erro, mas não falhar o processo
+                        Console.WriteLine($"Erro ao enviar e-mail: {ex.Message}");
+                    }
+                }
+
+                // Enviar email ao médico
+                if (consulta.Medico?.Usuario?.Email != null)
+                {
+                    try
+                    {
+                        await _emailService.SendEmailAsync(
+                            consulta.Medico.Usuario.Email,
+                            "Nova consulta confirmada",
+                            $@"
+                                <div style='font-family: Arial, sans-serif;'>
+                                    <h2>Nova consulta aprovada</h2>
+                                    <p>Olá Dr. {consulta.Medico.Usuario.Nome},</p>
+                                    <p>Uma nova consulta foi confirmada em sua agenda:</p>
+                                    <p>
+                                        <strong>Paciente:</strong> {consulta.Paciente.Usuario.Nome} {consulta.Paciente.Usuario.Sobrenome}<br>
+                                        <strong>Data/Hora:</strong> {consulta.DataHora:dd/MM/yyyy HH:mm}<br>
+                                        <strong>Tipo:</strong> {(consulta.Tipo == TipoConsulta.Presencial ? "Presencial" : "Online")}
+                                    </p>
+                                    <p>Por favor, acesse o sistema para mais detalhes.</p>
+                                </div>
+                            "
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao enviar e-mail para o médico: {ex.Message}");
+                    }
+                }
+
+                TempData["Success"] = $"Consulta aprovada com sucesso. E-mails enviados para {consulta.Paciente.Usuario.Nome} e Dr. {consulta.Medico.Usuario.Nome}.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Erro ao aprovar consulta: {ex.Message}";
             }
 
             return RedirectToAction(nameof(ValidarAgendamentos));
@@ -193,13 +265,99 @@ namespace ConsultasMedicasOnline.Controllers
         [HttpPost]
         public async Task<IActionResult> RejeitarConsulta(int id, string motivo)
         {
-            var consulta = await _context.Consultas.FindAsync(id);
-            if (consulta != null)
+            var consulta = await _context.Consultas
+                .Include(c => c.Paciente).ThenInclude(p => p.Usuario)
+                .Include(c => c.Medico).ThenInclude(m => m.Usuario)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (consulta == null)
             {
+                TempData["Error"] = "Consulta não encontrada.";
+                return RedirectToAction(nameof(ValidarAgendamentos));
+            }
+
+            try
+            {
+                // Atualizar status da consulta
                 consulta.Status = StatusConsulta.Cancelada;
-                consulta.MotivoCancelamento = motivo;
+                consulta.ObservacoesGerais = $"Consulta rejeitada pelo administrador. Motivo: {motivo}\n\n" +
+                                            (consulta.ObservacoesGerais ?? "");
+                _context.Update(consulta);
                 await _context.SaveChangesAsync();
-                TempData["Success"] = "Consulta rejeitada com sucesso!";
+
+                // Enviar email ao paciente
+                if (consulta.Paciente?.Usuario?.Email != null)
+                {
+                    try
+                    {
+                        await _emailService.SendEmailAsync(
+                            consulta.Paciente.Usuario.Email,
+                            "Consulta não aprovada",
+                            $@"
+                                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;'>
+                                    <div style='text-align: center; padding: 10px; background-color: #fef2f2; border-radius: 5px;'>
+                                        <h2 style='color: #b91c1c;'>Consulta Não Aprovada</h2>
+                                    </div>
+
+                                    <div style='padding: 20px;'>
+                                        <p>Olá, <strong>{consulta.Paciente.Usuario.Nome}</strong>!</p>
+
+                                        <p>Infelizmente, sua consulta com <strong>Dr. {consulta.Medico.Usuario.Nome}</strong> não pôde ser aprovada.</p>
+
+                                        <div style='background-color: #f8fafc; padding: 15px; border-radius: 5px; margin: 20px 0;'>
+                                            <p><strong>Data/Hora solicitada:</strong> {consulta.DataHora:dd/MM/yyyy HH:mm}</p>
+                                            <p><strong>Motivo:</strong> {motivo}</p>
+                                        </div>
+
+                                        <p>Por favor, tente agendar uma nova consulta em um horário diferente ou entre em contato com nosso atendimento.</p>
+                                    </div>
+
+                                    <div style='text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;'>
+                                        <p style='color: #64748b; font-size: 14px;'>Este é um e-mail automático. Por favor, não responda diretamente.</p>
+                                    </div>
+                                </div>
+                            "
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao enviar e-mail: {ex.Message}");
+                    }
+                }
+
+                // Enviar email ao médico (opcional)
+                if (consulta.Medico?.Usuario?.Email != null)
+                {
+                    try
+                    {
+                        await _emailService.SendEmailAsync(
+                            consulta.Medico.Usuario.Email,
+                            "Consulta rejeitada",
+                            $@"
+                                <div style='font-family: Arial, sans-serif;'>
+                                    <h2>Consulta rejeitada</h2>
+                                    <p>Olá Dr. {consulta.Medico.Usuario.Nome},</p>
+                                    <p>Uma solicitação de consulta foi rejeitada:</p>
+                                    <p>
+                                        <strong>Paciente:</strong> {consulta.Paciente.Usuario.Nome} {consulta.Paciente.Usuario.Sobrenome}<br>
+                                        <strong>Data/Hora:</strong> {consulta.DataHora:dd/MM/yyyy HH:mm}<br>
+                                        <strong>Motivo:</strong> {motivo}
+                                    </p>
+                                </div>
+                            "
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao enviar e-mail para o médico: {ex.Message}");
+                    }
+                }
+
+                TempData["Success"] = $"Consulta rejeitada com sucesso. E-mails de notificação enviados.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Erro ao rejeitar consulta: {ex.Message}";
             }
 
             return RedirectToAction(nameof(ValidarAgendamentos));
@@ -214,7 +372,7 @@ namespace ConsultasMedicasOnline.Controllers
                     .GroupBy(c => new { c.DataHora.Year, c.DataHora.Month })
                     .Select(g => new { Periodo = $"{g.Key.Month}/{g.Key.Year}", Total = g.Count() })
                     .ToListAsync(),
-                
+
                 ConsultasPorEspecialidade = await _context.Consultas
                     .Include(c => c.Medico).ThenInclude(m => m.Especialidade)
                     .GroupBy(c => c.Medico.Especialidade.Nome)
@@ -285,7 +443,7 @@ namespace ConsultasMedicasOnline.Controllers
                 return NotFound();
 
             ViewBag.Especialidades = await _context.Especialidades.ToListAsync();
-            
+
             var model = new EditarMedicoViewModel
             {
                 Id = medico.Id,
@@ -320,7 +478,7 @@ namespace ConsultasMedicasOnline.Controllers
                     medico.Usuario.Nome = model.Nome;
                     medico.Usuario.Sobrenome = model.Sobrenome;
                     medico.Usuario.PhoneNumber = model.Telefone;
-                    
+
                     // Atualizar dados do médico
                     medico.CRM = model.CRM;
                     medico.EstadoCRM = model.EstadoCRM;
@@ -353,7 +511,7 @@ namespace ConsultasMedicasOnline.Controllers
             {
                 // Verificar se o médico tem consultas
                 var temConsultas = await _context.Consultas.AnyAsync(c => c.MedicoId == id);
-                
+
                 if (temConsultas)
                 {
                     TempData["Error"] = "Não é possível excluir este médico pois ele possui consultas cadastradas.";
@@ -379,7 +537,7 @@ namespace ConsultasMedicasOnline.Controllers
                 especialidade.Nome = nome;
                 especialidade.Descricao = descricao;
                 especialidade.Ativa = ativa;
-                
+
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Especialidade atualizada com sucesso!";
             }
@@ -394,7 +552,7 @@ namespace ConsultasMedicasOnline.Controllers
             if (especialidade != null)
             {
                 var temMedicos = await _context.Medicos.AnyAsync(m => m.EspecialidadeId == id);
-                
+
                 if (temMedicos)
                 {
                     TempData["Error"] = "Não é possível excluir esta especialidade pois existem médicos cadastrados nela.";
@@ -432,7 +590,7 @@ namespace ConsultasMedicasOnline.Controllers
                 consulta.Status = StatusConsulta.Cancelada;
                 consulta.MotivoCancelamento = motivo;
                 consulta.DataCancelamento = DateTime.Now;
-                
+
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Consulta cancelada com sucesso!";
             }
