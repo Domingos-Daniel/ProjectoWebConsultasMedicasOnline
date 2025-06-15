@@ -115,16 +115,28 @@ namespace ConsultasMedicasOnline.Controllers.API
                     return NotFound(new { erro = "Médico não encontrado" });
                 }
 
-                // Buscar consultas já agendadas para esta data
+                // Get exact start and end of the date to avoid timezone issues
+                var startOfDay = dataConsulta.Date; 
+                var endOfDay = startOfDay.AddDays(1).AddTicks(-1);
+
+                // Buscar consultas já agendadas para esta data - add exact date comparison
                 var consultasAgendadas = _context.Consultas
                     .Where(c => c.MedicoId == id && 
-                           c.DataHora.Date == dataConsulta.Date &&
-                           (c.Status == StatusConsulta.Agendada || c.Status == StatusConsulta.Confirmada))
+                          c.DataHora >= startOfDay &&
+                          c.DataHora <= endOfDay &&
+                          (c.Status == StatusConsulta.Agendada || c.Status == StatusConsulta.Confirmada))
                     .Select(c => new { 
                         Horario = c.DataHora.ToString("HH:mm"),
                         Duracao = c.DuracaoMinutos
                     })
                     .ToList();
+
+                // Debug - log what appointments were found for this date
+                Console.WriteLine($"Found {consultasAgendadas.Count} bookings on {data} for doctor {id}");
+                foreach (var booking in consultasAgendadas)
+                {
+                    Console.WriteLine($"Booked time: {booking.Horario}, Duration: {booking.Duracao}");
+                }
 
                 // Gerar todos os horários (disponíveis e ocupados)
                 var todosHorarios = new List<object>();
@@ -181,6 +193,11 @@ namespace ConsultasMedicasOnline.Controllers.API
             catch (FormatException)
             {
                 return BadRequest(new { erro = "Formato de data inválido. Use yyyy-MM-dd" });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetHorariosData: {ex.Message}");
+                return StatusCode(500, new { erro = "Erro interno do servidor", detalhes = ex.Message });
             }
         }
     }
