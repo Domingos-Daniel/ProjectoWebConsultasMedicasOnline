@@ -4,232 +4,232 @@
     ViewData["Title"] = "Detalhes da Consulta";
 }
 
-<div class="min-h-screen bg-medical-50 py-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-white py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+        @if (TempData["Success"] != null)
+        {
+            <div class="mb-6 bg-green-100 border-l-4 border-green-500 p-4 rounded-md flex items-start">
+                <div class="flex-shrink-0 mt-0.5">
+                    <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-green-800 font-medium">Agendamento realizado!</h3>
+                    <div class="mt-1 text-green-700 text-sm">
+                        @TempData["Success"]
+                    </div>
+                </div>
+            </div>
+        }
+
         <!-- Header -->
-        <div class="mb-8">
-            <div class="flex items-center justify-between">
+        <div class="bg-white rounded-2xl shadow-sm border border-medical-200 p-8 mb-8">
+            <div class="flex justify-between items-center mb-4">
                 <div>
-                    <h1 class="text-3xl font-bold text-medical-800">Detalhes da Consulta</h1>
-                    <p class="text-medical-600 mt-2">Consulta #@Model.Id - @Model.DataHora.ToString("dd/MM/yyyy HH:mm")</p>
+                    <h1 class="text-3xl font-bold text-medical-800">
+                        <i class="fas fa-clipboard-list text-primary-600 mr-3"></i>
+                        Detalhes da Consulta
+                    </h1>
+                    <p class="text-medical-600 mt-2">
+                        Consulta #@Model.Id - 
+                        <span class="@GetStatusClass()">@GetStatusText()</span>
+                    </p>
                 </div>
                 <div class="flex space-x-3">
-                    <a asp-action="Index" class="bg-medical-100 text-medical-700 px-4 py-2 rounded-lg hover:bg-medical-200 transition-colors duration-200 inline-flex items-center">
+                    <a href="javascript:history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                         <i class="fas fa-arrow-left mr-2"></i>
-                        Voltar à Lista
+                        Voltar
                     </a>
-                    @if (Model.Status == StatusConsulta.Agendada && (User.IsInRole("Administrador") || 
-                        (User.IsInRole("Paciente") && Model.DataHora > DateTime.Now.AddHours(2))))
+                    @if(Model.Status == ConsultasMedicasOnline.Models.StatusConsulta.Agendada)
                     {
-                        <a asp-action="Edit" asp-route-id="@Model.Id" class="bg-warning-100 text-warning-700 px-4 py-2 rounded-lg hover:bg-warning-200 transition-colors duration-200 inline-flex items-center">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                             <i class="fas fa-edit mr-2"></i>
                             Editar
                         </a>
                     }
                 </div>
             </div>
-        </div>
-
-        <!-- Status Banner -->
-        <div class="mb-6">
-            <div class="rounded-lg p-4 @(Model.Status == StatusConsulta.Agendada ? "bg-warning-50 border border-warning-200" :
-                                         Model.Status == StatusConsulta.Confirmada ? "bg-info-50 border border-info-200" :
-                                         Model.Status == StatusConsulta.EmAndamento ? "bg-primary-50 border border-primary-200" :
-                                         Model.Status == StatusConsulta.Concluida ? "bg-success-50 border border-success-200" :
-                                         Model.Status == StatusConsulta.Cancelada ? "bg-danger-50 border border-danger-200" :
-                                         "bg-medical-50 border border-medical-200")">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
+            
+            @if (Model.Status == ConsultasMedicasOnline.Models.StatusConsulta.Agendada)
+            {
+                <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 mb-6">
+                    <div class="flex">
                         <div class="flex-shrink-0">
-                            <i class="fas fa-@(Model.Status == StatusConsulta.Agendada ? "clock text-warning-500" :
-                                              Model.Status == StatusConsulta.Confirmada ? "check-circle text-info-500" :
-                                              Model.Status == StatusConsulta.EmAndamento ? "play-circle text-primary-500" :
-                                              Model.Status == StatusConsulta.Concluida ? "check-double text-success-500" :
-                                              Model.Status == StatusConsulta.Cancelada ? "times-circle text-danger-500" :
-                                              "question-circle text-medical-500") text-2xl"></i>
+                            <i class="fas fa-clock text-yellow-600 text-xl"></i>
                         </div>
                         <div class="ml-3">
-                            <h3 class="text-lg font-semibold @(Model.Status == StatusConsulta.Agendada ? "text-warning-800" :
-                                                              Model.Status == StatusConsulta.Confirmada ? "text-info-800" :
-                                                              Model.Status == StatusConsulta.EmAndamento ? "text-primary-800" :
-                                                              Model.Status == StatusConsulta.Concluida ? "text-success-800" :
-                                                              Model.Status == StatusConsulta.Cancelada ? "text-danger-800" :
-                                                              "text-medical-800")">
-                                Status: @(Model.Status == StatusConsulta.Agendada ? "Agendada" :
-                                          Model.Status == StatusConsulta.Confirmada ? "Confirmada" :
-                                          Model.Status == StatusConsulta.EmAndamento ? "Em Andamento" :
-                                          Model.Status == StatusConsulta.Concluida ? "Concluída" :
-                                          Model.Status == StatusConsulta.Cancelada ? "Cancelada" :
-                                          "Não Compareceu")
-                            </h3>
-                            <p class="text-sm @(Model.Status == StatusConsulta.Agendada ? "text-warning-600" :
-                                              Model.Status == StatusConsulta.Confirmada ? "text-info-600" :
-                                              Model.Status == StatusConsulta.EmAndamento ? "text-primary-600" :
-                                              Model.Status == StatusConsulta.Concluida ? "text-success-600" :
-                                              Model.Status == StatusConsulta.Cancelada ? "text-danger-600" :
-                                              "text-medical-600")">
-                                @if (Model.Status == StatusConsulta.Agendada)
+                            <p class="font-medium">Aguardando aprovação</p>
+                            <p class="text-sm">Esta consulta está aguardando confirmação pelo médico. Você receberá uma notificação quando for aprovada.</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Detalhes da Consulta -->
+            <div class="md:col-span-2 space-y-6">
+                <!-- Informações Gerais -->
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                    <h2 class="text-xl font-semibold text-medical-800 mb-4 flex items-center">
+                        <i class="fas fa-info-circle text-primary-600 mr-2"></i>
+                        Informações Gerais
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-xs uppercase text-gray-500 font-semibold">Data</h4>
+                            <p class="text-medical-800">@Model.DataHora.ToString("dd/MM/yyyy")</p>
+                        </div>
+                        <div>
+                            <h4 class="text-xs uppercase text-gray-500 font-semibold">Horário</h4>
+                            <p class="text-medical-800">@Model.DataHora.ToString("HH:mm")</p>
+                        </div>
+                        <div>
+                            <h4 class="text-xs uppercase text-gray-500 font-semibold">Tipo</h4>
+                            <p class="text-medical-800">
+                                @if (Model.Tipo == ConsultasMedicasOnline.Models.TipoConsulta.Presencial)
                                 {
-                                    <text>Aguardando confirmação do médico</text>
-                                }
-                                else if (Model.Status == StatusConsulta.Confirmada)
-                                {
-                                    <text>Confirmada pelo médico - Aguardando data da consulta</text>
-                                }
-                                else if (Model.Status == StatusConsulta.EmAndamento)
-                                {
-                                    <text>Consulta em andamento</text>
-                                }
-                                else if (Model.Status == StatusConsulta.Concluida)
-                                {
-                                    <text>Consulta realizada com sucesso</text>
-                                }
-                                else if (Model.Status == StatusConsulta.Cancelada)
-                                {
-                                    <text>Consulta cancelada @(Model.DataCancelamento?.ToString("dd/MM/yyyy"))</text>
+                                    <span><i class="fas fa-clinic-medical text-medical-600 mr-1"></i> Presencial</span>
                                 }
                                 else
                                 {
-                                    <text>Paciente não compareceu à consulta</text>
+                                    <span><i class="fas fa-video text-medical-600 mr-1"></i> Online</span>
                                 }
                             </p>
                         </div>
+                        <div>
+                            <h4 class="text-xs uppercase text-gray-500 font-semibold">Duração</h4>
+                            <p class="text-medical-800">@Model.DuracaoMinutos minutos</p>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 border-medical-100" />
+                    
+                    <div>
+                        <h4 class="text-xs uppercase text-gray-500 font-semibold mb-2">Motivo da Consulta</h4>
+                        <p class="text-medical-800 bg-gray-50 p-3 rounded">
+                            @(string.IsNullOrEmpty(Model.MotivoConsulta) ? "Não informado" : Model.MotivoConsulta)
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Observações -->
+                @if (!string.IsNullOrEmpty(Model.ObservacoesGerais))
+                {
+                    <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                        <h2 class="text-xl font-semibold text-medical-800 mb-4 flex items-center">
+                            <i class="fas fa-sticky-note text-primary-600 mr-2"></i>
+                            Observações Gerais
+                        </h2>
+                        
+                        <p class="text-medical-700 bg-gray-50 p-3 rounded">@Model.ObservacoesGerais</p>
+                    </div>
+                }
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Médico -->
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                    <h2 class="text-lg font-semibold text-medical-800 mb-4 flex items-center">
+                        <i class="fas fa-user-md text-primary-600 mr-2"></i>
+                        Médico
+                    </h2>
+                    
+                    <div class="flex items-center mb-4">
+                        <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="font-semibold text-medical-800">Dr. @Model.Medico.Usuario.Nome @Model.Medico.Usuario.Sobrenome</h3>
+                            <p class="text-sm text-medical-600">@Model.Medico.Especialidade.Nome</p>
+                        </div>
                     </div>
                     
-                    <!-- Action Buttons -->
-                    <div class="flex space-x-2">
-                        @if (User.IsInRole("Medico") && Model.Status == StatusConsulta.Agendada)
+                    <div class="text-sm text-medical-700">
+                        <p class="flex items-center mb-2">
+                            <span class="w-5 text-center mr-2"><i class="fas fa-id-card text-medical-500"></i></span>
+                            <span>CRM: @Model.Medico.CRM</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Paciente -->
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                    <h2 class="text-lg font-semibold text-medical-800 mb-4 flex items-center">
+                        <i class="fas fa-user text-primary-600 mr-2"></i>
+                        Paciente
+                    </h2>
+                    
+                    <div class="flex items-center mb-4">
+                        <div class="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="font-semibold text-medical-800">@Model.Paciente.Usuario.Nome @Model.Paciente.Usuario.Sobrenome</h3>
+                            <p class="text-sm text-medical-600">@Model.Paciente.Usuario.Email</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ações -->
+                <div class="bg-white rounded-xl shadow-sm border border-medical-200 p-6">
+                    <h2 class="text-lg font-semibold text-medical-800 mb-4 flex items-center">
+                        <i class="fas fa-cog text-primary-600 mr-2"></i>
+                        Ações
+                    </h2>
+                    
+                    <div class="space-y-3">
+                        @if(Model.Status == ConsultasMedicasOnline.Models.StatusConsulta.Agendada)
                         {
-                            <form asp-action="Confirmar" asp-route-id="@Model.Id" method="post" class="inline">
-                                <button type="submit" class="bg-success-600 text-white px-4 py-2 rounded-lg hover:bg-success-700 transition-colors duration-200 inline-flex items-center">
-                                    <i class="fas fa-check mr-2"></i>
-                                    Confirmar
+                            <form asp-action="Cancel" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Tem certeza que deseja cancelar esta consulta?');">
+                                <button type="submit" class="w-full py-2 px-4 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors text-sm font-medium flex justify-center items-center">
+                                    <i class="fas fa-calendar-times mr-2"></i>
+                                    Cancelar Consulta
                                 </button>
                             </form>
                         }
-                        
-                        @if ((Model.Status == StatusConsulta.Agendada || Model.Status == StatusConsulta.Confirmada) && 
-                            (User.IsInRole("Administrador") || User.IsInRole("Paciente")))
+                        else if(Model.Status == ConsultasMedicasOnline.Models.StatusConsulta.Confirmada && Model.DataHora > DateTime.Now)
                         {
-                            <button onclick="cancelarConsulta(@Model.Id)" class="bg-danger-600 text-white px-4 py-2 rounded-lg hover:bg-danger-700 transition-colors duration-200 inline-flex items-center">
-                                <i class="fas fa-times mr-2"></i>
-                                Cancelar
-                            </button>
-                        }
-                        
-                        @if (User.IsInRole("Medico") && Model.Status == StatusConsulta.Confirmada && Model.DataHora <= DateTime.Now)
-                        {
-                            <button onclick="iniciarConsulta(@Model.Id)" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 inline-flex items-center">
-                                <i class="fas fa-play mr-2"></i>
-                                Iniciar Consulta
-                            </button>
+                            <a href="#" class="w-full py-2 px-4 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors text-sm font-medium flex justify-center items-center">
+                                <i class="fas fa-video mr-2"></i>
+                                Entrar na Consulta
+                            </a>
                         }
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Main Content -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Consultation Information -->
-                <div class="bg-white rounded-xl shadow-sm border border-medical-200 overflow-hidden">
-                    <div class="px-6 py-4 bg-gradient-to-r from-primary-600 to-primary-700 border-b border-medical-200">
-                        <h2 class="text-xl font-semibold text-white flex items-center">
-                            <i class="fas fa-calendar-alt mr-3"></i>
-                            Informações da Consulta
-                        </h2>
-                    </div>
+@functions {
+    private string GetStatusClass()
+    {
+        return Model.Status switch
+        {
+            ConsultasMedicasOnline.Models.StatusConsulta.Agendada => "text-yellow-600",
+            ConsultasMedicasOnline.Models.StatusConsulta.Confirmada => "text-green-600",
+            ConsultasMedicasOnline.Models.StatusConsulta.Concluida => "text-blue-600",
+            ConsultasMedicasOnline.Models.StatusConsulta.Cancelada => "text-red-600",
+            _ => "text-gray-600"
+        };
+    }
 
-                    <div class="p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-medium text-medical-700 mb-2">Data e Hora</label>
-                                <div class="flex items-center p-3 bg-primary-50 rounded-lg">
-                                    <i class="fas fa-calendar text-primary-500 mr-3"></i>
-                                    <div>
-                                        <div class="font-semibold text-primary-700">@Model.DataHora.ToString("dddd, dd/MM/yyyy")</div>
-                                        <div class="text-sm text-primary-600">@Model.DataHora.ToString("HH:mm")</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-medical-700 mb-2">Duração</label>
-                                <div class="flex items-center p-3 bg-medical-50 rounded-lg">
-                                    <i class="fas fa-clock text-medical-500 mr-3"></i>
-                                    <span class="font-semibold text-medical-700">@Model.DuracaoMinutos minutos</span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-medical-700 mb-2">Tipo de Consulta</label>
-                                <div class="flex items-center p-3 @(Model.Tipo == TipoConsulta.Online ? "bg-info-50" : "bg-success-50") rounded-lg">
-                                    <i class="fas fa-@(Model.Tipo == TipoConsulta.Online ? "video text-info-500" : "hospital text-success-500") mr-3"></i>
-                                    <span class="font-semibold @(Model.Tipo == TipoConsulta.Online ? "text-info-700" : "text-success-700")">
-                                        @(Model.Tipo == TipoConsulta.Online ? "Consulta Online" : "Consulta Presencial")
-                                    </span>
-                                </div>
-                            </div>
-
-                            @if (Model.Valor.HasValue)
-                            {
-                                <div>
-                                    <label class="block text-sm font-medium text-medical-700 mb-2">Valor</label>
-                                    <div class="flex items-center p-3 bg-success-50 rounded-lg">
-                                        <i class="fas fa-dollar-sign text-success-500 mr-3"></i>
-                                        <div>
-                                            <span class="font-semibold text-success-700">AOA @Model.Valor.Value.ToString("F2")</span>
-                                            <div class="text-sm text-success-600">
-                                                @if (Model.Pago)
-                                                {
-                                                    <i class="fas fa-check-circle mr-1"></i><text>Pago</text>
-                                                }
-                                                else
-                                                {
-                                                    <i class="fas fa-clock mr-1"></i><text>Pendente</text>
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-
-                        @if (!string.IsNullOrEmpty(Model.MotivoConsulta))
-                        {
-                            <div class="mt-6">
-                                <label class="block text-sm font-medium text-medical-700 mb-2">Motivo da Consulta</label>
-                                <div class="p-4 bg-medical-50 rounded-lg">
-                                    <p class="text-medical-900">@Model.MotivoConsulta</p>
-                                </div>
-                            </div>
-                        }
-
-                        @if (!string.IsNullOrEmpty(Model.ObservacoesGerais))
-                        {
-                            <div class="mt-6">
-                                <label class="block text-sm font-medium text-medical-700 mb-2">Observações Gerais</label>
-                                <div class="p-4 bg-medical-50 rounded-lg">
-                                    <p class="text-medical-900">@Model.ObservacoesGerais</p>
-                                </div>
-                            </div>
-                        }
-
-                        @if (Model.Status == StatusConsulta.Cancelada && !string.IsNullOrEmpty(Model.MotivoCancelamento))
-                        {
-                            <div class="mt-6">
-                                <label class="block text-sm font-medium text-medical-700 mb-2">Motivo do Cancelamento</label>
-                                <div class="p-4 bg-danger-50 border border-danger-200 rounded-lg">
-                                    <p class="text-danger-800">@Model.MotivoCancelamento</p>
-                                    @if (Model.DataCancelamento.HasValue)
-                                    {
-                                        <p class="text-sm text-danger-600 mt-2">
-                                            Cancelado em: @Model.DataCancelamento.Value.ToString("dd/MM/yyyy HH:mm")
-                                        </p>
-                                    }
-                                </div>
-                            </div>
+    private string GetStatusText()
+    {
+        return Model.Status switch
+        {
+            ConsultasMedicasOnline.Models.StatusConsulta.Agendada => "Aguardando Aprovação",
+            ConsultasMedicasOnline.Models.StatusConsulta.Confirmada => "Confirmada",
+            ConsultasMedicasOnline.Models.StatusConsulta.Concluida => "Concluída",
+            ConsultasMedicasOnline.Models.StatusConsulta.Cancelada => "Cancelada",
+            _ => Model.Status.ToString()
+        };
+    }
+}
                         }
                     </div>
                 </div>

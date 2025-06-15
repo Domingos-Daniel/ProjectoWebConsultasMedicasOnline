@@ -77,8 +77,6 @@ namespace ConsultasMedicasOnline.Controllers
                 return NotFound();
             }
 
-            var currentUserId = _userManager.GetUserId(User);
-            
             var consulta = await _context.Consultas
                 .Include(c => c.Paciente)
                     .ThenInclude(p => p.Usuario)
@@ -93,16 +91,6 @@ namespace ConsultasMedicasOnline.Controllers
             if (consulta == null)
             {
                 return NotFound();
-            }
-
-            // Verificar se o usuário pode ver os detalhes
-            bool canView = User.IsInRole("Administrador") ||
-                          consulta.Paciente.UsuarioId == currentUserId ||
-                          consulta.Medico.UsuarioId == currentUserId;
-
-            if (!canView)
-            {
-                return Forbid();
             }
 
             return View(consulta);
@@ -281,23 +269,44 @@ namespace ConsultasMedicasOnline.Controllers
                         .Include(m => m.Usuario)
                         .FirstOrDefaultAsync(m => m.Id == consulta.MedicoId);
                     
+                    bool emailEnviado = false;
+                    
                     if (paciente?.Usuario?.Email != null && medico != null)
                     {
                         // Extract time part from DateTime
                         string appointmentTime = consulta.DataHora.ToString("HH:mm");
                         
-                        // Send confirmation email
-                        await _emailService.SendAppointmentConfirmationAsync(
-                            paciente.Usuario.Email,
-                            $"{paciente.Usuario.Nome} {paciente.Usuario.Sobrenome}",
-                            $"{medico.Usuario.Nome} {medico.Usuario.Sobrenome}",
-                            consulta.DataHora,
-                            appointmentTime
-                        );
+                        try 
+                        {
+                            // Send confirmation email
+                            await _emailService.SendAppointmentConfirmationAsync(
+                                paciente.Usuario.Email,
+                                $"{paciente.Usuario.Nome} {paciente.Usuario.Sobrenome}",
+                                $"{medico.Usuario.Nome} {medico.Usuario.Sobrenome}",
+                                consulta.DataHora,
+                                appointmentTime
+                            );
+                            emailEnviado = true;
+                        }
+                        catch (Exception emailEx)
+                        {
+                            // Log the error but don't fail the appointment creation
+                            Console.WriteLine($"Erro ao enviar e-mail: {emailEx.Message}");
+                        }
                     }
 
-                    TempData["Success"] = "Consulta agendada com sucesso! Um e-mail de confirmação foi enviado.";
-                    return RedirectToAction(nameof(Index));
+                    // Set success message including email status
+                    if (emailEnviado)
+                    {
+                        TempData["Success"] = "Consulta agendada com sucesso! Um e-mail de confirmação foi enviado para você.";
+                    }
+                    else
+                    {
+                        TempData["Success"] = "Consulta agendada com sucesso! Não foi possível enviar o e-mail de confirmação.";
+                    }
+
+                    // Redirect to Details view instead of Index
+                    return RedirectToAction(nameof(Details), new { id = consulta.Id });
                 }
                 catch (Exception ex)
                 {
